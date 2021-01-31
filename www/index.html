@@ -1,0 +1,128 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="Description" content="Diskuis, belajar,bermain dan bersosial"><script src="https://unpkg.com/react-leaflet/dist/react-leaflet.min.js"></script><meta http-equiv="Content-Security-Policy" content="default-src * 'self' 'unsafe-inline' 'unsafe-eval' data: gap: content:"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no,minimal-ui,viewport-fit=cover"><meta name="theme-color" content="#E36521"><meta name="format-detection" content="telephone=no"><meta name="msapplication-tap-highlight" content="no"><title>Diskuis</title><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><link rel="apple-touch-icon" href="static/icons/apple-touch-icon.png"><link rel="icon" href="static/icons/favicon.png"><link rel="shortcut icon" type="image/x-icon" href="static/icons/512x512.png"><link rel="manifest" href="/manifest.json"><script src="https://apis.google.com/js/platform.js" async defer="defer"></script><meta name="google-signin-client_id" content="188472097829-dt3pigv7970k6q0q530l7eu86kdmtj0b.apps.googleusercontent.com"><link href="https://fonts.googleapis.com/css?family=Poppins:300" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Open+Sans" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Quicksand" rel="stylesheet"><link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ==" crossorigin=""><link rel="stylesheet" href="https://leaflet.github.io/Leaflet.markercluster/dist/MarkerCluster.css"><link rel="stylesheet" href="https://leaflet.github.io/Leaflet.markercluster/dist/MarkerCluster.Default.css"><link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-extra-markers@1.2.1/dist/css/leaflet.extra-markers.min.css"><style>body {
+      margin: 0;
+      padding: 0;
+    }
+    .splashScreen {
+      position: fixed;
+      z-index: 999999;
+      width: 100%;
+      height: 100%;
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-align: center;
+      -ms-flex-align: center;
+      align-items: center;
+      -webkit-box-pack: center;
+      -ms-flex-pack: center;
+      justify-content: center;
+      /* background: white; */
+      background-image: url("/static/icons/17876754.png");
+      background: url("/static/icons/17876754.png"), #ED213A;  
+      background-image: url("/static/icons/17876754.png"), -webkit-linear-gradient(to right, #93291E, #F27121); 
+      background-image: url("/static/icons/17876754.png"), linear-gradient(to right, #93291E, #F27121); 
+      background-size: contain;
+      /* background-image: -o-linear-gradient(328.3deg, #f43b47 22.9%, #a30606 69%);
+      background-image: linear-gradient(121.7deg, #f43b47 22.9%, #a30606 69%); */
+      /* background-image: -o-linear-gradient(328.3deg, rgba(41,116,250,1) 22.9%, rgba(67,212,255,1) 69%);
+      background-image: linear-gradient(121.7deg, rgba(41,116,250,1) 22.9%, rgba(67,212,255,1) 69%); */
+    }
+    .splashScreen .innerScreen {
+      /* position: relative; */
+      position: absolute;
+      display: block;
+      text-align: center;
+      margin-top: 400px;
+    }
+    .splashScreen .innerScreen img {
+      max-width: 200px;
+      display: block;
+      height: auto;
+      margin: 0 auto;
+    }
+    .splashScreen .innerScreen h4 {
+      font-family: -apple-system, SF Pro Text, SF UI Text, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif, Helvetica Neue, Helvetica, Arial, sans-serif;
+      text-align: center;
+      text-transform: uppercase;
+      font-size: 18px;
+      /* color: #434343; */
+      color: #fff;
+      margin: 12px 0;
+    }
+    .splashScreen .innerScreen .preloader {
+      width: 36px;
+      height: 36px;
+    }
+
+    /* .splashScreen2 */
+    .splashScreen2 {
+      position: fixed;
+      z-index: 999999;
+      width: 100%;
+      height: 100%;
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-align: center;
+      -ms-flex-align: center;
+      align-items: center;
+      -webkit-box-pack: center;
+      -ms-flex-pack: center;
+      justify-content: center;
+      background-image: -o-linear-gradient(328.3deg, rgb(41, 250, 239) 22.9%, rgba(67,212,255,1) 69%);
+      background-image: linear-gradient(121.7deg, rgba(41,250,239,1) 22.9%, rgba(67,212,255,1) 69%);
+    }
+    .splashScreen2 .innerScreen {
+      /* position: relative; */
+      position: absolute;
+      display: block;
+      text-align: center;
+      margin-top: 400px;
+    }
+    .splashScreen2 .innerScreen img {
+      max-width: 100px;
+      display: block;
+      height: auto;
+      margin: 0 auto;
+    }
+    .splashScreen2 .innerScreen h4 {
+      font-family: -apple-system, SF Pro Text, SF UI Text, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif, Helvetica Neue, Helvetica, Arial, sans-serif;
+      text-align: center;
+      text-transform: uppercase;
+      font-size: 18px;
+      color: #fff;
+      margin: 12px 0;
+    }
+    .splashScreen2 .innerScreen .preloader {
+      width: 36px;
+      height: 36px;
+    }
+    /* .splashScreen2 */</style><link href="css/27.app.css" rel="stylesheet"><link href="css/39.app.css" rel="stylesheet"><link href="css/31.app.css" rel="stylesheet"><link href="css/7.app.css" rel="stylesheet"></head><body><div class="splashScreen" id="splashScreen"><div id="logo_splash" style="width:100%;text-align:center;"><img src="/static/icons/4457.png" style="width:80%;max-width:600px"></div><br><div class="innerScreen"><h4 id="judul_aplikasi">Memuat Aplikasi...</h4><div style="color:#434343" id="sub_judul_aplikasi"></div><div style="font-style:italic;color:white" id="loading_kelamaan"></div><br><div class="preloader color-white"><span class="preloader-inner"><span class="preloader-inner-line"></span> <span class="preloader-inner-line"></span> <span class="preloader-inner-line"></span> <span class="preloader-inner-line"></span> <span class="preloader-inner-line"></span> <span class="preloader-inner-line"></span> <span class="preloader-inner-line"></span> <span class="preloader-inner-line"></span> <span class="preloader-inner-line"></span> <span class="preloader-inner-line"></span> <span class="preloader-inner-line"></span> <span class="preloader-inner-line"></span></span></div></div></div><div id="app"></div><script>localStorage.setItem('judul_aplikasi','Diskuis');
+    localStorage.setItem('sub_judul_aplikasi','Pendidikan Digital');
+
+    // localStorage.setItem('device','android');
+    localStorage.setItem('device','web');
+    // localStorage.setItem('google_api', '582957663393-hlr6l0a2oendcq6ul13n9pasi88mb7bc.apps.googleusercontent.com');
+    
+    // localStorage.setItem('kode_aplikasi','MEJA-EMPU');
+    // localStorage.setItem('kode_aplikasi','MEJA-GURU');
+    if(localStorage.getItem('kode_aplikasi') === null){
+      localStorage.setItem('kode_aplikasi','MEJA');
+    }
+
+    if(localStorage.getItem('custom_logo_sekolah')){
+      document.getElementById("logo_splash").innerHTML = '<img src="https://be.diskuis.id'+localStorage.getItem('custom_logo_sekolah')+'" style="width:80%;max-width:200px"/>';
+      localStorage.setItem('judul_aplikasi',localStorage.getItem('custom_logo_sekolah_nama'));
+      localStorage.setItem('sub_judul_aplikasi','Powered by Diskuis');
+    }
+
+// 
+    setTimeout(() => {
+      document.getElementById("loading_kelamaan").innerHTML = "(Silakan reload halaman ini jika loading tidak segera selesai)";
+    }, 40000);
+
+    window.addEventListener('load', function () {
+      setTimeout(function () {
+        document.getElementById('splashScreen').style.display = 'none';
+      }, 1000);
+    });</script><script src="js/24.app.js"></script><script src="js/28.app.js"></script><script src="js/50.app.js"></script><script src="js/34.app.js"></script><script src="js/23.app.js"></script><script src="js/27.app.js"></script><script src="js/45.app.js"></script><script src="js/51.app.js"></script><script src="js/49.app.js"></script><script src="js/25.app.js"></script><script src="js/37.app.js"></script><script src="js/46.app.js"></script><script src="js/30.app.js"></script><script src="js/33.app.js"></script><script src="js/52.app.js"></script><script src="js/44.app.js"></script><script src="js/29.app.js"></script><script src="js/48.app.js"></script><script src="js/42.app.js"></script><script src="js/43.app.js"></script><script src="js/55.app.js"></script><script src="js/41.app.js"></script><script src="js/39.app.js"></script><script src="js/40.app.js"></script><script src="js/36.app.js"></script><script src="js/19.app.js"></script><script src="js/22.app.js"></script><script src="js/35.app.js"></script><script src="js/32.app.js"></script><script src="js/38.app.js"></script><script src="js/26.app.js"></script><script src="js/53.app.js"></script><script src="js/20.app.js"></script><script src="js/47.app.js"></script><script src="js/18.app.js"></script><script src="js/31.app.js"></script><script src="js/54.app.js"></script><script src="js/21.app.js"></script><script src="js/7.app.js"></script><script src="js/6.app.js"></script><script src="js/10.app.js"></script><script src="js/16.app.js"></script><script src="js/2.app.js"></script><script src="js/15.app.js"></script><script src="js/14.app.js"></script><script src="js/5.app.js"></script><script src="js/3.app.js"></script><script src="js/1.app.js"></script><script src="js/17.app.js"></script><script src="js/9.app.js"></script><script src="js/0.app.js"></script><script src="js/13.app.js"></script><script src="js/4.app.js"></script><script src="js/8.app.js"></script><script src="js/11.app.js"></script><script src="js/app.js"></script></body></html>

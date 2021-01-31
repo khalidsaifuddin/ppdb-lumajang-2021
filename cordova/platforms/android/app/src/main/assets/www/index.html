@@ -1,0 +1,114 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="Description" content="Diskuis, belajar,bermain dan bersosial"><script src="https://unpkg.com/react-leaflet/dist/react-leaflet.min.js"></script><meta http-equiv="Content-Security-Policy" content="default-src * 'self' 'unsafe-inline' 'unsafe-eval' data: gap: content:"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no,minimal-ui,viewport-fit=cover"><meta name="theme-color" content="#E36521"><meta name="format-detection" content="telephone=no"><meta name="msapplication-tap-highlight" content="no"><title>Diskuis</title><script src="https://apis.google.com/js/platform.js" async defer="defer"></script><meta name="google-signin-client_id" content="188472097829-dt3pigv7970k6q0q530l7eu86kdmtj0b.apps.googleusercontent.com"><link href="https://fonts.googleapis.com/css2?family=Open+Sans" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Quicksand" rel="stylesheet"><link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ==" crossorigin=""><link rel="stylesheet" href="https://leaflet.github.io/Leaflet.markercluster/dist/MarkerCluster.css"><link rel="stylesheet" href="https://leaflet.github.io/Leaflet.markercluster/dist/MarkerCluster.Default.css"><link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-extra-markers@1.2.1/dist/css/leaflet.extra-markers.min.css"><style>body {
+      margin: 0;
+      padding: 0;
+    }
+    .splashScreen {
+      position: fixed;
+      z-index: 999999;
+      width: 100%;
+      height: 100%;
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-align: center;
+      -ms-flex-align: center;
+      align-items: center;
+      -webkit-box-pack: center;
+      -ms-flex-pack: center;
+      justify-content: center;
+      background: #ED213A;  /* fallback for old browsers */
+      background: -webkit-linear-gradient(to right, #93291E, #F27121);  /* Chrome 10-25, Safari 5.1-6 */
+      background: linear-gradient(to right, #93291E, #F27121); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+      /* background-image: -o-linear-gradient(328.3deg, #f43b47 22.9%, #a30606 69%);
+      background-image: linear-gradient(121.7deg, #f43b47 22.9%, #a30606 69%); */
+      /* background-image: -o-linear-gradient(328.3deg, rgba(41,116,250,1) 22.9%, rgba(67,212,255,1) 69%);
+      background-image: linear-gradient(121.7deg, rgba(41,116,250,1) 22.9%, rgba(67,212,255,1) 69%); */
+    }
+    .splashScreen .innerScreen {
+      position: relative;
+      display: block;
+      text-align: center;
+    }
+    .splashScreen .innerScreen img {
+      max-width: 200px;
+      display: block;
+      height: auto;
+      margin: 0 auto;
+    }
+    .splashScreen .innerScreen h4 {
+      font-family: -apple-system, SF Pro Text, SF UI Text, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif, Helvetica Neue, Helvetica, Arial, sans-serif;
+      text-align: center;
+      text-transform: uppercase;
+      font-size: 18px;
+      color: #fff;
+      margin: 12px 0;
+    }
+    .splashScreen .innerScreen .preloader {
+      width: 36px;
+      height: 36px;
+    }
+
+    /* .splashScreen2 */
+    .splashScreen2 {
+      position: fixed;
+      z-index: 999999;
+      width: 100%;
+      height: 100%;
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-align: center;
+      -ms-flex-align: center;
+      align-items: center;
+      -webkit-box-pack: center;
+      -ms-flex-pack: center;
+      justify-content: center;
+      background-image: -o-linear-gradient(328.3deg, rgb(41, 250, 239) 22.9%, rgba(67,212,255,1) 69%);
+      background-image: linear-gradient(121.7deg, rgba(41,250,239,1) 22.9%, rgba(67,212,255,1) 69%);
+    }
+    .splashScreen2 .innerScreen {
+      position: relative;
+      display: block;
+      text-align: center;
+    }
+    .splashScreen2 .innerScreen img {
+      max-width: 100px;
+      display: block;
+      height: auto;
+      margin: 0 auto;
+    }
+    .splashScreen2 .innerScreen h4 {
+      font-family: -apple-system, SF Pro Text, SF UI Text, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif, Helvetica Neue, Helvetica, Arial, sans-serif;
+      text-align: center;
+      text-transform: uppercase;
+      font-size: 18px;
+      color: #fff;
+      margin: 12px 0;
+    }
+    .splashScreen2 .innerScreen .preloader {
+      width: 36px;
+      height: 36px;
+    }
+    /* .splashScreen2 */</style><link href="css/1.app.css" rel="stylesheet"><link href="css/app.css" rel="stylesheet"></head><body><div class="splashScreen" id="splashScreen"><div class="innerScreen"><img src="https://be.diskuis.id/assets/berkas/diskuis_white.png"><h4 id="judul_aplikasi"></h4><div style="color:white" id="sub_judul_aplikasi"></div><br><div style="font-style:italic;color:white" id="loading_kelamaan"></div><br><div class="preloader color-white"><span class="preloader-inner"><span class="preloader-inner-line"></span> <span class="preloader-inner-line"></span> <span class="preloader-inner-line"></span> <span class="preloader-inner-line"></span> <span class="preloader-inner-line"></span> <span class="preloader-inner-line"></span> <span class="preloader-inner-line"></span> <span class="preloader-inner-line"></span> <span class="preloader-inner-line"></span> <span class="preloader-inner-line"></span> <span class="preloader-inner-line"></span> <span class="preloader-inner-line"></span></span></div></div></div><div id="app"></div><script src="cordova.js"></script><script>localStorage.setItem('judul_aplikasi','Diskuis');
+    localStorage.setItem('sub_judul_aplikasi','Pembelajaran Daring Kolaboratif');
+
+    localStorage.setItem('device','android');
+    // localStorage.setItem('device','web');
+    // localStorage.setItem('google_api', '582957663393-hlr6l0a2oendcq6ul13n9pasi88mb7bc.apps.googleusercontent.com');
+    
+    // localStorage.setItem('kode_aplikasi','MEJA-EMPU');
+    // localStorage.setItem('kode_aplikasi','MEJA-GURU');
+    if(localStorage.getItem('kode_aplikasi') === null){
+      localStorage.setItem('kode_aplikasi','MEJA');
+    }
+
+// 
+    setTimeout(() => {
+      document.getElementById("loading_kelamaan").innerHTML = "(Silakan reload halaman ini jika loading tidak segera selesai)";
+    }, 40000);
+
+    window.addEventListener('load', function () {
+      setTimeout(function () {
+        document.getElementById('splashScreen').style.display = 'none';
+      }, 1000);
+    });</script><script src="js/1.app.js"></script><script src="js/app.js"></script></body></html>
