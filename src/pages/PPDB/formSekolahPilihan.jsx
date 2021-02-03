@@ -56,6 +56,7 @@ class formSekolahPilihan extends Component {
         routeParams: {
             pengguna_id: this.$f7route.params['pengguna_id'],
             sekolah_id: this.$f7route.params['sekolah_id'],
+            jalur_id: '0100',
             peserta_didik_id: (this.$f7route.params['peserta_didik_id'] !== "null" ? (this.$f7route.params['peserta_didik_id'] ? this.$f7route.params['peserta_didik_id'] : null) : null),
         },
         jalur_id: "0100",
@@ -64,7 +65,6 @@ class formSekolahPilihan extends Component {
             total: 0
         }
     }
-
 
     bulan = [
         'Januari',
@@ -91,16 +91,16 @@ class formSekolahPilihan extends Component {
             this.setState({
                 sekolah: result.payload.rows[0]
             },()=>{
-                this.props.getJalurPPDB(this.state.routeParams).then((result)=>{
+                this.props.getJalurPPDB({...this.state.routeParams, jalur_id: null}).then((result)=>{
 
                     this.props.getCalonPesertaDidik(this.state.routeParams).then((result)=>{
                         this.setState({
                             routeParams: {
-                                ...this.state.routeParams,
-                                ...result.payload.rows[0]
+                                ...result.payload.rows[0],
+                                ...this.state.routeParams
                             }
                         },()=>{
-                            this.props.getSekolahPilihan(this.state.routeParams).then((result)=>{
+                            this.props.getSekolahPilihan({...this.state.routeParams, peserta_didik_id: this.$f7route.params['peserta_didik_id']}).then((result)=>{
     
                                 let jalur_id = this.state.jalur_id
     
@@ -112,7 +112,7 @@ class formSekolahPilihan extends Component {
                                     sekolah_pilihan: result.payload,
                                     jalur_id: jalur_id
                                 },()=>{
-                                    console.log(this.state)
+                                    console.log(this.state.jalur_id)
                                 })
                             })
                         })
@@ -186,7 +186,7 @@ class formSekolahPilihan extends Component {
         return (
           <Page name="formSekolahPilihan" hideBarsOnScroll>
             
-            <HeaderPPDB />
+            <HeaderPPDB pengguna_id={this.$f7route.params['pengguna_id']} sekolah_id={this.$f7route.params['sekolah_id']} />
 
             <div className="cardAtas" style={{marginBottom:'50px'}}>
               <div>&nbsp;</div>
@@ -320,15 +320,16 @@ class formSekolahPilihan extends Component {
                                                     </div>
                                                     }
                                                 </div>
-                                                <Button raised fill className="bawahCiriBiru" style={{display:'inline-flex'}} onClick={this.simpan}>
-                                                    <i className="f7-icons" style={{fontSize:'20px'}}>floppy_disk</i>&nbsp;
-                                                    Simpan dan Lanjut
-                                                </Button>
                                             
                                             </CardContent>
                                         </Card>
                                     </Col>
-                                                    
+                                    <Col width="100" style={{textAlign:'right', marginBottom:'16px'}}>
+                                        <Button raised fill className="bawahCiriBiru" style={{display:'inline-flex'}} onClick={this.simpan}>
+                                            <i className="f7-icons" style={{fontSize:'20px'}}>floppy_disk</i>&nbsp;
+                                            Simpan dan Lanjut
+                                        </Button>
+                                    </Col>          
                                 </Row>
 
                             </CardContent>

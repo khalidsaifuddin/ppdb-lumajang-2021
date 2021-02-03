@@ -1203,8 +1203,12 @@ h2 {
   border:1px solid #ccc;
   width:70px;
   height:70px;
-  background:black;
+  background:#cccccc;
   border-radius: 20px;
+}
+
+.kotakJalur {
+  min-height: 100px;
 }
 
 

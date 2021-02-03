@@ -201,7 +201,13 @@ class formulirPendaftaran extends Component {
                 })
             })
         })
-    }
+  }
+
+  tambahManual = () => {
+    this.props.generateUUID(this.state.routeParams).then((result)=>{
+      this.$f7router.navigate("/formBiodata/"+this.props.uuid_kuis+"/"+this.$f7route.params['pengguna_id']+"/"+this.$f7route.params['sekolah_id'])
+    })
+  }
 
   render()
     {
@@ -244,6 +250,7 @@ class formulirPendaftaran extends Component {
                                   <Col width="0" tabletWidth="30">
                                     <Card style={{margin:'4px'}}>
                                         <CardContent>
+                                            <Button style={{borderRadius:'20px', marginBottom:'4px'}} className="color-theme-deeporange" tabLink="#tab-0" onClick={()=>this.$f7router.navigate("/HomePPDB/"+this.$f7route.params['pengguna_id']+"/"+this.$f7route.params['sekolah_id'])}>Beranda</Button>
                                             <Button style={{borderRadius:'20px', marginBottom:'4px'}} className="color-theme-deeporange" tabLink="#tab-1" onClick={()=>this.$f7router.navigate("/PPDB/"+this.$f7route.params['pengguna_id']+"/"+this.$f7route.params['sekolah_id'])}>Data Pendaftar</Button>
                                             <Button style={{borderRadius:'20px', marginBottom:'4px'}} className="color-theme-deeporange bawahCiri" tabLink="#tab-3" tabLinkActive>Tambah Pendaftar</Button>
                                             <Button style={{borderRadius:'20px', marginBottom:'4px'}} className="color-theme-deeporange" tabLink="#tab-3" onClick={()=>this.$f7router.navigate("/jadwalPPDB/"+this.$f7route.params['pengguna_id']+"/"+this.$f7route.params['sekolah_id'])}>Jadwal</Button>
@@ -314,7 +321,7 @@ class formulirPendaftaran extends Component {
                                                   Peserta Didik tidak ditemukan
                                                 </span>
                                                 <br/>
-                                                <Button raised fill style={{display:'inline-flex', marginTop:'4px'}} className="bawahCiriBiru">
+                                                <Button raised fill style={{display:'inline-flex', marginTop:'4px'}} className="bawahCiriBiru" onClick={this.tambahManual}>
                                                   <i className="icons f7-icons" style={{fontSize:'20px'}}>plus</i>
                                                   Tambah Pendaftar Manual
                                                 </Button>
@@ -361,15 +368,19 @@ class formulirPendaftaran extends Component {
                                                             </span>
                                                           </Col>
                                                           <Col width="20" tabletWidth="15">
+                                                            
                                                             <Button 
                                                               raised 
-                                                              fill 
+                                                              // fill={!option.calon_peserta_didik_id ? true : false}
+                                                              fill
+                                                              disabled={!option.calon_peserta_didik_id ? false : true}
                                                               style={{fontSize:'12px'}} 
                                                               className="bawahCiriBiru"
                                                               onClick={()=>this.$f7router.navigate("/formBiodata/"+option.peserta_didik_id+"/"+this.$f7route.params['pengguna_id']+"/"+this.$f7route.params['sekolah_id'])}
                                                             >
-                                                              Daftar
+                                                              {!option.calon_peserta_didik_id ? 'Daftar' : 'Daftar'}
                                                             </Button>
+                                                            <span style={{fontSize:'8px', display:'inline-flex', textAlign:'center'}}>{!option.calon_peserta_didik_id ? '' : 'Peserta didik ini telah didaftarkan'}</span>
                                                           </Col>
                                                         </Row>
                                                       </CardContent>
@@ -403,16 +414,18 @@ function mapDispatchToProps(dispatch) {
     setLoading: Actions.setLoading,
     setTabActive: Actions.setTabActive,
     getSekolah: Actions.getSekolah,
-    getPesertaDidikDapodik: Actions.getPesertaDidikDapodik
+    getPesertaDidikDapodik: Actions.getPesertaDidikDapodik,
+    generateUUID: Actions.generateUUID
   }, dispatch);
 }
 
-function mapStateToProps({ App, Sekolah }) {
+function mapStateToProps({ App, Sekolah, Kuis }) {
   return {
       window_dimension: App.window_dimension,
       loading: App.loading,
       tabBar: App.tabBar,
-      sekolah: Sekolah.sekolah
+      sekolah: Sekolah.sekolah,
+      uuid_kuis: Kuis.uuid_kuis
   }
 }
 

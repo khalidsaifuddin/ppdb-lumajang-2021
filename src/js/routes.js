@@ -106,6 +106,8 @@ import PetaPD from '../pages/PPDB/PetaPD';
 import formSekolahPilihan from '../pages/PPDB/formSekolahPilihan';
 import pilihSekolahPilihan from '../pages/PPDB/pilihSekolahPilihan';
 import formBerkas from '../pages/PPDB/formBerkas';
+import formKonfirmasi from '../pages/PPDB/formKonfirmasi';
+import HomePPDB from '../pages/PPDB/HomePPDB';
 
 // console.log(localStorage.getItem('kode_aplikasi'));
 
@@ -119,7 +121,7 @@ var routes = [
         (localStorage.getItem('kode_aplikasi') === 'MEJA-GURU' ? 
           BerandaGuru : 
           (localStorage.getItem('kode_aplikasi') === 'MEJA-PPDB' ? 
-            BerandaPPDB :
+            HomePPDB :
             BerandaEmpu
           )
         )
@@ -129,6 +131,10 @@ var routes = [
   {
     path: '/PPDB/:pengguna_id/:sekolah_id',
     component: BerandaPPDB
+  },
+  {
+    path: '/HomePPDB/:pengguna_id/:sekolah_id',
+    component: HomePPDB
   },
   {
     path: '/formulirPPDB/:pengguna_id/:sekolah_id',
@@ -153,6 +159,10 @@ var routes = [
   {
     path: '/formBerkas/:peserta_didik_id/:pengguna_id/:sekolah_id/:jalur_id',
     component: formBerkas
+  },
+  {
+    path: '/formKonfirmasi/:peserta_didik_id/:pengguna_id/:sekolah_id',
+    component: formKonfirmasi
   },
   {
     path: '/pilihSekolahPilihan/:peserta_didik_id/:pengguna_id/:sekolah_id',

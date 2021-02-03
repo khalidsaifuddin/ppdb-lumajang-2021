@@ -68,7 +68,8 @@ class formBerkas extends Component {
             total: 0
         },
         jalur: {},
-        berkas_calon:{}
+        berkas_calon:{},
+        imageHash: Date.now()
     }
 
 
@@ -110,7 +111,7 @@ class formBerkas extends Component {
                                     ...result.payload.rows[0]
                                 }
                             },()=>{
-                                this.props.getJalurBerkas({jalur_id:this.$f7route.params['jalur_id']}).then((result)=>{
+                                this.props.getJalurBerkas({jalur_id:this.$f7route.params['jalur_id'], peserta_didik_id:this.$f7route.params['peserta_didik_id'] }).then((result)=>{
                                     this.setState({
                                         jalur_berkas: result.payload
                                     },()=>{
@@ -118,6 +119,9 @@ class formBerkas extends Component {
 
                                         for (let indexJalurBerkas = 0; indexJalurBerkas < this.state.jalur_berkas.rows.length; indexJalurBerkas++) {
                                             const element = this.state.jalur_berkas.rows[indexJalurBerkas];
+
+                                            element.file_gambar = element.nama_file ? element.nama_file : ''
+                                            element.gambar = element.nama_file ? element.nama_file.split("/")[3] : ''
                                             
                                             // console.log(element)
                                             arrJalurBerkas[element.jenis_berkas_id] = element
@@ -144,51 +148,129 @@ class formBerkas extends Component {
     }
 
     acceptedFile = (jenis_berkas_id) => (file) => {
+        this.$f7.dialog.preloader()
+
         if(file[0].size >= 10000000){ //2Mb
             this.$f7.dialog.alert('Ukuran gambar tidak boleh melebihi 10MB!', 'Peringatan');
             return true;
         }
-
-        if(file[0].name.substr(file[0].name.length - 3) === 'jpg' || file[0].name.substr(file[0].name.length - 4) === 'jpeg' || file[0].name.substr(file[0].name.length - 3) === 'png'){
-            
-            this.props.generateUUID(this.state.routeParams).then((result)=>{
-
-                this.setState({
-                    berkas_calon: {
-                        ...this.state.berkas_calon,
-                        [jenis_berkas_id]: {
-                            ...this.state.berkas_calon[jenis_berkas_id],
-                            file_gambar: this.props.uuid_kuis
-                        }
-                    }
-                },()=>{
-
-                    console.log(this.state.berkas_calon)
         
-                    // return new Promise(
-                    //     (resolve, reject) => {
-                    //         const xhr = new XMLHttpRequest();
-                    //         xhr.open('POST', localStorage.getItem('api_base') + '/api/Ruang/upload');
-                    //         xhr.onload = this.uploadBerhasil;
-                    //         xhr.onerror = this.uploadGagal;
-                    //         const data = new FormData();
-                    //         data.append('image', file[0]);
-                    //         data.append('pengguna_id', this.$f7route.params['pengguna_id'] ? this.$f7route.params['pengguna_id'] : JSON.parse(localStorage.getItem('user')).pengguna_id);
-                    //         // data.append('pengguna_id', JSON.parse(localStorage.getItem('user')).pengguna_id);
-                    //         data.append('guid', this.state.guid_gambar);
-                    //         data.append('jenis', 'gambar_kuis');
-                    //         xhr.send(data);
-                    //     }
-                    // );
+        // if(file[0].name.substr(file[0].name.length - 3) === 'jpg' || file[0].name.substr(file[0].name.length - 4) === 'jpeg' || file[0].name.substr(file[0].name.length - 3) === 'png'){
+        try {
+        
+            if(
+                file[0].name.split(".")[1] === 'jpg' ||
+                file[0].name.split(".")[1] === 'png' ||
+                file[0].name.split(".")[1] === 'jpeg' ||
+                file[0].name.split(".")[1] === 'webp' ||
+                file[0].name.split(".")[1] === 'gif'
+            ){
+
+                let ekstensi = file[0].name.split(".")[1];
+                console.log(ekstensi)
+
+                this.props.generateUUID(this.state.routeParams).then((result)=>{
+
+                    this.setState({
+                        berkas_calon: {
+                            ...this.state.berkas_calon,
+                            [jenis_berkas_id]: {
+                                ...this.state.berkas_calon[jenis_berkas_id],
+                                gambar: this.props.uuid_kuis+"."+ekstensi,
+                                file_gambar: "/assets/berkas/"+this.props.uuid_kuis+"."+ekstensi
+                            }
+                        }
+                    },()=>{
+
+                        console.log(this.state.berkas_calon)
+            
+                        return new Promise(
+                            (resolve, reject) => {
+                                const xhr = new XMLHttpRequest();
+                                xhr.open('POST', "https://be.diskuis.id" + '/api/Ruang/upload');
+                                // xhr.open('POST', localStorage.getItem('api_base') + '/api/Ruang/upload');
+                                xhr.onload = this.uploadBerhasil(jenis_berkas_id);
+                                xhr.onerror = this.uploadGagal;
+                                const data = new FormData();
+                                data.append('image', file[0]);
+                                data.append('pengguna_id', this.$f7route.params['pengguna_id'] ? this.$f7route.params['pengguna_id'] : JSON.parse(localStorage.getItem('user')).pengguna_id);
+                                // data.append('pengguna_id', JSON.parse(localStorage.getItem('user')).pengguna_id);
+                                data.append('guid', this.props.uuid_kuis);
+                                data.append('gambar', this.props.uuid_kuis+"."+ekstensi);
+                                data.append('jenis', 'gambar_kuis');
+                                xhr.send(data);
+                            }
+                        );
+                    });
+
                 });
 
-            });
+            }else{
+                this.$f7.dialog.alert('Hanya dapat mengupload file gambar dengan format .jpg atau .png!', 'Peringatan');
+                return true;
+            }
 
-        }else{
-            this.$f7.dialog.alert('Hanya dapat mengupload file gambar dengan format .jpg atau .png!', 'Peringatan');
+        } catch (error) {
+            this.$f7.dialog.alert('file tidak dikenali. Mohon gunakan file lain!', 'Peringatan');
             return true;
         }
 
+    }
+
+    uploadBerhasil = (jenis_berkas_id) => (xhr) => {
+        console.log(JSON.parse(xhr.currentTarget.responseText));
+        let response = JSON.parse(xhr.currentTarget.responseText);
+        if(response.msg == 'sukses'){
+            this.setState({
+                file_gambar: response.filename,
+                loading: false,
+                imageHash: Date.now()
+            });
+            this.props.simpanBerkasCalon({
+                peserta_didik_id: this.$f7route.params['peserta_didik_id'],
+                pengguna_id: this.$f7route.params['pengguna_id'],
+                jenis_berkas_id: jenis_berkas_id,
+                nama_file: response.filename,
+                keterangan: ''
+            }).then((result)=>{
+                this.$f7.dialog.close()
+                this.props.getJalurBerkas({jalur_id:this.$f7route.params['jalur_id'], peserta_didik_id:this.$f7route.params['peserta_didik_id'] }).then((result)=>{
+                    this.setState({
+                        jalur_berkas: result.payload
+                    },()=>{
+                        let arrJalurBerkas = {}
+
+                        for (let indexJalurBerkas = 0; indexJalurBerkas < this.state.jalur_berkas.rows.length; indexJalurBerkas++) {
+                            const element = this.state.jalur_berkas.rows[indexJalurBerkas];
+
+                            element.file_gambar = element.nama_file ? element.nama_file : ''
+                            element.gambar = element.nama_file ? element.nama_file.split("/")[3] : ''
+                            
+                            arrJalurBerkas[element.jenis_berkas_id] = element
+
+                        }
+
+                        this.setState({
+                            berkas_calon: {...arrJalurBerkas}
+                        })
+                    })
+                })
+            })
+        }
+    }
+
+    uploadGagal = (xhr) => {
+        this.$f7.dialog.close()
+        this.$f7.dialog.alert('Ada kesalahan pada sistem atau jaringan Anda, mohon cek kembali sebelum melakukan upload ulang', 'Mohon maaf');
+    }
+
+    simpan = () => {
+        this.$f7.dialog.preloader()
+        
+        // this.props.simpanSekolahPilihan({peserta_didik_id: this.$f7route.params['peserta_didik_id'], jalur_id: this.state.jalur_id}).then((result)=> {
+        this.$f7.dialog.close()
+        this.$f7router.navigate("/formKonfirmasi/"+this.$f7route.params['peserta_didik_id']+"/"+this.$f7route.params['pengguna_id']+"/"+this.$f7route.params['sekolah_id'])
+        // })
     }
 
     render()
@@ -196,7 +278,7 @@ class formBerkas extends Component {
         return (
           <Page name="formBerkas" hideBarsOnScroll>
             
-            <HeaderPPDB />
+            <HeaderPPDB pengguna_id={this.$f7route.params['pengguna_id']} sekolah_id={this.$f7route.params['sekolah_id']} />
 
             <div className="cardAtas" style={{marginBottom:'50px'}}>
               <div>&nbsp;</div>
@@ -223,7 +305,7 @@ class formBerkas extends Component {
                         <Card style={{margin:'4px'}}>
                             <CardContent style={{padding:'8px'}}>
                                 
-                                <BlockTitle style={{marginTop:"8px", marginBottom:'8px'}}>Kelengkapan Berkas untuk Jalur {this.state.jalur.nama}</BlockTitle>
+                                <BlockTitle style={{marginTop:"0px", marginBottom:'8px'}}>Kelengkapan Berkas untuk Jalur {this.state.jalur.nama}</BlockTitle>
                                 <Row>
                                     <Col width="100" tabletWidth="30">
                                         <Card style={{marginRight:'4px', marginLeft:'0px'}}>
@@ -232,13 +314,31 @@ class formBerkas extends Component {
                                                     if((parseInt(this.state.jalur_berkas.rows.indexOf(option))+1) === 1){
                                                         return (
                                                             <>
-                                                                <Link key={option.jenis_berkas_id} style={{marginBottom:'8px'}} tabLinkActive tabLink={"#tab-"+(parseInt(this.state.jalur_berkas.rows.indexOf(option))+1)}>{option.nama}</Link><br/>
+                                                                <Link key={option.jenis_berkas_id} style={{marginBottom:'8px'}} tabLinkActive tabLink={"#tab-"+(parseInt(this.state.jalur_berkas.rows.indexOf(option))+1)}>
+                                                                    {option.nama_file &&
+                                                                    <i className="f7-icons" style={{color:'green', fontSize:'20px'}}>checkmark_alt_circle_fill</i>
+                                                                    }
+                                                                    {!option.nama_file &&
+                                                                    <i className="f7-icons" style={{color:'gray', fontSize:'20px'}}>circle</i>
+                                                                    }
+                                                                    &nbsp;{option.nama}
+                                                                </Link>
+                                                                <br/>
                                                             </>
                                                         )
                                                     }else{
                                                         return (
                                                             <>
-                                                                <Link key={option.jenis_berkas_id} style={{marginBottom:'8px'}} tabLink={"#tab-"+(parseInt(this.state.jalur_berkas.rows.indexOf(option))+1)}>{option.nama}</Link><br/>
+                                                                <Link key={option.jenis_berkas_id} style={{marginBottom:'8px'}} tabLink={"#tab-"+(parseInt(this.state.jalur_berkas.rows.indexOf(option))+1)}>
+                                                                {option.nama_file &&
+                                                                    <i className="f7-icons" style={{color:'green', fontSize:'20px'}}>checkmark_alt_circle_fill</i>
+                                                                    }
+                                                                    {!option.nama_file &&
+                                                                    <i className="f7-icons" style={{color:'gray', fontSize:'20px'}}>circle</i>
+                                                                    }
+                                                                    &nbsp;{option.nama}
+                                                                </Link>
+                                                                <br/>
                                                             </>
                                                         )
                                                     }
@@ -263,9 +363,12 @@ class formBerkas extends Component {
                                                             //yang pertama
                                                             return (
                                                                 <Tab key={option.jenis_berkas_id} id={"tab-"+(parseInt(this.state.jalur_berkas.rows.indexOf(option))+1)} className="page-content" tabActive>
-                                                                    {option.nama}
-                                                                    <br/>
-                                                                    {/* <Dropzone className="droping" onDrop={this.acceptedFile(option.jenis_berkas_id)}>
+                                                                    <BlockTitle style={{marginTop:'8px', marginBottom:'8px', marginLeft:'0px'}}>
+                                                                        {option.nama}
+                                                                    </BlockTitle>
+                                                                    {/* <br/> */}
+                                                                    {typeof(this.state.berkas_calon[option.jenis_berkas_id]) !== 'undefined' &&
+                                                                    <Dropzone className="droping" onDrop={this.acceptedFile(option.jenis_berkas_id)}>
                                                                     {({getRootProps, getInputProps}) => (
                                                                         <section>
                                                                             <div {...getRootProps()} style={{borderRadius:'20px', height:'250px',border:'4px dashed #ccc', textAlign: 'center', paddingTop:(this.state.berkas_calon[option.jenis_berkas_id].file_gambar !== '' ? '16px' : '10%'), paddingLeft:'16px', paddingRight:'16px'}}>
@@ -275,26 +378,27 @@ class formBerkas extends Component {
                                                                                 }
                                                                                 {this.state.berkas_calon[option.jenis_berkas_id].file_gambar !== '' &&
                                                                                 <>
-                                                                                <img style={{height:'150px'}} src={localStorage.getItem('api_base')+this.state.berkas_calon[option.jenis_berkas_id].file_gambar} />
-                                                                                <p style={{fontSize:'12px', fontStyle:'italic'}}>Klik/Sentuh kembali untuk mengganti gambar. Ukuran maksimal berkas adalah 1MB, dan hanya dalam format .jpg, atau .png</p>
+                                                                                <img style={{height:'150px'}} src={"https://be.diskuis.id"+this.state.berkas_calon[option.jenis_berkas_id].file_gambar+"?"+this.state.imageHash} />
+                                                                                <p style={{fontSize:'12px', fontStyle:'italic'}}>Klik/Sentuh kembali untuk mengganti gambar. Ukuran maksimal berkas adalah 10 MB, dan hanya dalam format .jpg, atau .png</p>
                                                                                 </>
                                                                                 }
                                                                                 {this.state.berkas_calon[option.jenis_berkas_id].gambar === '' &&
                                                                                 <>
                                                                                 <p>Tarik dan seret gambar pilihan Anda ke sini, atau klik/Sentuh untuk cari gambar</p>
-                                                                                <p style={{fontSize:'12px', fontStyle:'italic'}}>Ukuran maksimal berkas adalah 1MB, dan hanya dalam format .jpg, atau .png</p>
+                                                                                <p style={{fontSize:'12px', fontStyle:'italic'}}>Ukuran maksimal berkas adalah 10 MB, dan hanya dalam format .jpg, atau .png</p>
                                                                                 </>
                                                                                 }
                                                                                 {this.state.berkas_calon[option.jenis_berkas_id].gambar !== '' && this.state.berkas_calon[option.jenis_berkas_id].file_gambar === '' &&
                                                                                 <>
                                                                                 <p style={{fontSize:'20px'}}>{this.state.berkas_calon[option.jenis_berkas_id].gambar}</p>
-                                                                                <p style={{fontSize:'12px', fontStyle:'italic'}}>Klik/Sentuh kembali untuk mengganti gambar. Ukuran maksimal berkas adalah 1MB, dan hanya dalam format .jpg, atau .png</p>
+                                                                                <p style={{fontSize:'12px', fontStyle:'italic'}}>Klik/Sentuh kembali untuk mengganti gambar. Ukuran maksimal berkas adalah 10 MB, dan hanya dalam format .jpg, atau .png</p>
                                                                                 </>
                                                                                 }
                                                                             </div>
                                                                         </section>
                                                                     )}
-                                                                    </Dropzone> */}
+                                                                    </Dropzone>
+                                                                    }
                                                                 </Tab>
                                                             )
 
@@ -302,8 +406,42 @@ class formBerkas extends Component {
                                                             //yang berikutnya
                                                             return (
                                                                 <Tab id={"tab-"+(parseInt(this.state.jalur_berkas.rows.indexOf(option))+1)} className="page-content">
-                                                                    {option.nama}
-                                                                    <br/>
+                                                                    <BlockTitle style={{marginTop:'8px', marginBottom:'8px', marginLeft:'0px'}}>
+                                                                        {option.nama}
+                                                                    </BlockTitle>
+                                                                    {/* <br/> */}
+                                                                    {typeof(this.state.berkas_calon[option.jenis_berkas_id]) !== 'undefined' &&
+                                                                    <Dropzone className="droping" onDrop={this.acceptedFile(option.jenis_berkas_id)}>
+                                                                    {({getRootProps, getInputProps}) => (
+                                                                        <section>
+                                                                            <div {...getRootProps()} style={{borderRadius:'20px', height:'250px',border:'4px dashed #ccc', textAlign: 'center', paddingTop:(this.state.berkas_calon[option.jenis_berkas_id].file_gambar !== '' ? '16px' : '10%'), paddingLeft:'16px', paddingRight:'16px'}}>
+                                                                                <input {...getInputProps()} />
+                                                                                {this.state.berkas_calon[option.jenis_berkas_id].file_gambar === '' &&
+                                                                                <i slot="media" className="f7-icons" style={{fontSize:'60px', color:'#434343'}}>square_arrow_up</i>
+                                                                                }
+                                                                                {this.state.berkas_calon[option.jenis_berkas_id].file_gambar !== '' &&
+                                                                                <>
+                                                                                <img style={{height:'150px'}} src={"https://be.diskuis.id"+this.state.berkas_calon[option.jenis_berkas_id].file_gambar+"?"+this.state.imageHash} />
+                                                                                <p style={{fontSize:'12px', fontStyle:'italic'}}>Klik/Sentuh kembali untuk mengganti gambar. Ukuran maksimal berkas adalah 10 MB, dan hanya dalam format .jpg, atau .png</p>
+                                                                                </>
+                                                                                }
+                                                                                {this.state.berkas_calon[option.jenis_berkas_id].gambar === '' &&
+                                                                                <>
+                                                                                <p>Tarik dan seret gambar pilihan Anda ke sini, atau klik/Sentuh untuk cari gambar</p>
+                                                                                <p style={{fontSize:'12px', fontStyle:'italic'}}>Ukuran maksimal berkas adalah 10 MB, dan hanya dalam format .jpg, atau .png</p>
+                                                                                </>
+                                                                                }
+                                                                                {this.state.berkas_calon[option.jenis_berkas_id].gambar !== '' && this.state.berkas_calon[option.jenis_berkas_id].file_gambar === '' &&
+                                                                                <>
+                                                                                <p style={{fontSize:'20px'}}>{this.state.berkas_calon[option.jenis_berkas_id].gambar}</p>
+                                                                                <p style={{fontSize:'12px', fontStyle:'italic'}}>Klik/Sentuh kembali untuk mengganti gambar. Ukuran maksimal berkas adalah 10 MB, dan hanya dalam format .jpg, atau .png</p>
+                                                                                </>
+                                                                                }
+                                                                            </div>
+                                                                        </section>
+                                                                    )}
+                                                                    </Dropzone>
+                                                                    }
                                                                 </Tab>
                                                             )
 
@@ -313,6 +451,12 @@ class formBerkas extends Component {
                                                 </Tabs>
                                             </CardContent>
                                         </Card>
+                                    </Col>
+                                    <Col width="100" style={{textAlign:'right', marginBottom:'16px'}}>
+                                        <Button raised fill className="bawahCiriBiru" style={{display:'inline-flex'}} onClick={this.simpan}>
+                                        <i className="f7-icons" style={{fontSize:'20px'}}>floppy_disk</i>&nbsp;
+                                        Simpan dan Lanjut
+                                        </Button>
                                     </Col>
                                 </Row>
                             </CardContent>
@@ -338,7 +482,8 @@ function mapDispatchToProps(dispatch) {
         getWilayah: Actions.getWilayah,
         getJalurPPDB: Actions.getJalurPPDB,
         getJalurBerkas: Actions.getJalurBerkas,
-        generateUUID: Actions.generateUUID
+        generateUUID: Actions.generateUUID,
+        simpanBerkasCalon: Actions.simpanBerkasCalon
     }, dispatch);
 }
 

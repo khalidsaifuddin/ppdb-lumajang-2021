@@ -44,6 +44,7 @@ import io from 'socket.io-client';
 import moment from 'moment';
 import HeaderPPDB from './HeaderPPDB';
 import HeaderSekolahPPDB from './HeaderSekolahPPDB';
+import kuis from '../Kuis/kuis';
 
 class formBiodata extends Component {
 
@@ -170,13 +171,21 @@ class formBiodata extends Component {
                         this.setState({
                           kecamatan: result.payload.rows
                         },()=>{
-                          this.props.getSekolah({sekolah_id: this.state.routeParams.asal_sekolah_id}).then((result)=>{
-                            if(result.payload.total > 0){
-                              this.setState({
-                                sekolah_terpilih: result.payload.rows[0]
-                              })
-                            }
-                          })
+
+                          // // sekolah Asal
+                          if(this.state.routeParams.asal_sekolah_id){
+                            this.props.getSekolahPPDB({sekolah_id: this.state.routeParams.asal_sekolah_id}).then((result)=>{
+                              if(result.payload.total > 0){
+                                this.setState({
+                                  sekolah_terpilih: result.payload.rows[0]
+                                })
+                              }else{
+                                //do nothing
+                              }
+                            })
+                          }else{
+                            //do nothing
+                          }
                         })
                       })
                     })
@@ -194,50 +203,83 @@ class formBiodata extends Component {
           }else{
             //nggak ada
             this.props.getPesertaDidikDapodik(this.state.routeParams).then((result)=>{
-        
-              this.setState({
-                routeParams: {
-                  ...this.state.routeParams,
-                  ...result.payload.rows[0],
-                  alamat_tempat_tinggal: result.payload.rows[0].alamat_jalan,
-                  // kode_wilayah_provinsi: result.payload.rows[0].kode_provinsi,
-                  // kode_wilayah_kabupaten: result.payload.rows[0].kode_kabupaten,
-                  // kode_wilayah_kecamatan: result.payload.rows[0].kode_kecamatan
-                },
-                kabupaten: [{kode_wilayah:result.payload.rows[0].kode_kabupaten, nama:result.payload.rows[0].kabupaten}],
-                kecamatan: [{kode_wilayah:result.payload.rows[0].kode_kecamatan, nama:result.payload.rows[0].kecamatan}],
-                disabledInput: false
-              },()=>{
-                
+
+              if(result.payload.total < 1){
+                //manual
                 this.props.getSekolah({sekolah_id:this.$f7route.params['sekolah_id'], pengguna_id: this.$f7route.params['pengguna_id']}).then((result)=>{
                   this.setState({
                       sekolah: result.payload.rows[0],
-                      routeParams: {
-                        ...this.state.routeParams,
-                        kode_wilayah_provinsi: this.state.routeParams.kode_provinsi,
-                        kode_wilayah_kabupaten: this.state.routeParams.kode_kabupaten,
-                        kode_wilayah_kecamatan: this.state.routeParams.kode_kecamatan
-                      }
                   },()=>{
                     
                     this.$f7.dialog.close()
-            
-                    // this.props.getWilayah({id_level_wilayah:'1'}).then((result)=>{
-                      
-                    //   this.setState({
-                    //       provinsi: this.props.wilayah.rows
-                    //   })
-    
-                    // })
     
                   })
     
                 })
+              }else{
+                //ada
+                this.setState({
+                  routeParams: {
+                    ...this.state.routeParams,
+                    ...result.payload.rows[0],
+                    alamat_tempat_tinggal: result.payload.rows[0].alamat_jalan,
+                    asal_sekolah_id: result.payload.rows[0].sekolah_id
+                    // kode_wilayah_provinsi: result.payload.rows[0].kode_provinsi,
+                    // kode_wilayah_kabupaten: result.payload.rows[0].kode_kabupaten,
+                    // kode_wilayah_kecamatan: result.payload.rows[0].kode_kecamatan
+                  },
+                  kabupaten: [{kode_wilayah:result.payload.rows[0].kode_kabupaten, nama:result.payload.rows[0].kabupaten}],
+                  kecamatan: [{kode_wilayah:result.payload.rows[0].kode_kecamatan, nama:result.payload.rows[0].kecamatan}],
+                  disabledInput: false
+                },()=>{
+                  
+                  this.props.getSekolah({sekolah_id:this.$f7route.params['sekolah_id'], pengguna_id: this.$f7route.params['pengguna_id']}).then((result)=>{
+                    this.setState({
+                        sekolah: result.payload.rows[0],
+                        routeParams: {
+                          ...this.state.routeParams,
+                          kode_wilayah_provinsi: this.state.routeParams.kode_provinsi,
+                          kode_wilayah_kabupaten: this.state.routeParams.kode_kabupaten,
+                          kode_wilayah_kecamatan: this.state.routeParams.kode_kecamatan
+                        }
+                    },()=>{
+                      
+                      this.$f7.dialog.close()
+
+                      if(this.state.routeParams.asal_sekolah_id){
+                        this.props.getSekolahPPDB({sekolah_id: this.state.routeParams.asal_sekolah_id}).then((result)=>{
+                          if(result.payload.total > 0){
+                            this.setState({
+                              sekolah_terpilih: result.payload.rows[0]
+                            })
+                          }else{
+                            //do nothing
+                          }
+                        })
+                      }else{
+                        //do nothing
+                      }
               
-              })
-        
+                      // this.props.getWilayah({id_level_wilayah:'1'}).then((result)=>{
+                        
+                      //   this.setState({
+                      //       provinsi: this.props.wilayah.rows
+                      //   })
+      
+                      // })
+      
+                    })
+      
+                  })
+                
+                })
+
+              }
+
             })
+
           }
+
         })
 
 
@@ -500,6 +542,7 @@ class formBiodata extends Component {
       routeParams: {
         ...this.state.routeParams,
         sekolah_asal: null,
+        peserta_didik_id: this.$f7route.params['peserta_didik_id']
       }
     }, ()=> {
       if(
@@ -524,7 +567,7 @@ class formBiodata extends Component {
 
       this.props.simpanCalonPesertaDidik(this.state.routeParams).then((result)=> {
         if(result.payload.peserta_didik_id) {
-          this.$f7router.navigate("/petaPD/"+this.$f7route.params['pengguna_id']+"/"+this.$f7route.params['sekolah_id']+"/"+result.payload.peserta_didik_id+"/"+this.state.routeParams.lintang+"/"+this.state.routeParams.bujur);
+          this.$f7router.navigate("/petaPD/"+this.$f7route.params['pengguna_id']+"/"+this.$f7route.params['sekolah_id']+"/"+result.payload.peserta_didik_id+"/"+(this.state.routeParams.lintang ? this.state.routeParams.lintang : '-8.115799')+"/"+(this.state.routeParams.bujur ? this.state.routeParams.bujur : '113.223296'));
         } else {
           this.$f7.dialog.alert('Ada kesalahan pada sistem atau jaringan internet Anda. Mohon coba beberapa saat lagi');
         }
@@ -564,21 +607,32 @@ class formBiodata extends Component {
   pilihSekolahAsal = (sekolah_id) => (e, b) => {
     this.$f7.dialog.preloader()
     this.props.simpanCalonPesertaDidik({...this.state.routeParams, asal_sekolah_id: sekolah_id}).then((result)=>{
-      this.props.getSekolah({sekolah_id:sekolah_id}).then((result)=>{
-        this.setState({
-          sekolah_terpilih: result.payload.rows[0],
-          popupFilter: false
-        },()=>{
-          this.$f7.dialog.close()
+
+      this.setState({
+        routeParams: {
+          ...this.state.routeParams,
+          ...result.payload.rows[0]
+        }
+      },()=>{
+        this.props.getSekolah({sekolah_id:sekolah_id}).then((result)=>{
+          this.setState({
+            sekolah_terpilih: result.payload.rows[0],
+            popupFilter: false
+          },()=>{
+            this.$f7.dialog.close()
+  
+            console.log(this.state.routeParams)
+          })
         })
       })
+
     })
   }
 
   simpan = () => {
     this.$f7.dialog.preloader()
     
-    this.props.simpanCalonPesertaDidik(this.state.routeParams).then((result)=> {
+    this.props.simpanCalonPesertaDidik({...this.state.routeParams, peserta_didik_id: this.$f7route.params['peserta_didik_id']}).then((result)=> {
       this.$f7.dialog.close()
       this.$f7router.navigate("/formSekolahPilihan/"+this.$f7route.params['peserta_didik_id']+"/"+this.$f7route.params['pengguna_id']+"/"+this.$f7route.params['sekolah_id'])
     })
@@ -589,7 +643,7 @@ class formBiodata extends Component {
         return (
           <Page name="formBiodata" hideBarsOnScroll>
             
-            <HeaderPPDB />
+            <HeaderPPDB pengguna_id={this.$f7route.params['pengguna_id']} sekolah_id={this.$f7route.params['sekolah_id']} />
 
             <div className="cardAtas" style={{marginBottom:'50px'}}>
               <div>&nbsp;</div>
@@ -684,6 +738,7 @@ class formBiodata extends Component {
                                                         label="Jenis Kelamin"
                                                         type="select"
                                                         defaultValue={"0"}
+                                                        disabled={this.state.disabledInput}
                                                         placeholder="Pilih Jenis Kelamin..."
                                                         onChange={this.setFieldValue('jenis_kelamin')}
                                                     >
@@ -755,6 +810,7 @@ class formBiodata extends Component {
                                                     <ListInput
                                                         label="Provinsi"
                                                         type="select"
+                                                        disabled={this.state.disabledInput}
                                                         value={this.state.routeParams.kode_wilayah_provinsi}
                                                         placeholder="Pilih provinsi..."
                                                         onChange={this.setFieldValue('kode_wilayah_provinsi')}
@@ -769,6 +825,7 @@ class formBiodata extends Component {
                                                     <ListInput
                                                         label="Kabupaten/Kota"
                                                         type="select"
+                                                        disabled={this.state.disabledInput}
                                                         value={this.state.routeParams.kode_wilayah_kabupaten}
                                                         placeholder="Pilih kabupaten/kota..."
                                                         onChange={this.setFieldValue('kode_wilayah_kabupaten')}
@@ -782,6 +839,7 @@ class formBiodata extends Component {
                                                     <ListInput
                                                         label="Kecamatan"
                                                         type="select"
+                                                        disabled={this.state.disabledInput}
                                                         value={this.state.routeParams.kode_wilayah_kecamatan}
                                                         placeholder="Pilih kecamatan..."
                                                         onChange={this.setFieldValue('kode_wilayah')}
@@ -810,7 +868,7 @@ class formBiodata extends Component {
                                                       disabled={this.state.disabledInput}
                                                     />
                                                   </List>
-                                                  <Button className="bawahCiri color-theme-deeporange" raised fill onClick={this.bukaPeta} style={{display:'inline-flex', marginTop:'16px'}}>
+                                                  <Button disabled={this.state.disabledInput} className="bawahCiri color-theme-deeporange" raised fill onClick={this.bukaPeta} style={{display:'inline-flex', marginTop:'16px'}}>
                                                     <i className="f7-icons" style={{fontSize:'20px'}}>map_pin_ellipse</i>
                                                     Lihat / Ubah Posisi Koordinat Rumah
                                                   </Button>
@@ -827,6 +885,7 @@ class formBiodata extends Component {
                                                           type="select"
                                                           defaultValue={"ayah"}
                                                           placeholder="Pilih..."
+                                                          disabled={this.state.disabledInput}
                                                           onChange={this.setFieldValue('orang_tua_utama')}
                                                       >
                                                           <option value={"0"} disabled>-</option>
@@ -874,6 +933,7 @@ class formBiodata extends Component {
                                                             type="select"
                                                             defaultValue={"0"}
                                                             placeholder="Pilih..."
+                                                            disabled={this.state.disabledInput}
                                                             onChange={this.setFieldValue('pendidikan_terakhir_id_ayah')}
                                                         >
                                                             <option value={"99"}>Tidak Sekolah</option>
@@ -892,6 +952,7 @@ class formBiodata extends Component {
                                                             type="select"
                                                             defaultValue={"0"}
                                                             placeholder="Pilih..."
+                                                            disabled={this.state.disabledInput}
                                                             onChange={this.setFieldValue('pekerjaan_id_ayah')}
                                                         >
                                                             <option value={"98"}>Tidak Bekerja</option>
@@ -1162,8 +1223,14 @@ class formBiodata extends Component {
                                               </Card>
 
                                             </Col>
-                                            <Col width="100" style={{textAlign:'center', marginBottom:'16px'}}>
-                                              <Button raised fill className="bawahCiriBiru" style={{display:'inline-flex'}} onClick={this.simpan}>
+                                            <Col width="100" style={{textAlign:'right', marginBottom:'16px'}}>
+                                              {this.state.disabledInput &&
+                                              <Button raised className="bawahCiriAbu" style={{display:'inline-flex', marginRight:'4px'}} onClick={()=>this.$f7router.navigate("/PPDB/"+this.$f7route.params['pengguna_id']+'/'+this.$f7route.params['sekolah_id'])}>
+                                                <i className="f7-icons" style={{fontSize:'20px'}}>house</i>&nbsp;
+                                                Kembali ke Beranda
+                                              </Button>
+                                              }
+                                              <Button disabled={this.state.disabledInput} raised fill className="bawahCiriBiru" style={{display:'inline-flex'}} onClick={this.simpan}>
                                                 <i className="f7-icons" style={{fontSize:'20px'}}>floppy_disk</i>&nbsp;
                                                 Simpan dan Lanjut
                                               </Button>
@@ -1242,16 +1309,19 @@ function mapDispatchToProps(dispatch) {
     setLoading: Actions.setLoading,
     setTabActive: Actions.setTabActive,
     getSekolah: Actions.getSekolah,
+    getSekolahIndividu: Actions.getSekolahIndividu,
+    getSekolahPPDB: Actions.getSekolahPPDB,
     getCalonPesertaDidik: Actions.getCalonPesertaDidik,
     getPesertaDidikDapodik: Actions.getPesertaDidikDapodik,
     getWilayah: Actions.getWilayah,
     cekNik: Actions.cekNik,
     cekNISN: Actions.cekNISN,
-    simpanCalonPesertaDidik: Actions.simpanCalonPesertaDidik
+    simpanCalonPesertaDidik: Actions.simpanCalonPesertaDidik,
+    generateUUID: Actions.generateUUID
   }, dispatch);
 }
 
-function mapStateToProps({ App, Sekolah, PPDB }) {
+function mapStateToProps({ App, Sekolah, PPDB, Kuis }) {
   return {
       window_dimension: App.window_dimension,
       loading: App.loading,
@@ -1260,7 +1330,8 @@ function mapStateToProps({ App, Sekolah, PPDB }) {
       sekolah: Sekolah.sekolah,
       cek_nik: PPDB.cek_nik,
       cek_nisn: PPDB.cek_nisn,
-      calon_peserta_didik: PPDB.calon_peserta_didik      
+      calon_peserta_didik: PPDB.calon_peserta_didik,
+      uuid_kuis: Kuis.uuid_kuis      
   }
 }
 

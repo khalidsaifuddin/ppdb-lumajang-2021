@@ -46,7 +46,11 @@ class jadwalPPDB extends Component {
   state = {
     error: null,
     loading: true,
-    sekolah: {}
+    sekolah: {},
+    jadwal: {
+      rows: [],
+      total: 0
+    }
   };
 
 
@@ -74,6 +78,12 @@ class jadwalPPDB extends Component {
     this.props.getSekolah({sekolah_id:this.$f7route.params['sekolah_id'], pengguna_id: this.$f7route.params['pengguna_id']}).then((result)=>{
       this.setState({
           sekolah: result.payload.rows[0]
+      },()=>{
+        this.props.getJadwal({kode_wilayah:'052100'}).then((result)=>{
+          this.setState({
+            jadwal: result.payload
+          })
+        })
       })
     })
 
@@ -95,31 +105,12 @@ class jadwalPPDB extends Component {
                           <CardContent style={{padding:'8px'}}> */}
                               <Row noGap>
                                   <Col width="100" tabletWidth="100">
-                                    {/* <Card style={{margin:'4px'}}>
-                                        <CardContent>
-                                          <div style={{
-                                              height:'110px', 
-                                              width:'110px',
-                                              background:'white', 
-                                              backgroundImage:'url('+"https://be.diskuis.id"+this.state.sekolah.gambar_logo+')',
-                                              backgroundSize:'cover',
-                                              position:'absolute',
-                                              marginTop:'-45px',
-                                              borderRadius:'20px',
-                                              border:'1px solid #CCC'
-                                          }}>
-                                              &nbsp;
-                                          </div>
-                                          <h1 className="namaSekolah">{this.state.sekolah.nama}</h1>
-                                          <h3 className="keteranganSekolah">{this.state.sekolah.keterangan}</h3>
-                                          <span className="alamatSekolah hilangDiMobile">{this.state.sekolah.alamat}</span>
-                                        </CardContent>
-                                    </Card> */}
                                     <HeaderSekolahPPDB sekolah={this.state.sekolah} />
                                   </Col>
                                   <Col width="0" tabletWidth="30">
                                     <Card style={{margin:'4px'}}>
                                         <CardContent>
+                                        <Button style={{borderRadius:'20px', marginBottom:'4px'}} className="color-theme-deeporange" tabLink="#tab-0" onClick={()=>this.$f7router.navigate("/HomePPDB/"+this.$f7route.params['pengguna_id']+"/"+this.$f7route.params['sekolah_id'])}>Beranda</Button>
                                             <Button style={{borderRadius:'20px', marginBottom:'4px'}} className="color-theme-deeporange" tabLink="#tab-1" onClick={()=>this.$f7router.navigate("/PPDB/"+this.$f7route.params['pengguna_id']+"/"+this.$f7route.params['sekolah_id'])}>Data Pendaftar</Button>
                                             <Button style={{borderRadius:'20px', marginBottom:'4px'}} className="color-theme-deeporange" tabLink="#tab-3" onClick={()=>this.$f7router.navigate("/formulirPPDB/"+this.$f7route.params['pengguna_id']+"/"+this.$f7route.params['sekolah_id'])}>Tambah Pendaftar</Button>
                                             <Button style={{borderRadius:'20px', marginBottom:'4px'}} className="color-theme-deeporange bawahCiri" tabLink="#tab-3" tabLinkActive>Jadwal</Button>
@@ -129,7 +120,33 @@ class jadwalPPDB extends Component {
                                   <Col width="100" tabletWidth="70">
                                     <Card style={{margin:'4px'}}>
                                         <CardContent>
-                                            formulir pendaftaran
+                                          <BlockTitle style={{marginLeft:'0px', marginTop:"0px", marginBottom:'8px'}}>Jadwal PPDB</BlockTitle>
+                                          <Row noGap>
+                                          {this.state.jadwal.rows.map((option)=>{
+
+                                            let waktu_mulai = '';
+                                            waktu_mulai = moment(option.waktu_mulai).format('D') + ' ' + this.bulan[(moment(option.waktu_mulai).format('M')-1)] + ' ' + moment(option.waktu_mulai).format('YYYY');
+                                            //  + ', pukul ' + moment(option.waktu_mulai).format('H') + ':' + moment(option.waktu_mulai).format('mm');
+
+                                            let waktu_selesai = '';
+                                            waktu_selesai = moment(option.waktu_selesai).format('D') + ' ' + this.bulan[(moment(option.waktu_selesai).format('M')-1)] + ' ' + moment(option.waktu_selesai).format('YYYY');
+                                            //  + ', pukul ' + moment(option.waktu_selesai).format('H') + ':' + moment(option.waktu_selesai).format('mm');
+
+                                            return (
+                                              <Col key={option.jadwal_id} width="100" tabletWidth="100">
+                                                <Card style={{marginRight:'0px', marginLeft:'0px', borderLeft:'3px solid '+(option.jalur_id === '0100' ? 'red' : (option.jalur_id === '0200' ? 'purple' : (option.jalur_id === '0300' ? 'green' : (option.jalur_id === '0400' ? 'orange' : (option.jalur_id === '0500' ? 'teal' : 'gray'))))), borderRadius:'0px'}}>
+                                                {/* <Card style={{borderLeft:'3px solid '+(option.jalur_id === '0100' ? 'red' : (option.jalur_id === '0200' ? 'purple' : (option.jalur_id === '0300' ? 'green' : (option.jalur_id === '0400' ? 'orange' : (option.jalur_id === '0500' ? 'teal' : 'gray'))))), borderRadius:'0px'}}> */}
+                                                  <CardContent>
+                                                    <b>{option.jalur}</b> - Tahap {option.tahap}
+                                                    <br/>
+                                                    {waktu_mulai} - {waktu_selesai}
+                                                  </CardContent>
+                                                </Card>
+                                              </Col>
+                                            )
+                                          })}
+                                          </Row>
+
                                         </CardContent>
                                     </Card>
                                   </Col>
@@ -150,7 +167,8 @@ function mapDispatchToProps(dispatch) {
     updateWindowDimension: Actions.updateWindowDimension,
     setLoading: Actions.setLoading,
     setTabActive: Actions.setTabActive,
-    getSekolah: Actions.getSekolah
+    getSekolah: Actions.getSekolah,
+    getJadwal: Actions.getJadwal
   }, dispatch);
 }
 

@@ -79,7 +79,9 @@ class HeaderPPDB extends Component {
                       <div className="konten-ppdb-1">
                         <img src={"https://be.diskuis.id/assets/berkas/lumajang_logo_besar.png"} style={{height:'64px'}} />
                         <br/>
-                        <h1 style={{marginTop:'0px', marginBottom:'0px', fontSize:'25px'}}>{localStorage.getItem('judul_aplikasi')}</h1>
+                        <Link href={"/PPDB/"+this.props.pengguna_id+'/'+this.props.sekolah_id} style={{color:'white'}}>
+                          <h1 style={{marginTop:'0px', marginBottom:'0px', fontSize:'25px'}}>{localStorage.getItem('judul_aplikasi')}</h1>
+                        </Link>
                         <h3 style={{marginTop:'0px', marginBottom:'0px', fontSize:'12px'}}>{localStorage.getItem('sub_judul_aplikasi')}</h3>
                         <div style={{marginTop:'15px', fontSize:'10px', fontWeight:'bold', marginLeft:'8px', display:'inline-flex', marginTop:'-8px'}}>
                             <span style={{marginTop:'12px', marginRight:'8px'}}>powered by</span>

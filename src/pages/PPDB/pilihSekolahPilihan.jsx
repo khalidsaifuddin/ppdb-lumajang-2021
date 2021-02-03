@@ -26,7 +26,7 @@ class pilihSekolahPilihan extends Component {
             pengguna_id: this.$f7route.params['pengguna_id'] ? this.$f7route.params['pengguna_id'] : null,
             sekolah_id: this.$f7route.params['sekolah_id'] ? this.$f7route.params['sekolah_id'] : null,
             peserta_didik_id: this.$f7route.params['peserta_didik_id'] ? this.$f7route.params['peserta_didik_id'] : null,
-            jalur_id: this.$f7route.params['jalur_id'] ? this.$f7route.params['jalur_id'] : null,
+            jalur_id: this.$f7route.params['jalur_id'],
             start: 0,
             limit: 20
         },
@@ -68,6 +68,8 @@ class pilihSekolahPilihan extends Component {
         console.log(this.$f7route.url);
         localStorage.setItem('current_url', this.$f7route.url);
 
+        // console.log(this.$f7route.params['jalur_id'])
+
         this.props.getCalonPesertaDidik(this.state.routeParams).then((result)=>{
             this.setState({
                 routeParams: {
@@ -89,7 +91,9 @@ class pilihSekolahPilihan extends Component {
                 this.props.getSekolahPPDB(this.state.routeParamsFilter).then((result)=>{
                     this.setState({
                         sekolah: result.payload
-                    })
+                    },()=>[
+                        console.log(this.state)
+                    ])
                 })
 
             })
@@ -198,7 +202,10 @@ class pilihSekolahPilihan extends Component {
         this.$f7.dialog.preloader()
         this.props.simpanSekolahPilihan({
             ...this.state.routeParams,
-            sekolah_id: sekolah_id            
+            sekolah_id: sekolah_id,
+            peserta_didik_id: this.$f7route.params['peserta_didik_id'],
+            jalur_id: this.$f7route.params['jalur_id'],
+            pengguna_id: this.$f7route.params['pengguna_id']         
         }).then((result)=>{
             this.$f7.dialog.close()
             this.$f7router.navigate('/formSekolahPilihan/'+this.$f7route.params['peserta_didik_id']+"/"+this.$f7route.params['pengguna_id']+"/"+this.$f7route.params['sekolah_id'])

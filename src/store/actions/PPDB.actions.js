@@ -15,6 +15,10 @@ export const GET_SEKOLAH_PPDB = '[APP] GET_SEKOLAH_PPDB';
 export const SIMPAN_SEKOLAH_PILIHAN = '[APP] SIMPAN_SEKOLAH_PILIHAN';
 export const GET_SEKOLAH_PILIHAN = '[APP] GET_SEKOLAH_PILIHAN';
 export const GET_JALUR_BERKAS = '[APP] GET_JALUR_BERKAS';
+export const SIMPAN_BERKAS_CALON = '[APP] SIMPAN_BERKAS_CALON';
+export const SIMPAN_KONFIRMASI = '[APP] SIMPAN_KONFIRMASI';
+export const GET_JADWAL = '[APP] GET_JADWAL';
+export const GET_STATISTIK_SEKOLAH = '[APP] GET_STATISTIK_SEKOLAH';
 
 export function getCalonPesertaDidik(routeParams)
 {
@@ -53,9 +57,9 @@ export function getPesertaDidikDapodik(routeParams)
 export function cekNik(routeParams)
 {
     const request = axios.post(localStorage.getItem('api_base')+'/api/PPDB/cekNik', {
-        params: {
+        // params: {
             ...routeParams
-        }
+        // }
     });
 
     return (dispatch) =>
@@ -71,9 +75,9 @@ export function cekNik(routeParams)
 export function cekNISN(routeParams)
 {
     const request = axios.post(localStorage.getItem('api_base')+'/api/PPDB/cekNISN', {
-        params: {
+        // params: {
             ...routeParams
-        }
+        // }
     });
 
     return (dispatch) =>
@@ -250,6 +254,70 @@ export function getJalurBerkas(routeParams)
         request.then((response) =>
             dispatch({
                 type   : GET_JALUR_BERKAS,
+                payload: response.data,
+                routeParams
+            })
+        );
+}
+
+export function simpanBerkasCalon(routeParams)
+{
+    const request = axios.post(localStorage.getItem('api_base')+'/api/PPDB/simpanBerkasCalon', {
+        ...routeParams
+    });
+
+    return (dispatch) =>
+        request.then((response) =>
+            dispatch({
+                type   : SIMPAN_BERKAS_CALON,
+                payload: response.data,
+                routeParams
+            })
+        );
+}
+
+export function simpanKonfirmasi(routeParams)
+{
+    const request = axios.post(localStorage.getItem('api_base')+'/api/PPDB/simpanKonfirmasi', {
+        ...routeParams
+    });
+
+    return (dispatch) =>
+        request.then((response) =>
+            dispatch({
+                type   : SIMPAN_KONFIRMASI,
+                payload: response.data,
+                routeParams
+            })
+        );
+}
+
+export function getJadwal(routeParams)
+{
+    const request = axios.post(localStorage.getItem('api_base')+'/api/PPDB/getJadwal', {
+        ...routeParams
+    });
+
+    return (dispatch) =>
+        request.then((response) =>
+            dispatch({
+                type   : GET_JADWAL,
+                payload: response.data,
+                routeParams
+            })
+        );
+}
+
+export function getStatistikSekolah(routeParams)
+{
+    const request = axios.post(localStorage.getItem('api_base')+'/api/PPDB/getStatistikSekolah', {
+        ...routeParams
+    });
+
+    return (dispatch) =>
+        request.then((response) =>
+            dispatch({
+                type   : GET_JADWAL,
                 payload: response.data,
                 routeParams
             })

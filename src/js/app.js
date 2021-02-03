@@ -107,14 +107,14 @@ localStorage.setItem('versi_aplikasi','2020.02.01');
 localStorage.setItem('logo_aplikasi',"https://cdn4.iconfinder.com/data/icons/logos-3/600/React.js_logo-512.png");
 localStorage.setItem('socket_url',"https://socket.diskuis.id");
 localStorage.setItem('device','web');
-localStorage.setItem('versi','3.1.6');
+localStorage.setItem('versi','1.0.0');
 
 
 // localStorage.setItem('initial_route','/DataPokokSekolah/');
 // localStorage.setItem('show_toolbar','1');
 
-localStorage.setItem('google_api','582957663393-kp55jbquet0m0rlkkkskrahm2ruq8dfc.apps.googleusercontent.com');
-localStorage.setItem('api_base','http://mejabantu:8888');
+// localStorage.setItem('google_api','582957663393-kp55jbquet0m0rlkkkskrahm2ruq8dfc.apps.googleusercontent.com');
+// localStorage.setItem('api_base','http://mejabantu:8888');
 // localStorage.setItem('google_api', '582957663393-hlr6l0a2oendcq6ul13n9pasi88mb7bc.apps.googleusercontent.com');
 // localStorage.setItem('device','android');
 localStorage.setItem('device','web');
