@@ -86,33 +86,94 @@ class HomePPDB extends Component {
 
   componentDidMount = () => {
 
-    // console.log(this)
-    this.$f7.dialog.preloader()
-    
-    this.props.getSekolah({sekolah_id:this.$f7route.params['sekolah_id'], pengguna_id: this.$f7route.params['pengguna_id']}).then((result)=>{
-      this.setState({
-          sekolah: result.payload.rows[0]
-      },()=>{
-        this.$f7.dialog.close()
-        this.props.getStatistikSekolah({sekolah_id:this.$f7route.params['sekolah_id']}).then((result)=>{
-            this.setState({
-                statistik_sekolah: result.payload
-            },()=>{
-                this.props.getJadwal({param:'hari_ini'}).then((result)=>{
-                    this.setState({
-                        jadwal: result.payload
-                    },()=>{
-                        this.props.getCalonPesertaDidik({...this.state.routeParams, limit: 2, sekolah_id:this.$f7route.params['sekolah_id'] }).then((result)=>{
-                            this.setState({
-                                calon_peserta_didik: result.payload
+    if(!this.$f7route.params['sekolah_id'] && !this.$f7route.params['pengguna_id']){
+
+        if(parseInt(localStorage.getItem('sudah_login')) !== 1){
+            this.$f7router.navigate('/login/');
+            return true
+        }
+
+        this.props.getSekolahPengguna({pengguna_id: JSON.parse(localStorage.getItem('user')).pengguna_id}).then((result)=>{
+
+            if(this.props.sekolah_pengguna.total > 0){
+  
+              this.setState({
+                ...this.state,
+                sekolah_pengguna: this.props.sekolah_pengguna
+              },()=>{
+
+                this.$f7.dialog.close()
+
+                this.$f7router.navigate("/HomePPDB/"+JSON.parse(localStorage.getItem('user')).pengguna_id+"/"+this.state.sekolah_pengguna.rows[0].sekolah_id)
+
+                // // console.log(this)
+                // this.$f7.dialog.preloader()
+                
+                // this.props.getSekolah({sekolah_id:this.state.sekolah_pengguna.rows[0].sekolah_id, pengguna_id: JSON.parse(localStorage.getItem('user')).pengguna_id}).then((result)=>{
+                //     this.setState({
+                //         sekolah: result.payload.rows[0]
+                //     },()=>{
+                //         this.$f7.dialog.close()
+                //         this.props.getStatistikSekolah({sekolah_id:this.state.sekolah_pengguna.rows[0].sekolah_id}).then((result)=>{
+                //             this.setState({
+                //                 statistik_sekolah: result.payload
+                //             },()=>{
+                //                 this.props.getJadwal({param:'hari_ini'}).then((result)=>{
+                //                     this.setState({
+                //                         jadwal: result.payload
+                //                     },()=>{
+                //                         this.props.getCalonPesertaDidik({...this.state.routeParams, limit: 2, sekolah_id:this.state.sekolah_pengguna.rows[0].sekolah_id }).then((result)=>{
+                //                             this.setState({
+                //                                 calon_peserta_didik: result.payload
+                //                             })
+                //                         })
+                //                     })
+                //                 })
+                //             })
+                //         })
+                //     })
+                // })
+  
+                localStorage.setItem('getSekolahPengguna:'+JSON.parse(localStorage.getItem('user')).pengguna_id, JSON.stringify(this.props.sekolah_pengguna))
+              
+              })
+  
+            }
+  
+        })
+
+    }else{
+
+        // console.log(this)
+        this.$f7.dialog.preloader()
+        
+        this.props.getSekolah({sekolah_id:this.$f7route.params['sekolah_id'], pengguna_id: this.$f7route.params['pengguna_id']}).then((result)=>{
+          this.setState({
+              sekolah: result.payload.rows[0]
+          },()=>{
+            this.$f7.dialog.close()
+            this.props.getStatistikSekolah({sekolah_id:this.$f7route.params['sekolah_id']}).then((result)=>{
+                this.setState({
+                    statistik_sekolah: result.payload
+                },()=>{
+                    this.props.getJadwal({param:'hari_ini'}).then((result)=>{
+                        this.setState({
+                            jadwal: result.payload
+                        },()=>{
+                            this.props.getCalonPesertaDidik({...this.state.routeParams, limit: 3, sekolah_id:this.$f7route.params['sekolah_id'] }).then((result)=>{
+                                this.setState({
+                                    calon_peserta_didik: result.payload
+                                })
                             })
                         })
                     })
                 })
             })
+          })
         })
-      })
-    })
+
+    }
+
 
   }
 
@@ -123,6 +184,22 @@ class HomePPDB extends Component {
     '#E98074',
     '#fc5644'
   ]
+
+  keluar = () => {
+    localStorage.setItem('sudah_login', '0');
+    localStorage.setItem('user', '');
+    localStorage.setItem('token', '');
+    localStorage.setItem('sekolah_id_beranda', '');
+    localStorage.setItem('custom_logo_sekolah', '');
+    // localStorage.setItem('google_api', null);
+
+    // window.location.href="/";
+    if(localStorage.getItem('device') === 'android'){
+        window.location.reload(true);
+    }else{
+        window.location.href="/";
+    }
+  }
 
   render()
     {
@@ -145,14 +222,31 @@ class HomePPDB extends Component {
                             <HeaderSekolahPPDB sekolah={this.state.sekolah} />
                             </Col>
                             <Col width="0" tabletWidth="30">
-                            <Card style={{margin:'4px'}}>
-                                <CardContent>
-                                    <Button style={{borderRadius:'20px', marginBottom:'4px'}} className="color-theme-deeporange bawahCiri" tabLink="#tab-0" tabLinkActive>Beranda</Button>
-                                    <Button style={{borderRadius:'20px', marginBottom:'4px'}} className="color-theme-deeporange" tabLink="#tab-1" onClick={()=>this.$f7router.navigate("/PPDB/"+this.$f7route.params['pengguna_id']+"/"+this.$f7route.params['sekolah_id'])}>Data Pendaftar</Button>
-                                    <Button style={{borderRadius:'20px', marginBottom:'4px'}} className="color-theme-deeporange" tabLink="#tab-3" onClick={()=>this.$f7router.navigate("/formulirPPDB/"+this.$f7route.params['pengguna_id']+"/"+this.$f7route.params['sekolah_id'])}>Tambah Pendaftar</Button>
-                                    <Button style={{borderRadius:'20px', marginBottom:'4px'}} className="color-theme-deeporange" tabLink="#tab-3" onClick={()=>this.$f7router.navigate("/jadwalPPDB/"+this.$f7route.params['pengguna_id']+"/"+this.$f7route.params['sekolah_id'])}>Jadwal</Button>
-                                </CardContent>
-                            </Card>
+                                <Card style={{margin:'4px'}}>
+                                    <CardContent>
+                                        <Button style={{borderRadius:'20px', marginBottom:'4px'}} className="color-theme-deeporange bawahCiri" tabLink="#tab-0" tabLinkActive>Beranda</Button>
+                                        <Button style={{borderRadius:'20px', marginBottom:'4px'}} className="color-theme-deeporange" tabLink="#tab-1" onClick={()=>this.$f7router.navigate("/PPDB/"+this.$f7route.params['pengguna_id']+"/"+this.$f7route.params['sekolah_id'])}>Data Pendaftar</Button>
+                                        <Button style={{borderRadius:'20px', marginBottom:'4px'}} className="color-theme-deeporange" tabLink="#tab-3" onClick={()=>this.$f7router.navigate("/formulirPPDB/"+this.$f7route.params['pengguna_id']+"/"+this.$f7route.params['sekolah_id'])}>Tambah Pendaftar</Button>
+                                        <Button style={{borderRadius:'20px', marginBottom:'4px'}} className="color-theme-deeporange" tabLink="#tab-3" onClick={()=>this.$f7router.navigate("/jadwalPPDB/"+this.$f7route.params['pengguna_id']+"/"+this.$f7route.params['sekolah_id'])}>Jadwal</Button>
+                                        <Button style={{borderRadius:'20px', marginBottom:'4px', background:'#eeeeee', color:'red', marginTop:'16px'}} className="color-theme-deeporange" tabLink="#tab-3" onClick={this.keluar}>Keluar</Button>
+                                    </CardContent>
+                                </Card>
+                                
+                                <div className="hilangDiMobile" style={{textAlign:'center', padding:'16px', border:'2px dashed #ccc', margin:'4px', borderRadius:'20px', marginTop:'16px'}}>
+                                    Didukung oleh
+                                    <br/>
+                                    <Link href="https://diskuis.id" className="external">
+                                        <img src={'https://be.diskuis.id/assets/berkas/diskuis_red.png'}  style={{height:'20px', margin:'auto', marginTop:'10px'}} />
+                                    </Link>
+                                    <br/>
+                                    Aplikasi pembelajaran dan pendidikan digital Indonesia
+                                </div>
+
+                                <div className="hilangDiMobile" style={{textAlign:'center', padding:'16px', margin:'4px'}}>
+                                    Dinas Pendidikan Kabupaten Lumajang
+                                    <br/>
+                                    © 2021
+                                </div>
                             </Col>
                             <Col width="100" tabletWidth="70">
                             <Card style={{margin:'4px', marginBottom:'50px'}}>
@@ -175,9 +269,8 @@ class HomePPDB extends Component {
                                                 </Col>
                                             )
                                         })}
-                                        <Col width="50" tabletWidth="33" desktopWidth="20" style={{fontSize:'10px', padding:'16px'}}>
+                                        <Col width="50" tabletWidth="100" desktopWidth="100" style={{fontSize:'10px', padding:'16px'}}>
                                             *) Hanya menghitung pendaftar yang telah melakukan konfirmasi
-                                            <br/>
                                             <br/>
                                             <Link href={"/PPDB/"+this.$f7route.params['pengguna_id']+"/"+this.$f7route.params['sekolah_id']}>
                                                 Pendaftar Selengkapnya
@@ -197,8 +290,8 @@ class HomePPDB extends Component {
                                                 //  + ', pukul ' + moment(option.waktu_selesai).format('H') + ':' + moment(option.waktu_selesai).format('mm');
 
                                                 return (
-                                                <Col key={option.jadwal_id} width="100" tabletWidth="100">
-                                                    <Card style={{marginRight:'0px', marginLeft:'0px', borderLeft:'3px solid '+(option.jalur_id === '0100' ? 'red' : (option.jalur_id === '0200' ? 'purple' : (option.jalur_id === '0300' ? 'green' : (option.jalur_id === '0400' ? 'orange' : (option.jalur_id === '0500' ? 'teal' : 'gray'))))), borderRadius:'0px'}}>
+                                                <Col key={option.jadwal_id} width="100" tabletWidth="50">
+                                                    <Card style={{marginRight:'2px', marginLeft:'2px', borderLeft:'3px solid '+(option.jalur_id === '0100' ? 'red' : (option.jalur_id === '0200' ? 'purple' : (option.jalur_id === '0300' ? 'green' : (option.jalur_id === '0400' ? 'orange' : (option.jalur_id === '0500' ? 'teal' : 'gray'))))), borderRadius:'0px'}}>
                                                     {/* <Card style={{borderLeft:'3px solid '+(option.jalur_id === '0100' ? 'red' : (option.jalur_id === '0200' ? 'purple' : (option.jalur_id === '0300' ? 'green' : (option.jalur_id === '0400' ? 'orange' : (option.jalur_id === '0500' ? 'teal' : 'gray'))))), borderRadius:'0px'}}> */}
                                                     <CardContent>
                                                         <b>{option.jalur}</b> - Tahap {option.tahap}
@@ -341,7 +434,8 @@ function mapDispatchToProps(dispatch) {
     getSekolah: Actions.getSekolah,
     getCalonPesertaDidik: Actions.getCalonPesertaDidik,
     getStatistikSekolah: Actions.getStatistikSekolah,
-    getJadwal: Actions.getJadwal
+    getJadwal: Actions.getJadwal,
+    getSekolahPengguna: Actions.getSekolahPengguna
   }, dispatch);
 }
 
@@ -350,7 +444,8 @@ function mapStateToProps({ App, Sekolah }) {
       window_dimension: App.window_dimension,
       loading: App.loading,
       tabBar: App.tabBar,
-      sekolah: Sekolah.sekolah
+      sekolah: Sekolah.sekolah,
+      sekolah_pengguna: Sekolah.sekolah_pengguna,
   }
 }
 

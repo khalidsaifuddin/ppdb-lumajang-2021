@@ -17,6 +17,18 @@ const initialState = {
         rows: [],
         total: 0
     },
+    jenis_prestasi: {
+        rows: [],
+        total: 0
+    },
+    tingkat_prestasi: {
+        rows: [],
+        total: 0
+    },
+    nilai_prestasi: {
+        rows: [],
+        total: 0
+    },
     geocode: [],
     judul_panel_kanan: 'Judulnya kanan',
     panel_kanan_buka: false,
@@ -74,11 +86,32 @@ const PPDBReducers = function (state = initialState, action) {
                 jalur: action.payload
             };
         }
+        case Actions.GET_JENIS_PRESTASI:
+        {
+            return {
+                ...state,
+                jenis_prestasi: action.payload
+            };
+        }
+        case Actions.GET_TINGKAT_PRESTASI:
+        {
+            return {
+                ...state,
+                tingkat_prestasi: action.payload
+            };
+        }
         case Actions.PANEL_KANAN_BUKA:
         {
             return {
                 ...state,
                 panel_kanan_buka: action.panel_kanan_buka
+            };
+        }
+        case Actions.GET_NILAI_PRESTASI:
+        {
+            return {
+                ...state,
+                nilai_prestasi: action.payload
             };
         }
         default:

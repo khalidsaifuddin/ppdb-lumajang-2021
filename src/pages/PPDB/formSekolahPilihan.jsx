@@ -63,7 +63,14 @@ class formSekolahPilihan extends Component {
         sekolah_pilihan: {
             rows: [],
             total: 0
-        }
+        },
+        jenis_prestasi_id: 1,
+        tingkat_prestasi_id: 11,
+        nilai_semester_1: 0,
+        nilai_semester_2: 0,
+        nilai_semester_3: 0,
+        nilai_semester_4: 0,
+        nilai_semester_5: 0
     }
 
     bulan = [
@@ -91,6 +98,9 @@ class formSekolahPilihan extends Component {
             this.setState({
                 sekolah: result.payload.rows[0]
             },()=>{
+                this.props.getJenisPrestasi(this.state.routeParams)
+                this.props.getTingkatPrestasi(this.state.routeParams)
+
                 this.props.getJalurPPDB({...this.state.routeParams, jalur_id: null}).then((result)=>{
 
                     this.props.getCalonPesertaDidik(this.state.routeParams).then((result)=>{
@@ -113,6 +123,22 @@ class formSekolahPilihan extends Component {
                                     jalur_id: jalur_id
                                 },()=>{
                                     console.log(this.state.jalur_id)
+
+                                    //nilai prestasi
+                                    this.props.getNilaiPrestasi(this.state.routeParams).then((result)=>{
+                                        if(result.payload.total > 0){
+                                            this.setState({
+                                                jenis_prestasi_id: result.payload.rows[0].jenis_prestasi_id,
+                                                tingkat_prestasi_id: result.payload.rows[0].tingkat_prestasi_id,
+                                                nilai_semester_1: result.payload.rows[0].nilai_semester_1,
+                                                nilai_semester_2: result.payload.rows[0].nilai_semester_2,
+                                                nilai_semester_3: result.payload.rows[0].nilai_semester_3,
+                                                nilai_semester_4: result.payload.rows[0].nilai_semester_4,
+                                                nilai_semester_5: result.payload.rows[0].nilai_semester_5
+                                            })
+                                        }
+                                    })
+
                                 })
                             })
                         })
@@ -152,8 +178,24 @@ class formSekolahPilihan extends Component {
         this.$f7.dialog.preloader()
         
         this.props.simpanSekolahPilihan({peserta_didik_id: this.$f7route.params['peserta_didik_id'], jalur_id: this.state.jalur_id}).then((result)=> {
-          this.$f7.dialog.close()
-          this.$f7router.navigate("/formBerkas/"+this.$f7route.params['peserta_didik_id']+"/"+this.$f7route.params['pengguna_id']+"/"+this.$f7route.params['sekolah_id']+'/'+this.state.jalur_id)
+
+            this.props.simpanNilaiPrestasi({
+                pengguna_id: this.$f7route.params['pengguna_id'],
+                peserta_didik_id: this.$f7route.params['peserta_didik_id'],
+                jenis_prestasi_id: this.state.jenis_prestasi_id,
+                tingkat_prestasi_id: this.state.tingkat_prestasi_id,
+                nilai_semester_1: this.state.nilai_semester_1,
+                nilai_semester_2: this.state.nilai_semester_2,
+                nilai_semester_3: this.state.nilai_semester_3,
+                nilai_semester_4: this.state.nilai_semester_4,
+                nilai_semester_5: this.state.nilai_semester_5
+            }).then((result)=>{
+
+                this.$f7.dialog.close()
+                this.$f7router.navigate("/formBerkas/"+this.$f7route.params['peserta_didik_id']+"/"+this.$f7route.params['pengguna_id']+"/"+this.$f7route.params['sekolah_id']+'/'+this.state.jalur_id)
+
+            })
+
         })
       }
 
@@ -181,6 +223,17 @@ class formSekolahPilihan extends Component {
         })
     }
 
+    simpanNilaiPrestasi = (kolom) => (e) => {
+        console.log(kolom)
+        console.log(e.currentTarget.value)
+
+        this.setState({
+            [kolom]: e.currentTarget.value
+        },()=>{
+            console.log(this.state[kolom])
+        })
+    }
+
     render()
     {
         return (
@@ -191,8 +244,8 @@ class formSekolahPilihan extends Component {
             <div className="cardAtas" style={{marginBottom:'50px'}}>
               <div>&nbsp;</div>
               <Row>
-                  <Col width="0" tabletWidth="5" desktopWidth="10"></Col>
-                  <Col width="100" tabletWidth="90" desktopWidth="80">
+                  <Col width="0" tabletWidth="5" desktopWidth="15"></Col>
+                  <Col width="100" tabletWidth="90" desktopWidth="70">
                     <Row noGap>
                         <Col width="100" tabletWidth="100">
                         <HeaderSekolahPPDB sekolah={this.state.sekolah} />
@@ -238,6 +291,117 @@ class formSekolahPilihan extends Component {
                                             </CardContent>
                                         </Card>
                                     </Col>
+                                    {this.state.jalur_id === '0300' &&
+                                    <Col width="100" tabletWidth="50">
+                                        <Card>
+                                            <CardHeader>
+                                                <b>Jenis Prestasi</b>
+                                            </CardHeader>
+                                            <CardContent>
+                                                <List>
+                                                    <ListInput
+                                                        type="select"
+                                                        value={this.state.jenis_prestasi_id}
+                                                        placeholder="Pilih Prestasi..."
+                                                        onChange={this.simpanNilaiPrestasi('jenis_prestasi_id')}
+                                                    >
+                                                        <option value={"0"} disabled>-</option>
+                                                        {this.props.jenis_prestasi.rows.map((option)=>{
+                                                            return (
+                                                                <option value={option.jenis_prestasi_id}>{option.nama}</option>
+                                                            )
+                                                        })}
+                                                    </ListInput>
+                                                </List>
+                                            </CardContent>
+                                        </Card>
+                                    </Col>
+                                    }
+                                    {this.state.jalur_id === '0300' &&
+                                    <Col width="100" tabletWidth="50">
+                                        <Card>
+                                            <CardHeader>
+                                                <b>Peringkat/Nilai Prestasi</b>
+                                            </CardHeader>
+                                            <CardContent>
+                                                {parseInt(this.state.jenis_prestasi_id) !== 3 &&
+                                                <List>
+                                                    <ListInput
+                                                        type="select"
+                                                        value={this.state.tingkat_prestasi_id}
+                                                        placeholder="Pilih Peringkat Prestasi..."
+                                                        onChange={this.simpanNilaiPrestasi('tingkat_prestasi_id')}
+                                                    >
+                                                        <option value={"0"} disabled>-</option>
+                                                        {this.props.tingkat_prestasi.rows.map((option)=>{
+                                                            return (
+                                                                <option value={option.tingkat_prestasi_id}>{option.nama}</option>
+                                                            )
+                                                        })}
+                                                    </ListInput>
+                                                </List>
+                                                }
+                                                {parseInt(this.state.jenis_prestasi_id) === 3 &&
+                                                <Row noGap>
+                                                    <Col width="50">
+                                                        <List>
+                                                            <ListInput
+                                                                label="Nilai Rapor Semester 1"
+                                                                type="number"
+                                                                value={this.state.nilai_semester_1}
+                                                                placeholder="Semester 1..."
+                                                                onChange={this.simpanNilaiPrestasi('nilai_semester_1')}
+                                                                // info="Sesuai rapor sekolah"
+                                                            />
+                                                            <ListInput
+                                                                label="Nilai Rapor Semester 2"
+                                                                type="number"
+                                                                value={this.state.nilai_semester_2}
+                                                                placeholder="Semester 2..."
+                                                                onChange={this.simpanNilaiPrestasi('nilai_semester_2')}
+                                                                // info="Sesuai rapor sekolah"
+                                                            />
+                                                            <ListInput
+                                                                label="Nilai Rapor Semester 3"
+                                                                type="number"
+                                                                value={this.state.nilai_semester_3}
+                                                                placeholder="Semester 3..."
+                                                                onChange={this.simpanNilaiPrestasi('nilai_semester_3')}
+                                                                // info="Sesuai rapor sekolah"
+                                                            />
+                                                        </List>
+                                                    </Col>
+                                                    <Col width="50">
+                                                        <List>
+                                                            <ListInput
+                                                                label="Nilai Rapor Semester 4"
+                                                                type="number"
+                                                                value={this.state.nilai_semester_4}
+                                                                placeholder="Semester 4..."
+                                                                onChange={this.simpanNilaiPrestasi('nilai_semester_4')}
+                                                                // info="Sesuai rapor sekolah"
+                                                            />
+                                                            <ListInput
+                                                                label="Nilai Rapor Semester 5"
+                                                                type="number"
+                                                                value={this.state.nilai_semester_5}
+                                                                placeholder="Semester 5..."
+                                                                onChange={this.simpanNilaiPrestasi('nilai_semester_5')}
+                                                                // info="Sesuai rapor sekolah"
+                                                            />
+                                                        </List>
+                                                    </Col>
+                                                </Row>
+                                                }
+                                            </CardContent>
+                                        </Card>
+                                    </Col>
+                                    }
+                                    {this.state.jalur_id === '0300' &&
+                                    <Col width="100" tabletWidth="100" style={{fontSize:'12px', padding:'16px'}}>
+                                        *) Jenis dan peringkat/nilai prestasi hanya dipilih jika jalur PPDB yang diambil adalah jalur prestasi
+                                    </Col>
+                                    }
                                     <Col width="100">
                                         <Card>
                                             <CardHeader>
@@ -337,7 +501,7 @@ class formSekolahPilihan extends Component {
                         </Col>
                     </Row>
                   </Col>
-                  <Col width="0" tabletWidth="5" desktopWidth="10"></Col>
+                  <Col width="0" tabletWidth="5" desktopWidth="15"></Col>
               </Row>
             </div>
           </Page>
@@ -355,7 +519,11 @@ function mapDispatchToProps(dispatch) {
         getWilayah: Actions.getWilayah,
         getJalurPPDB: Actions.getJalurPPDB,
         getSekolahPilihan: Actions.getSekolahPilihan,
-        simpanSekolahPilihan: Actions.simpanSekolahPilihan
+        simpanSekolahPilihan: Actions.simpanSekolahPilihan,
+        getJenisPrestasi: Actions.getJenisPrestasi,
+        getTingkatPrestasi: Actions.getTingkatPrestasi,
+        simpanNilaiPrestasi: Actions.simpanNilaiPrestasi,
+        getNilaiPrestasi: Actions.getNilaiPrestasi
     }, dispatch);
 }
 
@@ -369,7 +537,10 @@ function mapStateToProps({ App, Sekolah, PPDB }) {
         cek_nik: PPDB.cek_nik,
         cek_nisn: PPDB.cek_nisn,
         calon_peserta_didik: PPDB.calon_peserta_didik, 
-        jalur: PPDB.jalur
+        jalur: PPDB.jalur,
+        jenis_prestasi: PPDB.jenis_prestasi,
+        tingkat_prestasi: PPDB.tingkat_prestasi,
+        nilai_prestasi: PPDB.nilai_prestasi
     }
 }
 

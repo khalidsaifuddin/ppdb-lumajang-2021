@@ -55,6 +55,7 @@ module.exports = {
     watchOptions: {
       poll: 1000,
     },
+    port: 8082
   },
   module: {
     rules: [

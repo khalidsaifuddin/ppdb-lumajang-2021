@@ -11,6 +11,8 @@ export const SET_ISI_KANAN = '[APP] SET ISI KANAN';
 export const PANEL_KANAN_BUKA = '[APP] PANEL KANAN BUKA';
 export const SIMPAN_LINTANG_BUJUR = '[APP] SIMPAN_LINTANG_BUJUR';
 export const GET_JALUR = '[APP] GET_JALUR';
+export const GET_JENIS_PRESTASI = '[APP] GET_JENIS_PRESTASI';
+export const GET_TINGKAT_PRESTASI = '[APP] GET_TINGKAT_PRESTASI';
 export const GET_SEKOLAH_PPDB = '[APP] GET_SEKOLAH_PPDB';
 export const SIMPAN_SEKOLAH_PILIHAN = '[APP] SIMPAN_SEKOLAH_PILIHAN';
 export const GET_SEKOLAH_PILIHAN = '[APP] GET_SEKOLAH_PILIHAN';
@@ -19,6 +21,8 @@ export const SIMPAN_BERKAS_CALON = '[APP] SIMPAN_BERKAS_CALON';
 export const SIMPAN_KONFIRMASI = '[APP] SIMPAN_KONFIRMASI';
 export const GET_JADWAL = '[APP] GET_JADWAL';
 export const GET_STATISTIK_SEKOLAH = '[APP] GET_STATISTIK_SEKOLAH';
+export const SIMPAN_NILAI_PRESTASI = '[APP] SIMPAN_NLAI_PRESTASI';
+export const GET_NILAI_PRESTASI = '[APP] GET_NILAI_PRESTASI';
 
 export function getCalonPesertaDidik(routeParams)
 {
@@ -189,6 +193,40 @@ export function getJalurPPDB(routeParams)
         );
 }
 
+
+export function getJenisPrestasi(routeParams)
+{
+    const request = axios.post(localStorage.getItem('api_base')+'/api/PPDB/getJenisPrestasi', {
+        ...routeParams
+    });
+
+    return (dispatch) =>
+        request.then((response) =>
+            dispatch({
+                type   : GET_JENIS_PRESTASI,
+                payload: response.data,
+                routeParams
+            })
+        );
+}
+
+
+export function getTingkatPrestasi(routeParams)
+{
+    const request = axios.post(localStorage.getItem('api_base')+'/api/PPDB/getTingkatPrestasi', {
+        ...routeParams
+    });
+
+    return (dispatch) =>
+        request.then((response) =>
+            dispatch({
+                type   : GET_TINGKAT_PRESTASI,
+                payload: response.data,
+                routeParams
+            })
+        );
+}
+
 export function getSekolahPPDB(routeParams)
 {
     const request = axios.post(localStorage.getItem('api_base')+'/api/PPDB/getSekolahPPDB', {
@@ -318,6 +356,40 @@ export function getStatistikSekolah(routeParams)
         request.then((response) =>
             dispatch({
                 type   : GET_JADWAL,
+                payload: response.data,
+                routeParams
+            })
+        );
+}
+
+
+export function simpanNilaiPrestasi(routeParams)
+{
+    const request = axios.post(localStorage.getItem('api_base')+'/api/PPDB/simpanNilaiPrestasi', {
+        ...routeParams
+    });
+
+    return (dispatch) =>
+        request.then((response) =>
+            dispatch({
+                type   : SIMPAN_NILAI_PRESTASI,
+                payload: response.data,
+                routeParams
+            })
+        );
+}
+
+
+export function getNilaiPrestasi(routeParams)
+{
+    const request = axios.post(localStorage.getItem('api_base')+'/api/PPDB/getNilaiPrestasi', {
+        ...routeParams
+    });
+
+    return (dispatch) =>
+        request.then((response) =>
+            dispatch({
+                type   : GET_NILAI_PRESTASI,
                 payload: response.data,
                 routeParams
             })

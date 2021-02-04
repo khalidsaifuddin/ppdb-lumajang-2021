@@ -100,6 +100,22 @@ class BerandaPPDB extends Component {
 
   }
 
+  keluar = () => {
+    localStorage.setItem('sudah_login', '0');
+    localStorage.setItem('user', '');
+    localStorage.setItem('token', '');
+    localStorage.setItem('sekolah_id_beranda', '');
+    localStorage.setItem('custom_logo_sekolah', '');
+    // localStorage.setItem('google_api', null);
+
+    // window.location.href="/";
+    if(localStorage.getItem('device') === 'android'){
+        window.location.reload(true);
+    }else{
+        window.location.href="/";
+    }
+  }
+
   render()
     {
         return (
@@ -145,8 +161,24 @@ class BerandaPPDB extends Component {
                                             <Button style={{borderRadius:'20px', marginBottom:'4px'}} className="color-theme-deeporange bawahCiri" tabLink="#tab-1" tabLinkActive>Data Pendaftar</Button>
                                             <Button style={{borderRadius:'20px', marginBottom:'4px'}} className="color-theme-deeporange" tabLink="#tab-3" onClick={()=>this.$f7router.navigate("/formulirPPDB/"+this.$f7route.params['pengguna_id']+"/"+this.$f7route.params['sekolah_id'])}>Tambah Pendaftar</Button>
                                             <Button style={{borderRadius:'20px', marginBottom:'4px'}} className="color-theme-deeporange" tabLink="#tab-3" onClick={()=>this.$f7router.navigate("/jadwalPPDB/"+this.$f7route.params['pengguna_id']+"/"+this.$f7route.params['sekolah_id'])}>Jadwal</Button>
+                                            <Button style={{borderRadius:'20px', marginBottom:'4px', background:'#eeeeee', color:'red', marginTop:'16px'}} className="color-theme-deeporange" tabLink="#tab-3" onClick={this.keluar}>Keluar</Button>
                                         </CardContent>
                                     </Card>
+                                    <div className="hilangDiMobile" style={{textAlign:'center', padding:'16px', border:'2px dashed #ccc', margin:'4px', borderRadius:'20px', marginTop:'16px'}}>
+                                        Didukung oleh
+                                        <br/>
+                                        <Link href="https://diskuis.id" className="external">
+                                            <img src={'https://be.diskuis.id/assets/berkas/diskuis_red.png'}  style={{height:'20px', margin:'auto', marginTop:'10px'}} />
+                                        </Link>
+                                        <br/>
+                                        Aplikasi pembelajaran dan pendidikan digital Indonesia
+                                    </div>
+
+                                    <div className="hilangDiMobile" style={{textAlign:'center', padding:'16px', margin:'4px'}}>
+                                        Dinas Pendidikan Kabupaten Lumajang
+                                        <br/>
+                                        © 2021
+                                    </div>
                                   </Col>
                                   <Col width="100" tabletWidth="70">
                                     <Card style={{margin:'4px', marginBottom:'50px'}}>
