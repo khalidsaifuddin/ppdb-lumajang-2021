@@ -22,6 +22,7 @@ class pilihSekolahPilihan extends Component {
     state = {
         error: null,
         loading: false,
+        belum_cari: true,
         routeParams:{
             pengguna_id: this.$f7route.params['pengguna_id'] ? this.$f7route.params['pengguna_id'] : null,
             sekolah_id: this.$f7route.params['sekolah_id'] ? this.$f7route.params['sekolah_id'] : null,
@@ -41,7 +42,8 @@ class pilihSekolahPilihan extends Component {
             rows: []
         },
         popupFilter: false,
-        routeParamsFilter: {}
+        routeParamsFilter: {},
+        sekolah_utama: {}
         // popup: (<div>Lokasi Rumah PD</div>)
     }
 
@@ -69,35 +71,44 @@ class pilihSekolahPilihan extends Component {
         localStorage.setItem('current_url', this.$f7route.url);
 
         // console.log(this.$f7route.params['jalur_id'])
-
-        this.props.getCalonPesertaDidik(this.state.routeParams).then((result)=>{
+        this.props.getSekolah({sekolah_id:this.$f7route.params['sekolah_id'], pengguna_id: this.$f7route.params['pengguna_id']}).then((result)=>{
             this.setState({
-                routeParams: {
-                    ...this.state.routeParams,
-                    ...result.payload.rows[0]
-                },
-                routeParamsFilter: {
-                    lintang: result.payload.rows[0].lintang, 
-                    bujur: result.payload.rows[0].bujur,
-                    dengan_tk: 'N',
-                    untuk_pilihan: 'Y',
-                    start: 0,
-                    limit: 20,
-                    peserta_didik_id: this.$f7route.params['peserta_didik_id'] ? this.$f7route.params['peserta_didik_id'] : null,
-                    status_sekolah: (parseInt(this.$f7route.params['urut_pilihan']) === 4 ? 2 : 1)
-                }
+                sekolah_utama: result.payload.rows[0]
             },()=>{
                 
-                this.props.getSekolahPPDB(this.state.routeParamsFilter).then((result)=>{
+                this.props.getCalonPesertaDidik({...this.state.routeParams, sekolah_id: null}).then((result)=>{
                     this.setState({
-                        sekolah: result.payload
-                    },()=>[
-                        console.log(this.state)
-                    ])
+                        routeParams: {
+                            ...this.state.routeParams,
+                            ...result.payload.rows[0]
+                        },
+                        routeParamsFilter: {
+                            lintang: result.payload.rows[0].lintang, 
+                            bujur: result.payload.rows[0].bujur,
+                            dengan_tk: 'N',
+                            untuk_pilihan: 'Y',
+                            dengan_smak: 'N',
+                            start: 0,
+                            limit: 20,
+                            bentuk_pendidikan_id: this.state.sekolah_utama.bentuk_pendidikan_id,
+                            peserta_didik_id: this.$f7route.params['peserta_didik_id'] ? this.$f7route.params['peserta_didik_id'] : null,
+                            status_sekolah: (parseInt(this.$f7route.params['urut_pilihan']) === 4 ? 2 : 1)
+                        }
+                    },()=>{
+                        
+                        this.props.getSekolahPPDB(this.state.routeParamsFilter).then((result)=>{
+                            this.setState({
+                                sekolah: result.payload
+                            },()=>[
+                                console.log(this.state)
+                            ])
+                        })
+        
+                    })
                 })
-
             })
         })
+
 
 
     }
@@ -143,6 +154,7 @@ class pilihSekolahPilihan extends Component {
                 ...this.state.routeParamsFilter,
                 keyword: e.currentTarget.value,
                 searchText: e.currentTarget.value,
+                dengan_smak: 'N'    
             }
         }, ()=> {
             
@@ -188,7 +200,8 @@ class pilihSekolahPilihan extends Component {
             this.props.getSekolahPPDB(this.state.routeParamsFilter).then((result)=>{
                 this.setState({
                     sekolah: result.payload,
-                    popupFilter: false
+                    popupFilter: false,
+                    belum_cari: false
                 },()=>{
                     this.$f7.dialog.close()
                 })
@@ -312,6 +325,12 @@ class pilihSekolahPilihan extends Component {
                         </div>
                         <Card style={{marginTop:'0px'}}>
                             <CardContent>
+                                {this.state.sekolah.total < 1 && this.state.belum_cari &&
+                                <>Sekolah tidak ditemukan</>
+                                }
+                                {this.state.sekolah.total < 1 && !this.state.belum_cari &&
+                                <>Mohon cari sekolah</>
+                                }
                                 {this.state.sekolah.rows.map((option)=>{
                                     return (
                                         <Card key={option.sekolah_id} style={{marginRight:'0px', marginLeft:'0px'}}>
@@ -436,6 +455,7 @@ function mapDispatchToProps(dispatch) {
       updateWindowDimension: Actions.updateWindowDimension,
       setLoading: Actions.setLoading,
       getSekolahPPDB: Actions.getSekolahPPDB,
+      getSekolah: Actions.getSekolah,
       getCalonPesertaDidik: Actions.getCalonPesertaDidik,
       simpanSekolahPilihan: Actions.simpanSekolahPilihan,
     }, dispatch);

@@ -263,7 +263,7 @@ class formulirPendaftaran extends Component {
                                     </Card> */}
                                     <HeaderSekolahPPDB sekolah={this.state.sekolah} />
                                   </Col>
-                                  <Col width="0" tabletWidth="30">
+                                  <Col width="0" tabletWidth="30" className="hilangDiMobile">
                                     <Card style={{margin:'4px'}}>
                                         <CardContent>
                                             <Button style={{borderRadius:'20px', marginBottom:'4px'}} className="color-theme-deeporange" tabLink="#tab-0" onClick={()=>this.$f7router.navigate("/HomePPDB/"+this.$f7route.params['pengguna_id']+"/"+this.$f7route.params['sekolah_id'])}>Beranda</Button>

@@ -69,7 +69,13 @@ class formKonfirmasi extends Component {
         },
         jalur: {},
         berkas_calon:{},
-        imageHash: Date.now()
+        imageHash: Date.now(),
+        pengguna: {},
+        sekolah_pilihan: {
+            rows: [],
+            total: 0
+        },
+        sekolah_pilihan_record: {}
     }
 
 
@@ -135,6 +141,20 @@ class formKonfirmasi extends Component {
                                             berkas_calon: {...arrJalurBerkas}
                                         },()=>{
                                             // console.log(this.state)
+                                            this.props.getPengguna({pengguna_id: this.$f7route.params['pengguna_id']}).then((result)=>{
+                                                if(result.payload.total > 0){
+                                                    this.setState({
+                                                        pengguna: result.payload.rows[0]
+                                                    },()=>{
+                                                        this.props.getSekolahPilihan(this.state.routeParams).then((result)=>{
+                                                            this.setState({
+                                                                sekolah_pilihan: result.payload,
+                                                                sekolah_pilihan_record: result.payload.rows[0]
+                                                            })
+                                                        })
+                                                    })
+                                                }
+                                            })
                                         })
                                     })
                                 })
@@ -290,7 +310,7 @@ class formKonfirmasi extends Component {
                   <Col width="100" tabletWidth="90" desktopWidth="80">
                     <Row noGap>
                         <Col width="100" tabletWidth="100">
-                            <HeaderSekolahPPDB sekolah={this.state.sekolah} />
+                            <HeaderSekolahPPDB pengguna_id={this.$f7route.params['pengguna_id']} sekolah={this.state.sekolah} f7={this} />
                         </Col>
                         <Col width="0" tabletWidth="100">
                         <Card style={{margin:'4px'}}>
@@ -331,10 +351,23 @@ class formKonfirmasi extends Component {
                                                 </div>
                                                 <br/>
                                                 <div variant="body1" style={{fontWeight:'bold'}}>
-                                                    <b>{this.state.routeParams.nama_pengguna}</b>
+                                                    <b>{this.state.pengguna.nama}</b>
+                                                    {/* <b>{this.state.routeParams.nama_pengguna}</b> */}
                                                 </div>
                                                 <hr/>
-                                                {this.state.displayOnly === null &&
+                                                Jalur Pendaftaran: <b>{this.state.sekolah_pilihan_record.jalur}</b> {this.state.sekolah_pilihan_record.jalur_id === '0300' && <></>}
+                                                <br/>
+                                                Sekolah Pilihan:
+                                                <br/>
+                                                <ol>
+                                                    {this.state.sekolah_pilihan.rows.map((option)=>{
+                                                        return (
+                                                            <li>{option.nama}</li>
+                                                        )
+                                                    })}
+                                                </ol>
+                                                <hr/>
+                                                {/* {this.state.displayOnly === null && */}
                                                 <i style={{fontSize:'10px'}}>
                                                     Keterangan:
                                                     <ul>
@@ -352,7 +385,8 @@ class formKonfirmasi extends Component {
                                                         </li>
                                                     </ul>
                                                 </i>
-                                                }
+                                                {/* } */}
+                                                <hr/>
                                             </CardContent>
                                         </Card>
                                     </Col>
@@ -391,7 +425,9 @@ function mapDispatchToProps(dispatch) {
         getJalurPPDB: Actions.getJalurPPDB,
         getJalurBerkas: Actions.getJalurBerkas,
         generateUUID: Actions.generateUUID,
-        simpanKonfirmasi: Actions.simpanKonfirmasi
+        simpanKonfirmasi: Actions.simpanKonfirmasi,
+        getPengguna: Actions.getPengguna,
+        getSekolahPilihan: Actions.getSekolahPilihan
     }, dispatch);
 }
 

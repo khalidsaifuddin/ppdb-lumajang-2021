@@ -114,7 +114,7 @@ class formBerkas extends Component {
                                 this.props.getJalurBerkas({jalur_id:this.$f7route.params['jalur_id'], peserta_didik_id:this.$f7route.params['peserta_didik_id'] }).then((result)=>{
                                     this.setState({
                                         jalur_berkas: result.payload
-                                    },()=>{
+                                    },()=>{ 
                                         let arrJalurBerkas = {}
 
                                         for (let indexJalurBerkas = 0; indexJalurBerkas < this.state.jalur_berkas.rows.length; indexJalurBerkas++) {
@@ -150,23 +150,34 @@ class formBerkas extends Component {
     acceptedFile = (jenis_berkas_id) => (file) => {
         this.$f7.dialog.preloader()
 
-        if(file[0].size >= 10000000){ //2Mb
-            this.$f7.dialog.alert('Ukuran gambar tidak boleh melebihi 10MB!', 'Peringatan');
+        // console.log(file);return true;
+
+        if(file[0].size >= 1500000){ //2Mb
+            this.$f7.dialog.close()
+            this.$f7.dialog.alert('Ukuran gambar tidak boleh melebihi 1MB! Silakan perkecil ukuran gambar Anda atau gunakan gambar lain', 'Peringatan');
+            // console.log('nggak lewat')
             return true;
         }
+        // else{
+        //     console.log('lewat')
+        //     return true;
+        // }
+
+        // alert('tes');return true;
+
         
         // if(file[0].name.substr(file[0].name.length - 3) === 'jpg' || file[0].name.substr(file[0].name.length - 4) === 'jpeg' || file[0].name.substr(file[0].name.length - 3) === 'png'){
         try {
-        
+
             if(
-                file[0].name.split(".")[1] === 'jpg' ||
-                file[0].name.split(".")[1] === 'png' ||
-                file[0].name.split(".")[1] === 'jpeg' ||
-                file[0].name.split(".")[1] === 'webp' ||
-                file[0].name.split(".")[1] === 'gif'
+                file[0].name.split(".")[(parseInt(file[0].name.split(".").length)-1)] === 'jpg' ||
+                file[0].name.split(".")[(parseInt(file[0].name.split(".").length)-1)] === 'png' ||
+                file[0].name.split(".")[(parseInt(file[0].name.split(".").length)-1)] === 'jpeg' ||
+                file[0].name.split(".")[(parseInt(file[0].name.split(".").length)-1)] === 'webp' ||
+                file[0].name.split(".")[(parseInt(file[0].name.split(".").length)-1)] === 'gif'
             ){
 
-                let ekstensi = file[0].name.split(".")[1];
+                let ekstensi = file[0].name.split(".")[(parseInt(file[0].name.split(".").length)-1)];
                 console.log(ekstensi)
 
                 this.props.generateUUID(this.state.routeParams).then((result)=>{
@@ -182,13 +193,15 @@ class formBerkas extends Component {
                         }
                     },()=>{
 
+                        
+
                         console.log(this.state.berkas_calon)
             
                         return new Promise(
                             (resolve, reject) => {
                                 const xhr = new XMLHttpRequest();
                                 xhr.open('POST', "https://be.diskuis.id" + '/api/Ruang/upload');
-                                // xhr.open('POST', localStorage.getItem('api_base') + '/api/Ruang/upload');
+                                // xhr.open('POST', "http://mejabantu:8888" + '/api/Ruang/upload');
                                 xhr.onload = this.uploadBerhasil(jenis_berkas_id);
                                 xhr.onerror = this.uploadGagal;
                                 const data = new FormData();
@@ -206,11 +219,13 @@ class formBerkas extends Component {
                 });
 
             }else{
+                this.$f7.dialog.close()
                 this.$f7.dialog.alert('Hanya dapat mengupload file gambar dengan format .jpg atau .png!', 'Peringatan');
                 return true;
             }
 
         } catch (error) {
+            this.$f7.dialog.close()
             this.$f7.dialog.alert('file tidak dikenali. Mohon gunakan file lain!', 'Peringatan');
             return true;
         }
@@ -266,10 +281,40 @@ class formBerkas extends Component {
 
     simpan = () => {
         this.$f7.dialog.preloader()
-        
-        // this.props.simpanSekolahPilihan({peserta_didik_id: this.$f7route.params['peserta_didik_id'], jalur_id: this.state.jalur_id}).then((result)=> {
-        this.$f7.dialog.close()
-        this.$f7router.navigate("/formKonfirmasi/"+this.$f7route.params['peserta_didik_id']+"/"+this.$f7route.params['pengguna_id']+"/"+this.$f7route.params['sekolah_id'])
+
+        //checking if berkas has already been uploaded
+        console.log(this.state.jalur_berkas)
+
+        let cek_hitung = 0;
+
+        this.state.jalur_berkas.rows.map((option)=>{
+            if(!option.berkas_calon_id){
+                //nggak usah dihitung
+            }else{
+                //dihitung
+                cek_hitung++
+            }
+        })
+
+        // console.log("cek_hitung: "+cek_hitung)
+        // console.log("total: "+this.state.jalur_berkas.total)
+
+        if(cek_hitung < this.state.jalur_berkas.total){
+            //masih kurang
+            this.$f7.dialog.close()
+            this.$f7.dialog.alert('Masih ada berkas yang belum diunggah! Mohon lengkapi sebelum melanjutkan!', 'Peringatan')
+        }else{
+            //sudah cukup
+            // this.$f7.dialog.close()
+            // this.$f7.dialog.alert('Oke sudah cukup', 'Mantab')
+            // return true;
+            //checking if berkas has already been uploaded
+            
+            // this.props.simpanSekolahPilihan({peserta_didik_id: this.$f7route.params['peserta_didik_id'], jalur_id: this.state.jalur_id}).then((result)=> {
+            this.$f7.dialog.close()
+            this.$f7router.navigate("/formKonfirmasi/"+this.$f7route.params['peserta_didik_id']+"/"+this.$f7route.params['pengguna_id']+"/"+this.$f7route.params['sekolah_id'])
+        }
+
         // })
     }
 
@@ -287,7 +332,7 @@ class formBerkas extends Component {
                   <Col width="100" tabletWidth="90" desktopWidth="80">
                     <Row noGap>
                         <Col width="100" tabletWidth="100">
-                            <HeaderSekolahPPDB sekolah={this.state.sekolah} />
+                            <HeaderSekolahPPDB pengguna_id={this.$f7route.params['pengguna_id']} sekolah={this.state.sekolah} f7={this} />
                         </Col>
                         <Col width="0" tabletWidth="100">
                         <Card style={{margin:'4px'}}>
@@ -379,7 +424,7 @@ class formBerkas extends Component {
                                                                                 {this.state.berkas_calon[option.jenis_berkas_id].file_gambar !== '' &&
                                                                                 <>
                                                                                 <img style={{height:'150px'}} src={"https://be.diskuis.id"+this.state.berkas_calon[option.jenis_berkas_id].file_gambar+"?"+this.state.imageHash} />
-                                                                                <p style={{fontSize:'12px', fontStyle:'italic'}}>Klik/Sentuh kembali untuk mengganti gambar. Ukuran maksimal berkas adalah 10 MB, dan hanya dalam format .jpg, atau .png</p>
+                                                                                <p style={{fontSize:'12px', fontStyle:'italic'}}>Klik/Sentuh kembali untuk mengganti gambar. Ukuran maksimal berkas adalah 1 MB, dan hanya dalam format .jpg, atau .png</p>
                                                                                 </>
                                                                                 }
                                                                                 {this.state.berkas_calon[option.jenis_berkas_id].gambar === '' &&
@@ -391,7 +436,7 @@ class formBerkas extends Component {
                                                                                 {this.state.berkas_calon[option.jenis_berkas_id].gambar !== '' && this.state.berkas_calon[option.jenis_berkas_id].file_gambar === '' &&
                                                                                 <>
                                                                                 <p style={{fontSize:'20px'}}>{this.state.berkas_calon[option.jenis_berkas_id].gambar}</p>
-                                                                                <p style={{fontSize:'12px', fontStyle:'italic'}}>Klik/Sentuh kembali untuk mengganti gambar. Ukuran maksimal berkas adalah 10 MB, dan hanya dalam format .jpg, atau .png</p>
+                                                                                <p style={{fontSize:'12px', fontStyle:'italic'}}>Klik/Sentuh kembali untuk mengganti gambar. Ukuran maksimal berkas adalah 1MB, dan hanya dalam format .jpg, atau .png</p>
                                                                                 </>
                                                                                 }
                                                                             </div>

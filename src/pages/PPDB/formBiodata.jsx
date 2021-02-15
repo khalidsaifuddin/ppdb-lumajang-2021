@@ -138,7 +138,7 @@ class formBiodata extends Component {
           provinsi: this.props.wilayah.rows
       },()=>{
 
-        this.props.getCalonPesertaDidik(this.state.routeParams).then((result)=>{
+        this.props.getCalonPesertaDidik({...this.state.routeParams, sekolah_id:null}).then((result)=>{
           if(result.payload.total > 0){
             //ada
             this.setState({
@@ -405,6 +405,15 @@ class formBiodata extends Component {
     }, ()=> {
       console.log(this.state.routeParams);
 
+      if(key === 'kode_wilayah'){
+        this.setState({
+          routeParams: {
+            ...this.state.routeParams,
+            kode_wilayah_kecamatan: this.state.routeParams.kode_wilayah
+          }
+        })
+      }
+
       if(key === 'kode_wilayah_provinsi'){
         this.props.getWilayah({id_level_wilayah:2, mst_kode_wilayah: this.state.routeParams.kode_wilayah_provinsi}).then((result)=>{
             this.setState({
@@ -630,6 +639,35 @@ class formBiodata extends Component {
   }
 
   simpan = () => {
+
+    if(
+      this.state.routeParams.nama === null || 
+      this.state.routeParams.nik === null || 
+      this.state.routeParams.tempat_lahir === null || 
+      this.state.routeParams.tanggal_lahir === null
+      ) {
+      this.$f7.dialog.alert('Mohon lengkapi Nama/NISN/tempat dan tanggal lahir sebelum malanjutkan!','Peringatan');
+      return false;
+    }
+    
+    if(
+        this.state.routeParams.kode_wilayah_provinsi === null || 
+        this.state.routeParams.kode_wilayah_kabupaten === null || 
+        this.state.routeParams.kode_wilayah_kecamatan === null || 
+        this.state.routeParams.alamat_tempat_tinggal === null
+      ) {
+      this.$f7.dialog.alert('Mohon lengkapi alamat sebelum melanjutkan!','Peringatan');
+      return false;
+    }
+    
+    if(
+        this.state.routeParams.lintang === null || 
+        this.state.routeParams.bujur === null
+      ) {
+      this.$f7.dialog.alert('Mohon lengkapi titik koordinat lintang dan bujur tempat tinggal sebelum melanjutkan!','Peringatan');
+      return false;
+    }
+
     this.$f7.dialog.preloader()
     
     this.props.simpanCalonPesertaDidik({...this.state.routeParams, peserta_didik_id: this.$f7route.params['peserta_didik_id']}).then((result)=> {
@@ -654,7 +692,7 @@ class formBiodata extends Component {
                           <CardContent style={{padding:'8px'}}> */}
                               <Row noGap>
                                   <Col width="100" tabletWidth="100">
-                                    <HeaderSekolahPPDB sekolah={this.state.sekolah} />
+                                    <HeaderSekolahPPDB pengguna_id={this.$f7route.params['pengguna_id']} sekolah={this.state.sekolah} f7={this} />
                                   </Col>
                                   <Col width="0" tabletWidth="100">
                                     <Card style={{margin:'4px'}}>

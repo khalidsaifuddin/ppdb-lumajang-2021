@@ -82,6 +82,7 @@ class app extends Component {
     // Login screen demo data
     username: '',
     password: '',
+    sekolah_id: null
   };
 
     // this.onClickLinkTab = this.onClickLinkTab.bind(this);
@@ -113,7 +114,7 @@ class app extends Component {
     // alert(menu);
   }
 
-  componentDidMount = () => {
+  // componentDidMount = () => {
     // console.log(this);
     // console.log(this);
     // this.$f7route.navigate(localStorage.getItem('initial_route'));
@@ -135,7 +136,7 @@ class app extends Component {
     //   }
     // });
     
-  }
+  // }
 
   gantiSemester = (b) => {
     localStorage.setItem('semester_id_aplikasi', b.target.value);
@@ -172,7 +173,7 @@ class app extends Component {
         <Statusbar></Statusbar>
 
         {/* Left panel with cover effect when hidden */}
-        {parseInt(localStorage.getItem('sudah_login')) === 1 && localStorage.getItem('kode_aplikasi') !== 'MEJA-PPDB' &&
+        {parseInt(localStorage.getItem('sudah_login')) === 1 && localStorage.getItem('kode_aplikasi') !== 'MEJA-PPDB' && localStorage.getItem('kode_aplikasi') !== 'MEJA-PPDB-DINAS' &&
         <Panel left cover>
         {/* <Panel left cover themeDark> */}
           <View>
@@ -444,10 +445,66 @@ class app extends Component {
         
         <Views tabs className="safe-areas" hideToolbarOnScroll>
           {/* Tabbar for switching views-tabs */}
-          {localStorage.getItem('sudah_login') === '1' && localStorage.getItem('kode_aplikasi') !== 'MEJA-PPDB' &&
+          {localStorage.getItem('sudah_login') === '1' && 
+          // localStorage.getItem('kode_aplikasi') !== 'MEJA-PPDB' &&
           <Toolbar labels bottom className="mobileTab" hideToolbarOnScroll>
             {localStorage.getItem('sudah_login') === '1' &&
             <>
+            {localStorage.getItem('kode_aplikasi') === 'MEJA-PPDB' &&
+            <Link 
+              href={"/HomePPDB/"+JSON.parse(localStorage.getItem('user')).pengguna_id+"/"+this.state.sekolah_id} 
+              tabLinkActive={this.props.tabBar.beranda} 
+              iconIos="f7:rocket" 
+              iconAurora="f7:rocket" 
+              iconMd="f7:rocket" 
+              text="Beranda" 
+              style={{fontSize:'12px'}} 
+            />
+            }
+            {localStorage.getItem('kode_aplikasi') === 'MEJA-PPDB' &&
+            <Link 
+              href={"/PPDB/"+JSON.parse(localStorage.getItem('user')).pengguna_id+"/"+this.state.sekolah_id} 
+              tabLinkActive={this.props.tabBar.beranda} 
+              iconIos="f7:square_list" 
+              iconAurora="f7:square_list" 
+              iconMd="f7:square_list" 
+              text="Pendaftar" 
+              style={{fontSize:'12px'}} 
+            />
+            }
+            {localStorage.getItem('kode_aplikasi') === 'MEJA-PPDB' &&
+            <Link 
+              href={"/formulirPPDB/"+JSON.parse(localStorage.getItem('user')).pengguna_id+"/"+this.state.sekolah_id} 
+              tabLinkActive={this.props.tabBar.beranda} 
+              iconIos="f7:doc_append" 
+              iconAurora="f7:doc_append" 
+              iconMd="f7:doc_append" 
+              text="Formulir" 
+              style={{fontSize:'12px'}} 
+            />
+            }
+            {localStorage.getItem('kode_aplikasi') === 'MEJA-PPDB' &&
+            <Link 
+              href={"/jadwalPPDB/"+JSON.parse(localStorage.getItem('user')).pengguna_id+"/"+this.state.sekolah_id} 
+              tabLinkActive={this.props.tabBar.beranda} 
+              iconIos="f7:calendar" 
+              iconAurora="f7:calendar" 
+              iconMd="f7:calendar" 
+              text="Jadwal" 
+              style={{fontSize:'12px'}} 
+            />
+            }
+            {localStorage.getItem('kode_aplikasi') === 'MEJA-PPDB' &&
+            <Link 
+              iconIos="f7:square_arrow_left" 
+              iconAurora="f7:square_arrow_left" 
+              iconMd="f7:square_arrow_left" 
+              text="Keluar" 
+              onClick={this.keluar}
+              style={{fontSize:'12px'}} 
+            />
+            }
+            {localStorage.getItem('kode_aplikasi') !== 'MEJA-PPDB' &&
             <Link 
               href="/" 
               // onClick={()=>{this.onClickLinkTab('beranda')}} 
@@ -458,6 +515,7 @@ class app extends Component {
               text="Beranda" 
               style={{fontSize:'12px'}} 
             />
+            }
             {localStorage.getItem('kode_aplikasi') === 'MEJA' &&
             <Link 
               href="/Cari" 
@@ -619,6 +677,7 @@ class app extends Component {
               style={{fontSize:'12px'}} 
             />
             }
+            {localStorage.getItem('kode_aplikasi') === 'MEJA' &&
             <Link 
               iconIos="f7:ellipsis_vertical_circle" 
               iconAurora="f7:ellipsis_vertical_circle" 
@@ -628,6 +687,7 @@ class app extends Component {
               // loginScreenOpen="#my-login-screen" 
               style={{fontSize:'12px'}}
             />
+            }
             {/* <Link link="/" view=".view-main" tabLinkActive iconIos="f7:home_fil" iconAurora="f7:home_fil" iconMd="material:home" text="Home" />
             <Link link="/catalog/" view=".view-main" iconIos="f7:list_fill" iconAurora="f7:list_fill" iconMd="material:view_list" text="Catalog" />
             <Link link="/form/" view=".view-main" iconIos="f7:settings_fill" iconAurora="f7:settings_fill" iconMd="material:settings" text="About" /> */}
@@ -705,27 +765,39 @@ class app extends Component {
   alertLoginData() {
     this.$f7.dialog.alert('Username: ' + this.state.username + '<br>Password: ' + this.state.password);
   }
-  componentDidMount() {
-    // console.log(this.props);
-    // this.$f7.preloader.show();
-    // this.$f7.dialog.preloader();
-    setTimeout(() => {
-      // this.$f7.preloader.hide();
-      // this.$f7.dialog.close();
 
+  componentDidMount() {
+    
+    setTimeout(() => {
+      //do something here
     }, 3000);
 
     this.$f7ready((f7) => {
-      // Init cordova APIs (see cordova-app.js)
-      if (f7.device.cordova) {
-        cordovaApp.init(f7);
-        
-        // console.log(localStorage.getItem('device'));
-        // console.log(parseInt(localStorage.getItem('sudah_login')));
+
+      if(parseInt(localStorage.getItem('sudah_login')) === 1){
+          this.props.getSekolahPengguna({pengguna_id: JSON.parse(localStorage.getItem('user')).pengguna_id}).then((result)=>{
+            
+            if(result.payload.total > 0){
+    
+              this.setState({
+                sekolah_id: result.payload.rows[0].sekolah_id
+              })
+    
+            }
+    
+          })
       }
-      // Call F7 APIs here
-    });
+
+
+      if (f7.device.cordova) {
+        cordovaApp.init(f7)
+        
+      }
+      
+    })
+
   }
+
 }
 
 function mapDispatchToProps(dispatch) {
@@ -733,11 +805,12 @@ function mapDispatchToProps(dispatch) {
     updateWindowDimension: Actions.updateWindowDimension,
     setLoading: Actions.setLoading,
     setTabActive: Actions.setTabActive,
-    getNotifikasi: Actions.getNotifikasi
+    getNotifikasi: Actions.getNotifikasi,
+    getSekolahPengguna: Actions.getSekolahPengguna
   }, dispatch);
 }
 
-function mapStateToProps({ App, Notifikasi }) {
+function mapStateToProps({ App, Notifikasi, Sekolah }) {
   // console.log(App.tabBar);
 
   return {
@@ -746,7 +819,8 @@ function mapStateToProps({ App, Notifikasi }) {
       tabBar: App.tabBar,
       judul_panel_kanan: App.judul_panel_kanan,
       isi_panel_kanan: App.isi_panel_kanan,
-      notifikasi_belum_dibaca: Notifikasi.notifikasi_belum_dibaca
+      notifikasi_belum_dibaca: Notifikasi.notifikasi_belum_dibaca,
+      sekolah_pengguna: Sekolah.sekolah_pengguna
   }
 }
 

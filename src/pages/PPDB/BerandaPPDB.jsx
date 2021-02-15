@@ -88,7 +88,7 @@ class BerandaPPDB extends Component {
       this.setState({
           sekolah: result.payload.rows[0]
       },()=>{
-        this.props.getCalonPesertaDidik({sekolah_id:this.$f7route.params['sekolah_id']}).then((result)=>{
+        this.props.getCalonPesertaDidik({sekolah_id:this.$f7route.params['sekolah_id'], urut_pilihan:1}).then((result)=>{
           this.setState({
             calon_peserta_didik: result.payload
           },()=>{
@@ -114,6 +114,72 @@ class BerandaPPDB extends Component {
     }else{
         window.location.href="/";
     }
+  }
+
+  batalKonfirmasi = (calon_peserta_didik_id) => {
+    // alert('tes')
+    this.$f7.dialog.confirm('Apakah Anda yakin ingin membatalkan konfirmasi calon peserta didik ini?', 'Konfirmasi', ()=>{
+      this.$f7.dialog.preloader()
+
+      this.props.batalKonfirmasi({
+        calon_peserta_didik_id: calon_peserta_didik_id
+      }).then((result)=>{
+        this.$f7.dialog.close()
+
+        if(result.payload.sukses){
+          //berhasil
+          this.$f7.dialog.alert('Berhasil menyimpan data!', 'Berhasil')
+
+          this.props.getCalonPesertaDidik({sekolah_id:this.$f7route.params['sekolah_id'], urut_pilihan:1}).then((result)=>{
+            this.setState({
+              calon_peserta_didik: result.payload
+            },()=>{
+              this.$f7.dialog.close()
+            })
+          })
+
+        }else{
+          //gagal
+          this.$f7.dialog.alert('Ada kesalahan pada sistem. Mohon coba kembali dalam beberapa saat!', 'Galat')
+        }
+      }).catch((err)=>{
+        this.$f7.dialog.alert('Ada kesalahan pada sistem. Mohon coba kembali dalam beberapa saat!', 'Galat')
+      })
+    })
+    
+  }
+
+  hapus = (calon_peserta_didik_id) => {
+    // alert('tes')
+    this.$f7.dialog.confirm('Apakah Anda yakin ingin menghapus data calon peserta didik ini?', 'Konfirmasi', ()=>{
+      this.$f7.dialog.preloader()
+
+      this.props.hapusCalonPesertaDidik({
+        calon_peserta_didik_id: calon_peserta_didik_id
+      }).then((result)=>{
+        this.$f7.dialog.close()
+
+        if(result.payload.sukses){
+          //berhasil
+          this.$f7.dialog.alert('Berhasil menghapus data!', 'Berhasil')
+
+          this.props.getCalonPesertaDidik({sekolah_id:this.$f7route.params['sekolah_id'], urut_pilihan:1}).then((result)=>{
+            this.setState({
+              calon_peserta_didik: result.payload
+            },()=>{
+              this.$f7.dialog.close()
+            })
+          })
+
+        }else{
+          //gagal
+          this.$f7.dialog.alert('Ada kesalahan pada sistem. Mohon coba kembali dalam beberapa saat!', 'Galat')
+        }
+      }).catch((err)=>{
+        this.$f7.dialog.alert('Ada kesalahan pada sistem. Mohon coba kembali dalam beberapa saat!', 'Galat')
+      })
+    })
+    
   }
 
   render()
@@ -154,7 +220,7 @@ class BerandaPPDB extends Component {
                                     </Card> */}
                                     <HeaderSekolahPPDB sekolah={this.state.sekolah} />
                                   </Col>
-                                  <Col width="0" tabletWidth="30">
+                                  <Col width="0" tabletWidth="30" className="hilangDiMobile">
                                     <Card style={{margin:'4px'}}>
                                         <CardContent>
                                             <Button style={{borderRadius:'20px', marginBottom:'4px'}} className="color-theme-deeporange" tabLink="#tab-0" onClick={()=>this.$f7router.navigate("/HomePPDB/"+this.$f7route.params['pengguna_id']+"/"+this.$f7route.params['sekolah_id'])}>Beranda</Button>
@@ -215,7 +281,7 @@ class BerandaPPDB extends Component {
                                                 <CardContent style={{padding:'8px'}}>
                                                   <Row>
                                                       <Col width="25" tabletWidth="20" desktopWidth="15">
-                                                          <div className="fotoSekolah" style={{width:'90px', height:'90px', backgroundImage: "url(https://be.diskuis.id"+(pas_foto !== '' ? pas_foto : (option.jenis_kelamin === 'L' ? '/assets/img/boy.jpg' : '/assets/img/girl.jpg'))+")", backgroundSize:'cover', backgroundPosition:'center'}}>
+                                                          <div className="fotoSekolah" style={{width:'80px', height:'90px', backgroundImage: "url(https://be.diskuis.id"+(pas_foto !== '' ? pas_foto : (option.jenis_kelamin === 'L' ? '/assets/img/boy.jpg' : '/assets/img/girl.jpg'))+")", backgroundSize:'cover', backgroundPosition:'center'}}>
                                                               &nbsp;
                                                           </div>
                                                       </Col>
@@ -236,13 +302,30 @@ class BerandaPPDB extends Component {
                                                               <Link style={{fontSize:'10px'}}>
                                                                 Sekolah pilihan lain
                                                               </Link>
+                                                              <div className="hilangDiMobile">
+                                                                <Button raised fill small style={{fontSize:'10px', height:'20px', display:'inline-flex'}} className={(parseInt(option.status_konfirmasi_id) === 1 ? 'color-theme-green' : 'color-theme-orange')}>
+                                                                    <i className="f7-icons" style={{fontSize:'15px'}}>{parseInt(option.status_konfirmasi_id) === 1 ? 'checkmark_seal' : 'circle'}</i>&nbsp;
+                                                                    {parseInt(option.status_konfirmasi_id) === 1 ? 'Terkonfirmasi' : 'Belum Terkonfirmasi'}
+                                                                </Button>
+                                                              </div>
                                                             </Col>
                                                             <Col width="50" tabletwidth="50" style={{border:'0px dashed #ccc', textAlign:'right', borderRadius:'10px'}}>
-                                                              {/* <span style={{fontSize:'10px'}}> */}
                                                               <span style={{fontSize:'15px', fontWeight:'bold'}}>{option.jalur}</span>
-                                                              {/* </span> */}
+                                                              {option.jalur_id === '0300' &&
+                                                              <div>
+                                                                <span style={{fontSize:'10px', fontWeight:'bold'}}>{option.nilai_prestasi.jenis_prestasi}</span>
+                                                                {parseInt(option.nilai_prestasi.jenis_prestasi_id) !== 3 &&
+                                                                  <div style={{fontSize:'8px'}}>{option.nilai_prestasi.tingkat_prestasi}</div>
+                                                                }
+                                                              </div>
+                                                              }
+                                                              {option.jalur_id === '0300' &&
+                                                                <span style={{fontSize:'12px'}}>
+                                                                  Poin: <b>{option.nilai_prestasi.skor}</b>
+                                                                </span>
+                                                              }
                                                             </Col>
-                                                            <Col width="100">
+                                                            <Col width="100" className="hilangDiDesktop">
                                                               <Button raised fill small style={{fontSize:'10px', height:'20px', display:'inline-flex'}} className={(parseInt(option.status_konfirmasi_id) === 1 ? 'color-theme-green' : 'color-theme-orange')}>
                                                                   <i className="f7-icons" style={{fontSize:'15px'}}>{parseInt(option.status_konfirmasi_id) === 1 ? 'checkmark_seal' : 'circle'}</i>&nbsp;
                                                                   {parseInt(option.status_konfirmasi_id) === 1 ? 'Terkonfirmasi' : 'Belum Terkonfirmasi'}
@@ -254,7 +337,13 @@ class BerandaPPDB extends Component {
                                                           <Button popoverOpen={".popover-menu-"+option.calon_peserta_didik_id}><i className="icons f7-icons">ellipsis_vertical</i></Button>
                                                           <Popover className={"popover-menu-"+option.calon_peserta_didik_id} style={{minWidth:'300px'}}>
                                                             <List>
-                                                                <ListItem onClick={()=>this.$f7router.navigate("/formBiodata/"+option.calon_peserta_didik_id+"/"+this.$f7route.params['pengguna_id']+"/"+this.$f7route.params['sekolah_id'])} link="#" popoverClose title="Edit Biodata" />
+                                                                <ListItem disabled={parseInt(option.status_konfirmasi_id) === 1 ? true : false} onClick={()=>this.$f7router.navigate("/formBiodata/"+option.calon_peserta_didik_id+"/"+this.$f7route.params['pengguna_id']+"/"+this.$f7route.params['sekolah_id'])} link="#" popoverClose title="Edit Biodata" />
+                                                                {/* <ListItem onClick={()=>window.open("http://mejabantu:8888/api/PPDB/print/formulir/"+option.calon_peserta_didik_id)} link="#" popoverClose title="Cetak Formulir Pendaftaran" />
+                                                                <ListItem onClick={()=>window.open("http://mejabantu:8888/api/PPDB/print/bukti/"+option.calon_peserta_didik_id)} link="#" popoverClose title="Cetak Bukti Pendaftaran" /> */}
+                                                                <ListItem disabled={parseInt(option.status_konfirmasi_id) !== 1 ? true : false} onClick={()=>window.open("https://be.diskuis.id/api/PPDB/print/formulir/"+option.calon_peserta_didik_id)} link="#" popoverClose title="Cetak Formulir Pendaftaran" />
+                                                                <ListItem disabled={parseInt(option.status_konfirmasi_id) !== 1 ? true : false} onClick={()=>window.open("https://be.diskuis.id/api/PPDB/print/bukti/"+option.calon_peserta_didik_id)} link="#" popoverClose title="Cetak Bukti Pendaftaran" />
+                                                                <ListItem disabled={parseInt(option.status_konfirmasi_id) !== 1 ? true : false} onClick={()=>this.batalKonfirmasi(option.calon_peserta_didik_id)} link="#" popoverClose title="Batalkan Konfirmasi" />
+                                                                <ListItem onClick={()=>this.hapus(option.calon_peserta_didik_id)} link="#" popoverClose title="Hapus" />
                                                             </List>
                                                         </Popover>
                                                       </Col>
@@ -305,7 +394,9 @@ function mapDispatchToProps(dispatch) {
     setLoading: Actions.setLoading,
     setTabActive: Actions.setTabActive,
     getSekolah: Actions.getSekolah,
-    getCalonPesertaDidik: Actions.getCalonPesertaDidik
+    getCalonPesertaDidik: Actions.getCalonPesertaDidik,
+    batalKonfirmasi: Actions.batalKonfirmasi,
+    hapusCalonPesertaDidik: Actions.hapusCalonPesertaDidik
   }, dispatch);
 }
 

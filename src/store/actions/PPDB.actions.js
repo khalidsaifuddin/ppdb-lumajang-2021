@@ -23,6 +23,8 @@ export const GET_JADWAL = '[APP] GET_JADWAL';
 export const GET_STATISTIK_SEKOLAH = '[APP] GET_STATISTIK_SEKOLAH';
 export const SIMPAN_NILAI_PRESTASI = '[APP] SIMPAN_NLAI_PRESTASI';
 export const GET_NILAI_PRESTASI = '[APP] GET_NILAI_PRESTASI';
+export const BATAL_KONFIRMASI = '[APP] BATAL_KONFIRMASI';
+export const HAPUS_CALON_PESERTA_DIDIK = '[APP] HAPUS_CALON_PESERTA_DIDIK';
 
 export function getCalonPesertaDidik(routeParams)
 {
@@ -390,6 +392,39 @@ export function getNilaiPrestasi(routeParams)
         request.then((response) =>
             dispatch({
                 type   : GET_NILAI_PRESTASI,
+                payload: response.data,
+                routeParams
+            })
+        );
+}
+
+export function batalKonfirmasi(routeParams)
+{
+    const request = axios.post(localStorage.getItem('api_base')+'/api/PPDB/batalKonfirmasi', {
+        ...routeParams
+    });
+
+    return (dispatch) =>
+        request.then((response) =>
+            dispatch({
+                type   : BATAL_KONFIRMASI,
+                payload: response.data,
+                routeParams
+            })
+        );
+}
+
+
+export function hapusCalonPesertaDidik(routeParams)
+{
+    const request = axios.post(localStorage.getItem('api_base')+'/api/PPDB/hapusCalonPesertaDidik', {
+        ...routeParams
+    });
+
+    return (dispatch) =>
+        request.then((response) =>
+            dispatch({
+                type   : HAPUS_CALON_PESERTA_DIDIK,
                 payload: response.data,
                 routeParams
             })

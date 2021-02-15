@@ -41,240 +41,154 @@ import moment from 'moment';
 import HeaderPPDB from './HeaderPPDB';
 import HeaderSekolahPPDB from './HeaderSekolahPPDB';
 
-class HomePPDB extends Component {
+class HomePPDBDinas extends Component {
 
-  state = {
-    error: null,
-    loading: true,
-    sekolah: {
-      gambar_logo: '/1.jpg'
-    },
-    routeParamsFilter: {
-      start: 0,
-      limit: 20
-    },
-    calon_peserta_didik: {
-      rows: [],
-      total: 0
-    },
-    statistik_sekolah: [],
-    jadwal: {
+    state = {
+        error: null,
+        loading: true,
+        sekolah: {
+        gambar_logo: '/1.jpg'
+        },
+        routeParamsFilter: {
+        start: 0,
+        limit: 20
+        },
+        calon_peserta_didik: {
         rows: [],
         total: 0
-    }
-  };
-
-
-  bulan = [
-    'Januari',
-    'Februari',
-    'Maret',
-    'April',
-    'Mei',
-    'Juni',
-    'Juli',
-    'Agustus',
-    'September',
-    'Oktober',
-    'November',
-    'Desember'
-]
-
-  formatAngka = (num) => {
-        return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
-  }
-
-  componentDidMount = () => {
-
-    if(!this.$f7route.params['sekolah_id'] && !this.$f7route.params['pengguna_id']){
-
-        if(parseInt(localStorage.getItem('sudah_login')) !== 1){
-            this.$f7router.navigate('/login/');
-            return true
+        },
+        statistik_sekolah: [],
+        jadwal: {
+            rows: [],
+            total: 0
         }
+    };
 
-        this.props.getSekolahPengguna({pengguna_id: JSON.parse(localStorage.getItem('user')).pengguna_id}).then((result)=>{
 
-            if(this.props.sekolah_pengguna.total > 0){
-  
-              this.setState({
-                ...this.state,
-                sekolah_pengguna: this.props.sekolah_pengguna
-              },()=>{
+    bulan = [
+        'Januari',
+        'Februari',
+        'Maret',
+        'April',
+        'Mei',
+        'Juni',
+        'Juli',
+        'Agustus',
+        'September',
+        'Oktober',
+        'November',
+        'Desember'
+    ]
 
+    formatAngka = (num) => {
+        return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
+    }
+
+    componentDidMount = () => {
+
+        
+
+
+    }
+
+    arrWarna = [
+        '#D83F87',
+        '#2A1B3D',
+        '#44318D',
+        '#E98074',
+        '#fc5644'
+    ]
+
+    keluar = () => {
+        localStorage.setItem('sudah_login', '0');
+        localStorage.setItem('user', '');
+        localStorage.setItem('token', '');
+        localStorage.setItem('sekolah_id_beranda', '');
+        localStorage.setItem('custom_logo_sekolah', '');
+        // localStorage.setItem('google_api', null);
+
+        // window.location.href="/";
+        if(localStorage.getItem('device') === 'android'){
+            window.location.reload(true);
+        }else{
+            window.location.href="/";
+        }
+    }
+
+    batalKonfirmasi = (calon_peserta_didik_id) => {
+        // alert('tes')
+        this.$f7.dialog.confirm('Apakah Anda yakin ingin membatalkan konfirmasi calon peserta didik ini?', 'Konfirmasi', ()=>{
+            this.$f7.dialog.preloader()
+
+            this.props.batalKonfirmasi({
+                calon_peserta_didik_id: calon_peserta_didik_id
+            }).then((result)=>{
                 this.$f7.dialog.close()
 
-                this.$f7router.navigate("/HomePPDB/"+JSON.parse(localStorage.getItem('user')).pengguna_id+"/"+this.state.sekolah_pengguna.rows[0].sekolah_id)
+                if(result.payload.sukses){
+                //berhasil
+                this.$f7.dialog.alert('Berhasil menyimpan data!', 'Berhasil')
 
-                // // console.log(this)
-                // this.$f7.dialog.preloader()
-                
-                // this.props.getSekolah({sekolah_id:this.state.sekolah_pengguna.rows[0].sekolah_id, pengguna_id: JSON.parse(localStorage.getItem('user')).pengguna_id}).then((result)=>{
-                //     this.setState({
-                //         sekolah: result.payload.rows[0]
-                //     },()=>{
-                //         this.$f7.dialog.close()
-                //         this.props.getStatistikSekolah({sekolah_id:this.state.sekolah_pengguna.rows[0].sekolah_id}).then((result)=>{
-                //             this.setState({
-                //                 statistik_sekolah: result.payload
-                //             },()=>{
-                //                 this.props.getJadwal({param:'hari_ini'}).then((result)=>{
-                //                     this.setState({
-                //                         jadwal: result.payload
-                //                     },()=>{
-                //                         this.props.getCalonPesertaDidik({...this.state.routeParams, limit: 2, sekolah_id:this.state.sekolah_pengguna.rows[0].sekolah_id }).then((result)=>{
-                //                             this.setState({
-                //                                 calon_peserta_didik: result.payload
-                //                             })
-                //                         })
-                //                     })
-                //                 })
-                //             })
-                //         })
-                //     })
-                // })
-  
-                localStorage.setItem('getSekolahPengguna:'+JSON.parse(localStorage.getItem('user')).pengguna_id, JSON.stringify(this.props.sekolah_pengguna))
-              
-              })
-  
-            }
-  
-        })
-
-    }else{
-
-        // console.log(this)
-        this.$f7.dialog.preloader()
-        
-        this.props.getSekolah({sekolah_id:this.$f7route.params['sekolah_id'], pengguna_id: this.$f7route.params['pengguna_id']}).then((result)=>{
-          this.setState({
-              sekolah: result.payload.rows[0]
-          },()=>{
-            this.$f7.dialog.close()
-            this.props.getStatistikSekolah({sekolah_id:this.$f7route.params['sekolah_id']}).then((result)=>{
-                this.setState({
-                    statistik_sekolah: result.payload
-                },()=>{
-                    this.props.getJadwal({param:'hari_ini'}).then((result)=>{
-                        this.setState({
-                            jadwal: result.payload
-                        },()=>{
-                            this.props.getCalonPesertaDidik({...this.state.routeParams, limit: 3, sekolah_id:this.$f7route.params['sekolah_id'], urut_pilihan:1 }).then((result)=>{
-                                this.setState({
-                                    calon_peserta_didik: result.payload
-                                })
-                            })
-                        })
+                this.props.getCalonPesertaDidik({sekolah_id:this.$f7route.params['sekolah_id'], urut_pilihan:1}).then((result)=>{
+                    this.setState({
+                    calon_peserta_didik: result.payload
+                    },()=>{
+                    this.$f7.dialog.close()
                     })
                 })
+
+                }else{
+                //gagal
+                this.$f7.dialog.alert('Ada kesalahan pada sistem. Mohon coba kembali dalam beberapa saat!', 'Galat')
+                }
+            }).catch((err)=>{
+                this.$f7.dialog.alert('Ada kesalahan pada sistem. Mohon coba kembali dalam beberapa saat!', 'Galat')
             })
-          })
         })
-
+        
     }
 
+    hapus = (calon_peserta_didik_id) => {
+        // alert('tes')
+        this.$f7.dialog.confirm('Apakah Anda yakin ingin menghapus data calon peserta didik ini?', 'Konfirmasi', ()=>{
+            this.$f7.dialog.preloader()
 
-  }
+            this.props.hapusCalonPesertaDidik({
+                calon_peserta_didik_id: calon_peserta_didik_id
+            }).then((result)=>{
+                this.$f7.dialog.close()
 
-  arrWarna = [
-    '#D83F87',
-    '#2A1B3D',
-    '#44318D',
-    '#E98074',
-    '#fc5644'
-  ]
+                if(result.payload.sukses){
+                //berhasil
+                this.$f7.dialog.alert('Berhasil menghapus data!', 'Berhasil')
 
-  keluar = () => {
-    localStorage.setItem('sudah_login', '0');
-    localStorage.setItem('user', '');
-    localStorage.setItem('token', '');
-    localStorage.setItem('sekolah_id_beranda', '');
-    localStorage.setItem('custom_logo_sekolah', '');
-    // localStorage.setItem('google_api', null);
+                this.props.getCalonPesertaDidik({sekolah_id:this.$f7route.params['sekolah_id'], urut_pilihan:1}).then((result)=>{
+                    this.setState({
+                    calon_peserta_didik: result.payload
+                    },()=>{
+                    this.$f7.dialog.close()
+                    })
+                })
 
-    // window.location.href="/";
-    if(localStorage.getItem('device') === 'android'){
-        window.location.reload(true);
-    }else{
-        window.location.href="/";
+                }else{
+                //gagal
+                this.$f7.dialog.alert('Ada kesalahan pada sistem. Mohon coba kembali dalam beberapa saat!', 'Galat')
+                }
+            }).catch((err)=>{
+                this.$f7.dialog.alert('Ada kesalahan pada sistem. Mohon coba kembali dalam beberapa saat!', 'Galat')
+            })
+        })
+        
     }
-  }
 
-  batalKonfirmasi = (calon_peserta_didik_id) => {
-    // alert('tes')
-    this.$f7.dialog.confirm('Apakah Anda yakin ingin membatalkan konfirmasi calon peserta didik ini?', 'Konfirmasi', ()=>{
-      this.$f7.dialog.preloader()
-
-      this.props.batalKonfirmasi({
-        calon_peserta_didik_id: calon_peserta_didik_id
-      }).then((result)=>{
-        this.$f7.dialog.close()
-
-        if(result.payload.sukses){
-          //berhasil
-          this.$f7.dialog.alert('Berhasil menyimpan data!', 'Berhasil')
-
-          this.props.getCalonPesertaDidik({sekolah_id:this.$f7route.params['sekolah_id'], urut_pilihan:1}).then((result)=>{
-            this.setState({
-              calon_peserta_didik: result.payload
-            },()=>{
-              this.$f7.dialog.close()
-            })
-          })
-
-        }else{
-          //gagal
-          this.$f7.dialog.alert('Ada kesalahan pada sistem. Mohon coba kembali dalam beberapa saat!', 'Galat')
-        }
-      }).catch((err)=>{
-        this.$f7.dialog.alert('Ada kesalahan pada sistem. Mohon coba kembali dalam beberapa saat!', 'Galat')
-      })
-    })
-    
-  }
-
-  hapus = (calon_peserta_didik_id) => {
-    // alert('tes')
-    this.$f7.dialog.confirm('Apakah Anda yakin ingin menghapus data calon peserta didik ini?', 'Konfirmasi', ()=>{
-      this.$f7.dialog.preloader()
-
-      this.props.hapusCalonPesertaDidik({
-        calon_peserta_didik_id: calon_peserta_didik_id
-      }).then((result)=>{
-        this.$f7.dialog.close()
-
-        if(result.payload.sukses){
-          //berhasil
-          this.$f7.dialog.alert('Berhasil menghapus data!', 'Berhasil')
-
-          this.props.getCalonPesertaDidik({sekolah_id:this.$f7route.params['sekolah_id'], urut_pilihan:1}).then((result)=>{
-            this.setState({
-              calon_peserta_didik: result.payload
-            },()=>{
-              this.$f7.dialog.close()
-            })
-          })
-
-        }else{
-          //gagal
-          this.$f7.dialog.alert('Ada kesalahan pada sistem. Mohon coba kembali dalam beberapa saat!', 'Galat')
-        }
-      }).catch((err)=>{
-        this.$f7.dialog.alert('Ada kesalahan pada sistem. Mohon coba kembali dalam beberapa saat!', 'Galat')
-      })
-    })
-    
-  }
-
-  render()
+    render()
     {
 
         let hari_ini = '';
         hari_ini = moment().format('D') + ' ' + this.bulan[(moment().format('M')-1)] + ' ' + moment().format('YYYY');
 
         return (
-          <Page name="HomePPDB" hideBarsOnScroll>
+          <Page name="HomePPDBDinas" hideBarsOnScroll>
             
             <HeaderPPDB pengguna_id={this.$f7route.params['pengguna_id']} sekolah_id={this.$f7route.params['sekolah_id']} />
 
@@ -285,15 +199,15 @@ class HomePPDB extends Component {
                   <Col width="100" tabletWidth="90" desktopWidth="80">
                         <Row noGap>
                             <Col width="100" tabletWidth="100">                                    
-                            <HeaderSekolahPPDB sekolah={this.state.sekolah} />
+                            {/* <HeaderSekolahPPDB sekolah={this.state.sekolah} /> */}
                             </Col>
                             <Col width="0" tabletWidth="30" className="hilangDiMobile">
                                 <Card style={{margin:'4px'}}>
                                     <CardContent>
                                         <Button style={{borderRadius:'20px', marginBottom:'4px'}} className="color-theme-deeporange bawahCiri" tabLink="#tab-0" tabLinkActive>Beranda</Button>
-                                        <Button style={{borderRadius:'20px', marginBottom:'4px'}} className="color-theme-deeporange" tabLink="#tab-1" onClick={()=>this.$f7router.navigate("/PPDB/"+this.$f7route.params['pengguna_id']+"/"+this.$f7route.params['sekolah_id'])}>Data Pendaftar</Button>
-                                        <Button style={{borderRadius:'20px', marginBottom:'4px'}} className="color-theme-deeporange" tabLink="#tab-3" onClick={()=>this.$f7router.navigate("/formulirPPDB/"+this.$f7route.params['pengguna_id']+"/"+this.$f7route.params['sekolah_id'])}>Tambah Pendaftar</Button>
-                                        <Button style={{borderRadius:'20px', marginBottom:'4px'}} className="color-theme-deeporange" tabLink="#tab-3" onClick={()=>this.$f7router.navigate("/jadwalPPDB/"+this.$f7route.params['pengguna_id']+"/"+this.$f7route.params['sekolah_id'])}>Jadwal</Button>
+                                        <Button style={{borderRadius:'20px', marginBottom:'4px'}} className="color-theme-deeporange" tabLink="#tab-1" onClick={()=>this.$f7router.navigate("/PPDB/"+this.$f7route.params['pengguna_id'])}>Data Pendaftar</Button>
+                                        <Button style={{borderRadius:'20px', marginBottom:'4px'}} className="color-theme-deeporange" tabLink="#tab-1" onClick={()=>this.$f7router.navigate("/PPDB/"+this.$f7route.params['pengguna_id'])}>Jadwal</Button>
+                                        <Button style={{borderRadius:'20px', marginBottom:'4px'}} className="color-theme-deeporange" tabLink="#tab-1" onClick={()=>this.$f7router.navigate("/PPDB/"+this.$f7route.params['pengguna_id'])}>Kuota Sekolah</Button>
                                         <Button style={{borderRadius:'20px', marginBottom:'4px', background:'#eeeeee', color:'red', marginTop:'16px'}} className="color-theme-deeporange" tabLink="#tab-3" onClick={this.keluar}>Keluar</Button>
                                     </CardContent>
                                 </Card>
@@ -520,4 +434,4 @@ function mapStateToProps({ App, Sekolah }) {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(HomePPDB);
+export default connect(mapStateToProps, mapDispatchToProps)(HomePPDBDinas);

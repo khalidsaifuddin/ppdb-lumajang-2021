@@ -93,6 +93,7 @@ class formSekolahPilihan extends Component {
     }
 
     componentDidMount = () => {
+        this.$f7.dialog.preloader()
 
         this.props.getSekolah({sekolah_id:this.$f7route.params['sekolah_id'], pengguna_id: this.$f7route.params['pengguna_id']}).then((result)=>{
             this.setState({
@@ -103,7 +104,7 @@ class formSekolahPilihan extends Component {
 
                 this.props.getJalurPPDB({...this.state.routeParams, jalur_id: null}).then((result)=>{
 
-                    this.props.getCalonPesertaDidik(this.state.routeParams).then((result)=>{
+                    this.props.getCalonPesertaDidik({...this.state.routeParams, sekolah_id:null}).then((result)=>{
                         this.setState({
                             routeParams: {
                                 ...result.payload.rows[0],
@@ -123,6 +124,8 @@ class formSekolahPilihan extends Component {
                                     jalur_id: jalur_id
                                 },()=>{
                                     console.log(this.state.jalur_id)
+
+                                    this.$f7.dialog.close()
 
                                     //nilai prestasi
                                     this.props.getNilaiPrestasi(this.state.routeParams).then((result)=>{
@@ -175,28 +178,36 @@ class formSekolahPilihan extends Component {
     }
 
     simpan = () => {
-        this.$f7.dialog.preloader()
-        
-        this.props.simpanSekolahPilihan({peserta_didik_id: this.$f7route.params['peserta_didik_id'], jalur_id: this.state.jalur_id}).then((result)=> {
 
-            this.props.simpanNilaiPrestasi({
-                pengguna_id: this.$f7route.params['pengguna_id'],
-                peserta_didik_id: this.$f7route.params['peserta_didik_id'],
-                jenis_prestasi_id: this.state.jenis_prestasi_id,
-                tingkat_prestasi_id: this.state.tingkat_prestasi_id,
-                nilai_semester_1: this.state.nilai_semester_1,
-                nilai_semester_2: this.state.nilai_semester_2,
-                nilai_semester_3: this.state.nilai_semester_3,
-                nilai_semester_4: this.state.nilai_semester_4,
-                nilai_semester_5: this.state.nilai_semester_5
-            }).then((result)=>{
-
-                this.$f7.dialog.close()
-                this.$f7router.navigate("/formBerkas/"+this.$f7route.params['peserta_didik_id']+"/"+this.$f7route.params['pengguna_id']+"/"+this.$f7route.params['sekolah_id']+'/'+this.state.jalur_id)
-
+        if(this.state.sekolah_pilihan.total < 4){
+            //nggak boleh
+            this.$f7.dialog.alert('Mohon maaf, mohon lengkapi pilihan sekolah Pendaftar ini hingga 4 sekolah sebelum melanjutkan!', 'Peringatan')
+        }else{
+            //boleh
+            this.$f7.dialog.preloader()
+            
+            this.props.simpanSekolahPilihan({peserta_didik_id: this.$f7route.params['peserta_didik_id'], jalur_id: this.state.jalur_id}).then((result)=> {
+    
+                this.props.simpanNilaiPrestasi({
+                    pengguna_id: this.$f7route.params['pengguna_id'],
+                    peserta_didik_id: this.$f7route.params['peserta_didik_id'],
+                    jenis_prestasi_id: this.state.jenis_prestasi_id,
+                    tingkat_prestasi_id: this.state.tingkat_prestasi_id,
+                    nilai_semester_1: this.state.nilai_semester_1,
+                    nilai_semester_2: this.state.nilai_semester_2,
+                    nilai_semester_3: this.state.nilai_semester_3,
+                    nilai_semester_4: this.state.nilai_semester_4,
+                    nilai_semester_5: this.state.nilai_semester_5
+                }).then((result)=>{
+    
+                    this.$f7.dialog.close()
+                    this.$f7router.navigate("/formBerkas/"+this.$f7route.params['peserta_didik_id']+"/"+this.$f7route.params['pengguna_id']+"/"+this.$f7route.params['sekolah_id']+'/'+this.state.jalur_id)
+    
+                })
+    
             })
+        }
 
-        })
       }
 
     hapusSekolah = (sekolah_id) => (e) => {
@@ -248,7 +259,7 @@ class formSekolahPilihan extends Component {
                   <Col width="100" tabletWidth="90" desktopWidth="70">
                     <Row noGap>
                         <Col width="100" tabletWidth="100">
-                        <HeaderSekolahPPDB sekolah={this.state.sekolah} />
+                            <HeaderSekolahPPDB pengguna_id={this.$f7route.params['pengguna_id']} sekolah={this.state.sekolah} f7={this} />
                         </Col>
                         <Col width="0" tabletWidth="100">
                         <Card style={{margin:'4px'}}>
@@ -346,7 +357,7 @@ class formSekolahPilihan extends Component {
                                                     <Col width="50">
                                                         <List>
                                                             <ListInput
-                                                                label="Nilai Rapor Semester 1"
+                                                                label="Nilai Rapor Semester 7"
                                                                 type="number"
                                                                 value={this.state.nilai_semester_1}
                                                                 placeholder="Semester 1..."
@@ -354,7 +365,7 @@ class formSekolahPilihan extends Component {
                                                                 // info="Sesuai rapor sekolah"
                                                             />
                                                             <ListInput
-                                                                label="Nilai Rapor Semester 2"
+                                                                label="Nilai Rapor Semester 8"
                                                                 type="number"
                                                                 value={this.state.nilai_semester_2}
                                                                 placeholder="Semester 2..."
@@ -362,7 +373,7 @@ class formSekolahPilihan extends Component {
                                                                 // info="Sesuai rapor sekolah"
                                                             />
                                                             <ListInput
-                                                                label="Nilai Rapor Semester 3"
+                                                                label="Nilai Rapor Semester 9"
                                                                 type="number"
                                                                 value={this.state.nilai_semester_3}
                                                                 placeholder="Semester 3..."
@@ -374,7 +385,7 @@ class formSekolahPilihan extends Component {
                                                     <Col width="50">
                                                         <List>
                                                             <ListInput
-                                                                label="Nilai Rapor Semester 4"
+                                                                label="Nilai Rapor Semester 10"
                                                                 type="number"
                                                                 value={this.state.nilai_semester_4}
                                                                 placeholder="Semester 4..."
@@ -382,7 +393,7 @@ class formSekolahPilihan extends Component {
                                                                 // info="Sesuai rapor sekolah"
                                                             />
                                                             <ListInput
-                                                                label="Nilai Rapor Semester 5"
+                                                                label="Nilai Rapor Semester 11"
                                                                 type="number"
                                                                 value={this.state.nilai_semester_5}
                                                                 placeholder="Semester 5..."
@@ -415,7 +426,7 @@ class formSekolahPilihan extends Component {
                                                                 <i className="icons f7-icons" style={{fontSize:'40px', color:'#434343'}}>info_circle</i>
                                                             </Col>
                                                             <Col width="85" tabletWidth="90" style={{color:'#434343'}}>
-                                                                Jumlah minimal sekolah yang dipilih adalah <b>3 sekolah</b>, dan maksimal adalah <b>4 sekolah</b>, dengan sekolah keempat harus berstatus <b>sekolah swasta</b>
+                                                                Jumlah minimal sekolah yang dipilih adalah <b>4 sekolah</b>, dengan pilihan sekolah pertama hingga ketiga adalah sekolah negeri, dan sekolah keempat harus berstatus <b>sekolah swasta</b>
                                                             </Col>
                                                         </Row>
                                                     </CardContent>

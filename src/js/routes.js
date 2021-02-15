@@ -11,12 +11,10 @@ import LeftPage2 from '../pages/left-page-2.jsx';
 import NotFoundPage from '../pages/404.jsx';
 import SettingsPage from '../pages/settings.jsx';
 
-import tambahPertanyaan from '../pages/Pertanyaan/tambahPertanyaan';
 import pertanyaanPengguna from '../pages/Pertanyaan/pertanyaanPengguna';
 import tampilPertanyaan from '../pages/Pertanyaan/tampilPertanyaan';
 import pantauan from '../pages/Pertanyaan/pantauan';
 import jawabPertanyaan from '../pages/Pertanyaan/jawabPertanyaan';
-import cariPertanyaan from '../pages/Pertanyaan/cariPertanyaan';
 import notifikasi from '../pages/Notifikasi/notifikasi';
 import ruang from '../pages/Ruang/ruang';
 import tambahRuang from '../pages/Ruang/tambahRuang';
@@ -41,8 +39,6 @@ import RiwayatSesiKuis from '../pages/Kuis/RiwayatSesiKuis';
 import laporanHasilKuis from '../pages/Kuis/laporanHasilKuis';
 import tampilPengguna from '../pages/Pengguna/tampilPengguna';
 import cariKuis from '../pages/Kuis/cariKuis';
-import kategori from '../pages/Kuis/kategori';
-import daftarKuis from '../pages/Kuis/daftarKuis';
 import BerandaEmpu from '../pages/BerandaEmpu';
 import tampilKuis from '../pages/Kuis/tampilKuis';
 import formPertanyaan from '../pages/Kuis/formPertanyaan';
@@ -50,54 +46,24 @@ import Pricing from '../pages/Pricing';
 import statistikKuis from '../pages/Kuis/statistikKuis';
 import daftar from '../pages/daftar';
 import BerandaSekolah from '../pages/Sekolah/BerandaSekolah';
-import kelolaSekolah from '../pages/Sekolah/kelolaSekolah';
 import formSekolah from '../pages/Sekolah/formSekolah';
 import kodeSekolah from '../pages/Sekolah/kodeSekolah';
 import daftarGuru from '../pages/Sekolah/daftarGuru';
-import tambahGuru from '../pages/Sekolah/tambahGuru';
 import buatKodeSekolah from '../pages/Sekolah/buatKodeSekolah';
-import undanganSekolah from '../pages/Sekolah/undanganSekolah';
-import daftarSekolahGuru from '../pages/Sekolah/daftarSekolahGuru';
-import menuSekolahGuru from '../pages/Sekolah/menuSekolahGuru';
-import profilGuru from '../pages/Sekolah/profilGuru';
 import gabungSekolah from '../pages/Sekolah/gabungSekolah';
-import vervalGuru from '../pages/Sekolah/vervalGuru';
-import kehadiranGuru from '../pages/Sekolah/kehadiranGuru';
-import kehadiranHarianGuru from '../pages/Sekolah/kehadiranHarianGuru';
-import kehadiranRekapGuru from '../pages/Sekolah/kehadiranRekapGuru';
-import pengaturanSekolah from '../pages/Sekolah/pengaturanSekolah';
 import pengaturanPengguna from '../pages/Pengguna/pengaturanPengguna';
-import daftarSiswa from '../pages/Sekolah/daftarSiswa';
-import tambahSiswa from '../pages/Sekolah/tambahSiswa';
-import menuSekolahSiswa from '../pages/Sekolah/menuSekolahSiswa';
 import kolaborasiKuis from '../pages/Kuis/kolaborasiKuis';
 import tambahKolaborasiKuis from '../pages/Kuis/tambahKolaborasiKuis';
-import tambahBagianKuis from '../pages/Kuis/tambahBagianKuis';
 import KuisFavorit from '../pages/Kuis/KuisFavorit';
 import Playlist from '../pages/Playlist/Playlist';
 import formPlaylist from '../pages/Playlist/formPlaylist';
 import TampilPlaylist from '../pages/Playlist/TampilPlaylist';
 import TambahKuisPlaylist from '../pages/Playlist/TambahKuisPlaylist';
-import dokumenGuru from '../pages/Sekolah/dokumenGuru';
-import tambahDokumenGuru from '../pages/Sekolah/tambahDokumenGuru';
-import EmpuKuis from '../pages/Empu/EmpuKuis';
-import EmpuKuisKumulatif from '../pages/Empu/EmpuKuisKumulatif';
-import vervalSiswa from '../pages/Sekolah/vervalSiswa';
-import daftarRuang from '../pages/Sekolah/daftarRuang';
-import tambahRuangSekolah from '../pages/Sekolah/tambahRuangSekolah';
 import kehadiranRuang from '../pages/Sekolah/kehadiranRuang';
 import profilSekolah from '../pages/Sekolah/profilSekolah';
-import kehadiranSiswa from '../pages/Sekolah/kehadiranSiswa';
-import kehadiranHarianSiswa from '../pages/Sekolah/kehadiranHarianSiswa';
-import kehadiranRekapSiswa from '../pages/Sekolah/kehadiranRekapSiswa';
 import tampilAktivitas from '../pages/tampilAktivitas';
-import KelolaBlog from '../pages/Empu/KelolaBlog';
-import tambahBlog from '../pages/Empu/tambahBlog';
-import FormBerlangganan from '../pages/Langganan/FormBerlangganan';
 import gantiGambar from '../pages/Pengguna/gantiGambar';
 import tambahAnggotaRuang from '../pages/Ruang/tambahAnggotaRuang';
-import Leaderboard from '../pages/Poin/Leaderboard';
-import LeaderboardGlobal from '../pages/Poin/LeaderboardGlobal';
 import BerandaPPDB from '../pages/PPDB/BerandaPPDB';
 import formulirPendaftaran from '../pages/PPDB/formulirPendaftaran';
 import jadwalPPDB from '../pages/PPDB/jadwalPPDB';
@@ -108,6 +74,7 @@ import pilihSekolahPilihan from '../pages/PPDB/pilihSekolahPilihan';
 import formBerkas from '../pages/PPDB/formBerkas';
 import formKonfirmasi from '../pages/PPDB/formKonfirmasi';
 import HomePPDB from '../pages/PPDB/HomePPDB';
+import HomePPDBDinas from '../pages/PPDB/HomePPDBDinas';
 
 // console.log(localStorage.getItem('kode_aplikasi'));
 
@@ -122,7 +89,10 @@ var routes = [
           BerandaGuru : 
           (localStorage.getItem('kode_aplikasi') === 'MEJA-PPDB' ? 
             HomePPDB :
+            (localStorage.getItem('kode_aplikasi') === 'MEJA-PPDB-DINAS' ?
+            HomePPDBDinas : 
             BerandaEmpu
+            )
           )
         )
       ) : 
@@ -183,52 +153,6 @@ var routes = [
   {
     path: '/petaPD/:pengguna_id/:sekolah_id/:peserta_didik_id/:lintang/:bujur',
     component: PetaPD
-  },
-  {
-    path: '/EmpuKuis/:jenis',
-    component: EmpuKuis
-  },
-  {
-    path: '/EmpuKuisKumulatif/:jenis',
-    component: EmpuKuisKumulatif
-  },
-  {
-    path: '/tambahPertanyaan',
-    component: tambahPertanyaan
-  },
-  {
-    path: '/Leaderboard',
-    component: Leaderboard
-  },
-  {
-    path: '/LeaderboardGlobal',
-    component: LeaderboardGlobal
-  },
-  {
-    path: '/tambahPertanyaan/:ruang_id',
-    component: tambahPertanyaan
-  },
-  {
-    path: '/editPertanyaan/:pertanyaan_id',
-    component: tambahPertanyaan
-  },
-  {
-    path: '/Cari',
-    component: cariPertanyaan
-  },
-  {
-    path: '/kategori',
-    component: kategori,
-    keepAlive: true
-  },
-  {
-    path: '/daftarKuis/:mata_pelajaran_id',
-    component: daftarKuis
-  },
-  {
-    path: '/Kuis',
-    component: kuis,
-    keepAlive: false
   },
   {
     path: '/buatSesiKuis/:kuis_id',
@@ -500,98 +424,6 @@ var routes = [
     component: daftarGuru
   },
   {
-    path: '/daftarSiswa/:sekolah_id',
-    component: daftarSiswa
-  },
-  {
-    path: '/daftarRuang/:sekolah_id',
-    component: daftarRuang
-  },
-  {
-    path: '/profilGuru/:pengguna_id/:sekolah_id',
-    component: profilGuru
-  },
-  {
-    path: '/dokumenGuru/:pengguna_id/:sekolah_id',
-    component: dokumenGuru
-  },
-  {
-    path: '/tambahDokumenGuru/:pengguna_id/:sekolah_id',
-    component: tambahDokumenGuru
-  },
-  {
-    path: '/vervalGuru/:pengguna_id/:sekolah_id',
-    component: vervalGuru
-  },
-  {
-    path: '/vervalSiswa/:pengguna_id/:sekolah_id',
-    component: vervalSiswa
-  },
-  {
-    path: '/kehadiranSiswa/:pengguna_id/:sekolah_id',
-    component: kehadiranSiswa
-  },
-  {
-    path: '/kehadiranHarianSiswa/:pengguna_id/:sekolah_id',
-    component: kehadiranHarianSiswa
-  },
-  {
-    path: '/kehadiranRekapSiswa/:sekolah_id',
-    component: kehadiranRekapSiswa
-  },
-  {
-    path: '/kehadiranGuru/:pengguna_id/:sekolah_id',
-    component: kehadiranGuru
-  },
-  {
-    path: '/kehadiranHarianGuru/:pengguna_id/:sekolah_id',
-    component: kehadiranHarianGuru
-  },
-  {
-    path: '/kehadiranRekapGuru/:sekolah_id',
-    component: kehadiranRekapGuru
-  },
-  {
-    path: '/menuSekolahGuru/:sekolah_id',
-    component: menuSekolahGuru
-  },
-  {
-    path: '/menuSekolahSiswa/:sekolah_id',
-    component: menuSekolahSiswa
-  },
-  {
-    path: '/pengaturanSekolah/:sekolah_id',
-    component: pengaturanSekolah
-  },
-  {
-    path: '/undanganSekolah/:sekolah_id',
-    component: undanganSekolah
-  },
-  {
-    path: '/tambahGuru/:sekolah_id',
-    component: tambahGuru
-  },
-  {
-    path: '/tambahSiswa/:sekolah_id',
-    component: tambahSiswa
-  },
-  {
-    path: '/tambahRuangSekolah/:sekolah_id',
-    component: tambahRuangSekolah
-  },
-  {
-    path: '/daftarSekolahGuru/:pengguna_id',
-    component: daftarSekolahGuru
-  },
-  {
-    path: '/kelolaSekolah/',
-    component: kelolaSekolah
-  },
-  {
-    path: '/formSekolah/',
-    component: formSekolah
-  },
-  {
     path: '/formSekolah/:sekolah_id',
     component: formSekolah
   },
@@ -630,38 +462,6 @@ var routes = [
   {
     path: '/settings/',
     component: SettingsPage,
-  },
-  {
-    path: '/formBerlangganan/',
-    component: FormBerlangganan,
-  },
-  {
-    path: '/kelola-blog/',
-    component: KelolaBlog,
-  },
-  {
-    path: '/tambah-artikel/',
-    component: tambahBlog,
-  },
-  {
-    path: '/tambah-artikel/:artikel_id',
-    component: tambahBlog,
-  },
-  {
-    path: '/tambahBagianKuis/:kuis_id',
-    component: tambahBagianKuis
-  },
-  {
-    path: '/tambahBagianKuis/:pengguna_id/:kuis_id',
-    component: tambahBagianKuis
-  },
-  {
-    path: '/tambahBagianKuis/:pengguna_id/:kuis_id/:bagian_kuis_id',
-    component: tambahBagianKuis
-  },
-  {
-    path: '/tambahBagianKuis/:pengguna_id/:kuis_id/:bagian_kuis_id/:induk_bagian_kuis_id',
-    component: tambahBagianKuis
   },
   {
     path: '/left-page-1/',

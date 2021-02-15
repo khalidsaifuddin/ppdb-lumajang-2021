@@ -298,6 +298,11 @@ body {
   background: url("/static/icons/17876754.png"), #ED213A;  
   background-image: url("/static/icons/17876754.png"), -webkit-linear-gradient(to right, #93291E, #F27121); 
   background-image: url("/static/icons/17876754.png"), linear-gradient(to right, #93291E, #F27121); 
+
+  background-image: url("/static/icons/17876754.png");
+  background: url("/static/icons/17876754.png"), #064307;  
+  background-image: url("/static/icons/17876754.png"), -webkit-linear-gradient(to right, #0f9b0f, #064307); 
+  background-image: url("/static/icons/17876754.png"), linear-gradient(to right, #0f9b0f, #064307); 
   background-size: contain;
 
 }
@@ -627,10 +632,21 @@ body {
   background: -webkit-linear-gradient(to right, #93291E, #F27121);  /* Chrome 10-25, Safari 5.1-6 */
   background: linear-gradient(to right, #93291E, #F27121); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 
+  background: #000000;  /* fallback for old browsers */
+  background: -webkit-linear-gradient(to right, #0f9b0f, #000000);  /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(to right, #0f9b0f, #000000); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+
+
   background-image: url("/static/icons/17876754.png");
   background: url("/static/icons/17876754.png"), #ED213A;  
   background-image: url("/static/icons/17876754.png"), -webkit-linear-gradient(to right, #93291E, #F27121); 
   background-image: url("/static/icons/17876754.png"), linear-gradient(to right, #93291E, #F27121); 
+  background-size: contain;
+
+  background-image: url("/static/icons/17876754.png");
+  background: url("/static/icons/17876754.png"), #ED213A;  
+  background-image: url("/static/icons/17876754.png"), -webkit-linear-gradient(to right, #0f9b0f, #064307); 
+  background-image: url("/static/icons/17876754.png"), linear-gradient(to right, #0f9b0f, #064307); 
   background-size: contain;
   
   padding:16px;
@@ -1211,5 +1227,27 @@ h2 {
   min-height: 120px;
   margin: 4px;
 }
+
+.bgGradient1 {
+  background-image: linear-gradient(-60deg, #ff5858 0%, #f09819 100%);
+}
+
+.bgGradient2 {
+  background-image: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.bgGradient3 {
+  background-image: linear-gradient(90deg, #16a085 0%, #f4d03f 100%);
+}
+
+.bgGradient4 {
+  background-image: linear-gradient(to top, #c71d6f 0%, #d09693 100%);
+}
+
+.bgGradient5 {
+  background-image: linear-gradient(45deg, #874da2 0%, #c43a30 100%);
+}
+
+
 
 

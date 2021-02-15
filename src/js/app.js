@@ -96,7 +96,8 @@ localStorage.setItem('custom_logo_sekolah','/assets/berkas/lumajang_logo_besar.p
 
 localStorage.setItem('judul_aplikasi','PPDB Kab Lumajang 2021');
 localStorage.setItem('sub_judul_aplikasi','Dinas Pendidikan Kabupaten Lumajang');
-localStorage.setItem('kode_aplikasi','MEJA-PPDB');
+localStorage.setItem('kode_aplikasi','MEJA-PPDB-DINAS');
+// localStorage.setItem('kode_aplikasi','MEJA-PPDB-DINAS');
 localStorage.setItem('tema_warna_aplikasi','biru-1');
 localStorage.setItem('wilayah_aplikasi','');
 localStorage.setItem('kode_wilayah_aplikasi','026100');
