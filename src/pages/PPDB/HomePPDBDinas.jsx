@@ -85,8 +85,29 @@ class HomePPDBDinas extends Component {
     }
 
     componentDidMount = () => {
-
         
+        if(parseInt(localStorage.getItem('sudah_login')) !== 1){
+            this.$f7router.navigate('/login/');
+            return true
+        }
+
+        this.props.getStatistikDinas({kode_wilayah:'052100'}).then((result)=>{
+            this.setState({
+                statistik_sekolah: result.payload
+            },()=>{
+                this.props.getJadwal({param:'hari_ini'}).then((result)=>{
+                    this.setState({
+                        jadwal: result.payload
+                    },()=>{
+                        this.props.getCalonPesertaDidik({...this.state.routeParams, limit: 3, sekolah_id:null, urut_pilihan:1 }).then((result)=>{
+                            this.setState({
+                                calon_peserta_didik: result.payload
+                            })
+                        })
+                    })
+                })
+            })
+        })
 
 
     }
@@ -205,9 +226,9 @@ class HomePPDBDinas extends Component {
                                 <Card style={{margin:'4px'}}>
                                     <CardContent>
                                         <Button style={{borderRadius:'20px', marginBottom:'4px'}} className="color-theme-deeporange bawahCiri" tabLink="#tab-0" tabLinkActive>Beranda</Button>
-                                        <Button style={{borderRadius:'20px', marginBottom:'4px'}} className="color-theme-deeporange" tabLink="#tab-1" onClick={()=>this.$f7router.navigate("/PPDB/"+this.$f7route.params['pengguna_id'])}>Data Pendaftar</Button>
-                                        <Button style={{borderRadius:'20px', marginBottom:'4px'}} className="color-theme-deeporange" tabLink="#tab-1" onClick={()=>this.$f7router.navigate("/PPDB/"+this.$f7route.params['pengguna_id'])}>Jadwal</Button>
-                                        <Button style={{borderRadius:'20px', marginBottom:'4px'}} className="color-theme-deeporange" tabLink="#tab-1" onClick={()=>this.$f7router.navigate("/PPDB/"+this.$f7route.params['pengguna_id'])}>Kuota Sekolah</Button>
+                                        <Button style={{borderRadius:'20px', marginBottom:'4px'}} className="color-theme-deeporange" tabLink="#tab-1" onClick={()=>this.$f7router.navigate("/PPDB/")}>Data Pendaftar</Button>
+                                        <Button style={{borderRadius:'20px', marginBottom:'4px'}} className="color-theme-deeporange" tabLink="#tab-1" onClick={()=>this.$f7router.navigate("/KelolaJadwal/")}>Kelola Jadwal</Button>
+                                        {/* <Button style={{borderRadius:'20px', marginBottom:'4px'}} className="color-theme-deeporange" tabLink="#tab-1" onClick={()=>this.$f7router.navigate("/KelolaKuota/")}>Kuota Sekolah </Button> */}
                                         <Button style={{borderRadius:'20px', marginBottom:'4px', background:'#eeeeee', color:'red', marginTop:'16px'}} className="color-theme-deeporange" tabLink="#tab-3" onClick={this.keluar}>Keluar</Button>
                                     </CardContent>
                                 </Card>
@@ -231,10 +252,10 @@ class HomePPDBDinas extends Component {
                             <Col width="100" tabletWidth="70">
                             <Card style={{margin:'4px', marginBottom:'50px'}}>
                                 <CardContent>
-                                    
+                                    <h1>Dasbor PPDB Dinas</h1>
                                     <Row noGap style={{justifyContent:'end'}}>
                                         <Col width="100">
-                                            <BlockTitle style={{marginLeft:'0px', marginTop:'8px'}}>Statistik Pendaftar</BlockTitle>
+                                            <BlockTitle style={{marginLeft:'0px', marginTop:'8px'}}>Statistik Pendaftar Se-Kabupaten</BlockTitle>
                                         </Col>
                                         {this.state.statistik_sekolah.map((option)=>{
                                             return (
@@ -285,7 +306,7 @@ class HomePPDBDinas extends Component {
                                             })}
                                             </Row>
 
-                                            <Link href={"/jadwalPPDB/"+this.$f7route.params['pengguna_id']+"/"+this.$f7route.params['sekolah_id']}>
+                                            <Link href={"/kelolaJadwal/"}>
                                                 Jadwal Selengkapnya
                                             </Link>
                                         </Col>
@@ -363,7 +384,7 @@ class HomePPDBDinas extends Component {
                                             </Card>
                                             )
                                             })}
-                                            <Link href={"/PPDB/"+this.$f7route.params['pengguna_id']+"/"+this.$f7route.params['sekolah_id']}>
+                                            <Link href={"/PPDB/"}>
                                                 Pendaftar Selengkapnya
                                             </Link>
                                         </Col>
@@ -420,7 +441,8 @@ function mapDispatchToProps(dispatch) {
     getCalonPesertaDidik: Actions.getCalonPesertaDidik,
     getStatistikSekolah: Actions.getStatistikSekolah,
     getJadwal: Actions.getJadwal,
-    getSekolahPengguna: Actions.getSekolahPengguna
+    getSekolahPengguna: Actions.getSekolahPengguna,
+    getStatistikDinas: Actions.getStatistikDinas
   }, dispatch);
 }
 

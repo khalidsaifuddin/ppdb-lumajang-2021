@@ -75,6 +75,9 @@ import formBerkas from '../pages/PPDB/formBerkas';
 import formKonfirmasi from '../pages/PPDB/formKonfirmasi';
 import HomePPDB from '../pages/PPDB/HomePPDB';
 import HomePPDBDinas from '../pages/PPDB/HomePPDBDinas';
+import kelolaJadwal from '../pages/PPDB/kelolaJadwal';
+import editJadwal from '../pages/PPDB/editJadwal';
+import HomePPDBPublik from '../pages/PPDB/HomePPDBPublik';
 
 // console.log(localStorage.getItem('kode_aplikasi'));
 
@@ -91,7 +94,10 @@ var routes = [
             HomePPDB :
             (localStorage.getItem('kode_aplikasi') === 'MEJA-PPDB-DINAS' ?
             HomePPDBDinas : 
-            BerandaEmpu
+            (localStorage.getItem('kode_aplikasi') === 'MEJA-PPDB-PUBLIK' ?
+              HomePPDBPublik : 
+              BerandaEmpu
+              )
             )
           )
         )
@@ -100,6 +106,10 @@ var routes = [
   },
   {
     path: '/PPDB/:pengguna_id/:sekolah_id',
+    component: BerandaPPDB
+  },
+  {
+    path: '/PPDB/',
     component: BerandaPPDB
   },
   {
@@ -113,6 +123,18 @@ var routes = [
   {
     path: '/jadwalPPDB/:pengguna_id/:sekolah_id',
     component: jadwalPPDB
+  },
+  {
+    path: '/editJadwal/:jadwal_id',
+    component: editJadwal
+  },
+  {
+    path: '/editJadwal/',
+    component: editJadwal
+  },
+  {
+    path: '/kelolaJadwal/',
+    component: kelolaJadwal
   },
   {
     path: '/formBiodata/:peserta_didik_id/:pengguna_id/:sekolah_id',

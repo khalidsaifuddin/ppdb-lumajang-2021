@@ -41,7 +41,7 @@ import moment from 'moment';
 import HeaderPPDB from './HeaderPPDB';
 import HeaderSekolahPPDB from './HeaderSekolahPPDB';
 
-class jadwalPPDB extends Component {
+class kelolaJadwal extends Component {
 
   state = {
     error: null,
@@ -108,7 +108,7 @@ class jadwalPPDB extends Component {
   render()
     {
         return (
-          <Page name="jadwalPPDB" hideBarsOnScroll>
+          <Page name="kelolaJadwal" hideBarsOnScroll>
             
             <HeaderPPDB />
 
@@ -121,15 +121,14 @@ class jadwalPPDB extends Component {
                           <CardContent style={{padding:'8px'}}> */}
                               <Row noGap>
                                   <Col width="100" tabletWidth="100">
-                                    <HeaderSekolahPPDB sekolah={this.state.sekolah} />
+                                    {/* <HeaderSekolahPPDB sekolah={this.state.sekolah} /> */}
                                   </Col>
                                   <Col width="0" tabletWidth="30" className="hilangDiMobile">
                                     <Card style={{margin:'4px'}}>
                                         <CardContent>
-                                        <Button style={{borderRadius:'20px', marginBottom:'4px'}} className="color-theme-deeporange" tabLink="#tab-0" onClick={()=>this.$f7router.navigate("/HomePPDB/"+this.$f7route.params['pengguna_id']+"/"+this.$f7route.params['sekolah_id'])}>Beranda</Button>
-                                            <Button style={{borderRadius:'20px', marginBottom:'4px'}} className="color-theme-deeporange" tabLink="#tab-1" onClick={()=>this.$f7router.navigate("/PPDB/"+this.$f7route.params['pengguna_id']+"/"+this.$f7route.params['sekolah_id'])}>Data Pendaftar</Button>
-                                            <Button style={{borderRadius:'20px', marginBottom:'4px'}} className="color-theme-deeporange" tabLink="#tab-3" onClick={()=>this.$f7router.navigate("/formulirPPDB/"+this.$f7route.params['pengguna_id']+"/"+this.$f7route.params['sekolah_id'])}>Tambah Pendaftar</Button>
-                                            <Button style={{borderRadius:'20px', marginBottom:'4px'}} className="color-theme-deeporange bawahCiri" tabLink="#tab-3" tabLinkActive>Jadwal</Button>
+                                            <Button style={{borderRadius:'20px', marginBottom:'4px'}} className="color-theme-deeporange" tabLink="#tab-0" onClick={()=>this.$f7router.navigate("/")}>Beranda</Button>
+                                            <Button style={{borderRadius:'20px', marginBottom:'4px'}} className="color-theme-deeporange" tabLink="#tab-1" onClick={()=>this.$f7router.navigate("/PPDB/")}>Data Pendaftar</Button>
+                                            <Button style={{borderRadius:'20px', marginBottom:'4px'}} className="color-theme-deeporange bawahCiri" tabLink="#tab-3" tabLinkActive>Kelola Jadwal</Button>
                                             <Button style={{borderRadius:'20px', marginBottom:'4px', background:'#eeeeee', color:'red', marginTop:'16px'}} className="color-theme-deeporange" tabLink="#tab-3" onClick={this.keluar}>Keluar</Button>
                                         </CardContent>
                                     </Card>
@@ -154,6 +153,11 @@ class jadwalPPDB extends Component {
                                     <Card style={{margin:'4px'}}>
                                         <CardContent>
                                           <BlockTitle style={{marginLeft:'0px', marginTop:"0px", marginBottom:'8px'}}>Jadwal PPDB</BlockTitle>
+                                          <Button onClick={()=>this.$f7router.navigate("/editJadwal/")} raised fill className="bawahCiriBiru" style={{display:'inline-flex', marginBottom:'16px'}}>
+                                              <i className="f7-icons" style={{fontSize:'20px'}}>plus</i>&nbsp;
+                                              Tambah
+                                          </Button>
+                                          
                                           <Row noGap>
                                           {this.state.jadwal.rows.map((option)=>{
 
@@ -170,21 +174,21 @@ class jadwalPPDB extends Component {
                                                 <Card style={{marginTop:'4px', marginBottom:'4px', marginRight:'0px', marginLeft:'0px', borderLeft:'3px solid '+(option.jalur_id === '0100' ? 'red' : (option.jalur_id === '0200' ? 'purple' : (option.jalur_id === '0300' ? 'green' : (option.jalur_id === '0400' ? 'orange' : (option.jalur_id === '0500' ? 'teal' : 'gray'))))), borderRadius:'0px'}}>
                                                 {/* <Card style={{borderLeft:'3px solid '+(option.jalur_id === '0100' ? 'red' : (option.jalur_id === '0200' ? 'purple' : (option.jalur_id === '0300' ? 'green' : (option.jalur_id === '0400' ? 'orange' : (option.jalur_id === '0500' ? 'teal' : 'gray'))))), borderRadius:'0px'}}> */}
                                                   <CardContent>
-                                                    <Row>
-                                                      <Col width="100">
-                                                        <b>{option.jalur}</b> - Tahap {option.tahap}
-                                                        <br/>
-                                                        {waktu_mulai} - {waktu_selesai}
-                                                      </Col>
-                                                      {/* <Col width="10">
-                                                        <Button popoverOpen={".popover-menu-"+option.calon_peserta_didik_id}><i className="icons f7-icons">ellipsis_vertical</i></Button>
-                                                        <Popover className={"popover-menu-"+option.calon_peserta_didik_id} style={{minWidth:'300px'}}>
-                                                          <List>
-                                                              <ListItem disabled={parseInt(option.status_konfirmasi_id) === 1 ? true : false} onClick={()=>this.$f7router.navigate("/formBiodata/"+option.calon_peserta_didik_id+"/"+this.$f7route.params['pengguna_id']+"/"+this.$f7route.params['sekolah_id'])} link="#" popoverClose title="Edit Biodata" />
-                                                          </List>
-                                                          </Popover>
-                                                      </Col> */}
-                                                    </Row>
+                                                      <Row>
+                                                          <Col width="90">
+                                                                <b>{option.jalur}</b> - Tahap {option.tahap}
+                                                                <br/>
+                                                                {waktu_mulai} - {waktu_selesai}
+                                                          </Col>
+                                                          <Col width="10" style={{textAlign:'right'}}>
+                                                            <Button style={{display:'inline-flex', textAlign:'right'}} popoverOpen={".popover-menu-"+option.jadwal_id}><i className="icons f7-icons">ellipsis_vertical</i></Button>
+                                                            <Popover className={"popover-menu-"+option.jadwal_id} style={{minWidth:'300px'}}>
+                                                                <List>
+                                                                    <ListItem onClick={()=>this.$f7router.navigate("/editJadwal/"+option.jadwal_id)} link="#" popoverClose title="Edit Jadwal" />
+                                                                </List>
+                                                            </Popover>
+                                                          </Col>
+                                                      </Row>
                                                   </CardContent>
                                                 </Card>
                                               </Col>
@@ -226,4 +230,4 @@ function mapStateToProps({ App, Sekolah }) {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(jadwalPPDB);
+export default connect(mapStateToProps, mapDispatchToProps)(kelolaJadwal);

@@ -49,13 +49,19 @@ class BerandaPPDB extends Component {
     sekolah: {
       gambar_logo: '/1.jpg'
     },
-    routeParamsFilter: {
-      start: 0,
-      limit: 20
-    },
+    // routeParams: {
+    //   start: 0,
+    //   limit: 20
+    // },
     calon_peserta_didik: {
       rows: [],
       total: 0
+    },
+    routeParams: {
+      sekolah_id: this.$f7route.params['sekolah_id'] ? this.$f7route.params['sekolah_id'] : null, 
+      urut_pilihan:1,
+      start: 0,
+      limit: 20
     }
   };
 
@@ -83,20 +89,32 @@ class BerandaPPDB extends Component {
 
     // console.log(this)
     this.$f7.dialog.preloader()
-    
-    this.props.getSekolah({sekolah_id:this.$f7route.params['sekolah_id'], pengguna_id: this.$f7route.params['pengguna_id']}).then((result)=>{
-      this.setState({
-          sekolah: result.payload.rows[0]
-      },()=>{
-        this.props.getCalonPesertaDidik({sekolah_id:this.$f7route.params['sekolah_id'], urut_pilihan:1}).then((result)=>{
-          this.setState({
-            calon_peserta_didik: result.payload
-          },()=>{
-            this.$f7.dialog.close()
+
+    if(this.$f7route.params['sekolah_id'] && this.$f7route.params['pengguna_id']){
+      
+      this.props.getSekolah({sekolah_id:this.$f7route.params['sekolah_id'], pengguna_id: this.$f7route.params['pengguna_id']}).then((result)=>{
+        this.setState({
+            sekolah: result.payload.rows[0]
+        },()=>{
+          this.props.getCalonPesertaDidik(this.state.routeParams).then((result)=>{
+            this.setState({
+              calon_peserta_didik: result.payload
+            },()=>{
+              this.$f7.dialog.close()
+            })
           })
         })
       })
-    })
+    }else{
+      this.props.getCalonPesertaDidik({...this.state.routeParams, sekolah_id: (this.$f7route.params['sekolah_id'] ? this.$f7route.params['sekolah_id'] : null)}).then((result)=>{
+        this.setState({
+          calon_peserta_didik: result.payload
+        },()=>{
+          this.$f7.dialog.close()
+        })
+      })
+    }
+    
 
   }
 
@@ -182,6 +200,50 @@ class BerandaPPDB extends Component {
     
   }
 
+  klikNext = () => {
+    // alert('tes');
+    this.$f7.dialog.preloader()
+    
+    this.setState({
+        ...this.state,
+        loading: true,
+        routeParams: {
+            ...this.state.routeParams,
+            start: (parseInt(this.state.routeParams.start) + parseInt(this.state.routeParams.limit))
+        }
+    },()=>{
+      this.props.getCalonPesertaDidik({...this.state.routeParams, sekolah_id: (this.$f7route.params['sekolah_id'] ? this.$f7route.params['sekolah_id'] : null)}).then((result)=>{
+        this.setState({
+          calon_peserta_didik: result.payload
+        },()=>{
+          this.$f7.dialog.close()
+        })
+      })
+    });
+  }
+
+  klikPrev = () => {
+      // alert('tes');
+      this.$f7.dialog.preloader()
+      
+      this.setState({
+          ...this.state,
+          loading: true,
+          routeParams: {
+              ...this.state.routeParams,
+              start: (parseInt(this.state.routeParams.start) - parseInt(this.state.routeParams.limit))
+          }
+      },()=>{
+        this.props.getCalonPesertaDidik({...this.state.routeParams, sekolah_id: (this.$f7route.params['sekolah_id'] ? this.$f7route.params['sekolah_id'] : null)}).then((result)=>{
+          this.setState({
+            calon_peserta_didik: result.payload
+          },()=>{
+            this.$f7.dialog.close()
+          })
+        })
+      });
+  }
+
   render()
     {
         return (
@@ -218,16 +280,29 @@ class BerandaPPDB extends Component {
                                           <span className="alamatSekolah hilangDiMobile">{this.state.sekolah.alamat}</span>
                                         </CardContent>
                                     </Card> */}
+                                    {this.$f7route.params['sekolah_id'] &&
                                     <HeaderSekolahPPDB sekolah={this.state.sekolah} />
+                                    }
                                   </Col>
                                   <Col width="0" tabletWidth="30" className="hilangDiMobile">
                                     <Card style={{margin:'4px'}}>
                                         <CardContent>
+                                          {this.$f7route.params['sekolah_id'] &&
+                                          <>
                                             <Button style={{borderRadius:'20px', marginBottom:'4px'}} className="color-theme-deeporange" tabLink="#tab-0" onClick={()=>this.$f7router.navigate("/HomePPDB/"+this.$f7route.params['pengguna_id']+"/"+this.$f7route.params['sekolah_id'])}>Beranda</Button>
                                             <Button style={{borderRadius:'20px', marginBottom:'4px'}} className="color-theme-deeporange bawahCiri" tabLink="#tab-1" tabLinkActive>Data Pendaftar</Button>
                                             <Button style={{borderRadius:'20px', marginBottom:'4px'}} className="color-theme-deeporange" tabLink="#tab-3" onClick={()=>this.$f7router.navigate("/formulirPPDB/"+this.$f7route.params['pengguna_id']+"/"+this.$f7route.params['sekolah_id'])}>Tambah Pendaftar</Button>
                                             <Button style={{borderRadius:'20px', marginBottom:'4px'}} className="color-theme-deeporange" tabLink="#tab-3" onClick={()=>this.$f7router.navigate("/jadwalPPDB/"+this.$f7route.params['pengguna_id']+"/"+this.$f7route.params['sekolah_id'])}>Jadwal</Button>
                                             <Button style={{borderRadius:'20px', marginBottom:'4px', background:'#eeeeee', color:'red', marginTop:'16px'}} className="color-theme-deeporange" tabLink="#tab-3" onClick={this.keluar}>Keluar</Button>
+                                          </>
+                                          }
+                                          {!this.$f7route.params['sekolah_id'] &&
+                                          <>
+                                            <Button style={{borderRadius:'20px', marginBottom:'4px'}} className="color-theme-deeporange" tabLink="#tab-0" onClick={()=>this.$f7router.navigate("/")}>Beranda</Button>
+                                            <Button style={{borderRadius:'20px', marginBottom:'4px'}} className="color-theme-deeporange bawahCiri" tabLink="#tab-1" tabLinkActive>Data Pendaftar</Button>
+                                            <Button style={{borderRadius:'20px', marginBottom:'4px'}} className="color-theme-deeporange" tabLink="#tab-1" onClick={()=>this.$f7router.navigate("/KelolaJadwal/")}>Kelola Jadwal</Button>
+                                          </>
+                                          }
                                         </CardContent>
                                     </Card>
                                     <div className="hilangDiMobile" style={{textAlign:'center', padding:'16px', border:'2px dashed #ccc', margin:'4px', borderRadius:'20px', marginTop:'16px'}}>
@@ -253,13 +328,13 @@ class BerandaPPDB extends Component {
                                           <div className="data-table" style={{overflowY:'hidden'}}>
                                               <div className="data-table-footer" style={{display:'block'}}>
                                                   <div className="data-table-pagination" style={{textAlign:'right'}}>
-                                                      <a onClick={this.klikPrev} href="#" className={"link "+(this.state.routeParamsFilter.start < 1 ? "disabled" : "" )}>
+                                                      <a onClick={this.klikPrev} href="#" className={"link "+(this.state.routeParams.start < 1 ? "disabled" : "" )}>
                                                       <i class="icon icon-prev color-gray"></i>
                                                       </a>
-                                                      <a onClick={this.klikNext} href="#" className={"link "+((parseInt(this.state.routeParamsFilter.start)+20) >= parseInt(this.state.calon_peserta_didik.total) ? "disabled" : "" )}>
+                                                      <a onClick={this.klikNext} href="#" className={"link "+((parseInt(this.state.routeParams.start)+20) >= parseInt(this.state.calon_peserta_didik.total) ? "disabled" : "" )}>
                                                           <i className="icon icon-next color-gray"></i>
                                                       </a>
-                                                      <span className="data-table-pagination-label">{(this.state.routeParamsFilter.start+1)}-{(this.state.routeParamsFilter.start)+parseInt(this.state.routeParamsFilter.limit) <= parseInt(this.state.calon_peserta_didik.total) ? (this.state.routeParamsFilter.start)+parseInt(this.state.routeParamsFilter.limit) : parseInt(this.state.calon_peserta_didik.total)} dari {this.formatAngka(this.state.calon_peserta_didik.total)} Pendaftar</span>
+                                                      <span className="data-table-pagination-label">{(this.state.routeParams.start+1)}-{(this.state.routeParams.start)+parseInt(this.state.routeParams.limit) <= parseInt(this.state.calon_peserta_didik.total) ? (this.state.routeParams.start)+parseInt(this.state.routeParams.limit) : parseInt(this.state.calon_peserta_didik.total)} dari {this.formatAngka(this.state.calon_peserta_didik.total)} Pendaftar</span>
                                                   </div>
                                               </div>
                                           </div>

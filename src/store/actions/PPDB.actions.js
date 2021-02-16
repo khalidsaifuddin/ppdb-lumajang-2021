@@ -1,4 +1,5 @@
 import axios from 'axios/index';
+import { GET_STATISTIK } from './App.actions';
 
 export const GET_PESERTA_DIDIK_DAPODIK = '[PESERTA DIDIK] GET_PESERTA_DIDIK_DAPODIK';
 export const GET_CALON_PESERTA_DIDIK = '[PESERTA DIDIK] GET_CALON_PESERTA_DIDIK';
@@ -21,10 +22,12 @@ export const SIMPAN_BERKAS_CALON = '[APP] SIMPAN_BERKAS_CALON';
 export const SIMPAN_KONFIRMASI = '[APP] SIMPAN_KONFIRMASI';
 export const GET_JADWAL = '[APP] GET_JADWAL';
 export const GET_STATISTIK_SEKOLAH = '[APP] GET_STATISTIK_SEKOLAH';
+export const GET_STATISTIK_DINAS = '[APP] GET_STATISTIK_DINAS';
 export const SIMPAN_NILAI_PRESTASI = '[APP] SIMPAN_NLAI_PRESTASI';
 export const GET_NILAI_PRESTASI = '[APP] GET_NILAI_PRESTASI';
 export const BATAL_KONFIRMASI = '[APP] BATAL_KONFIRMASI';
 export const HAPUS_CALON_PESERTA_DIDIK = '[APP] HAPUS_CALON_PESERTA_DIDIK';
+export const SIMPAN_JADWAL = '[APP] SIMPAN_JADWAL';
 
 export function getCalonPesertaDidik(routeParams)
 {
@@ -430,3 +433,36 @@ export function hapusCalonPesertaDidik(routeParams)
             })
         );
 }
+
+export function getStatistikDinas(routeParams)
+{
+    const request = axios.post(localStorage.getItem('api_base')+'/api/PPDB/getStatistikDinas', {
+        ...routeParams
+    });
+
+    return (dispatch) =>
+        request.then((response) =>
+            dispatch({
+                type   : GET_STATISTIK_DINAS,
+                payload: response.data,
+                routeParams
+            })
+        );
+}
+
+export function simpanJadwal(routeParams)
+{
+    const request = axios.post(localStorage.getItem('api_base')+'/api/PPDB/simpanJadwal', {
+        ...routeParams
+    });
+
+    return (dispatch) =>
+        request.then((response) =>
+            dispatch({
+                type   : SIMPAN_JADWAL,
+                payload: response.data,
+                routeParams
+            })
+        );
+}
+
