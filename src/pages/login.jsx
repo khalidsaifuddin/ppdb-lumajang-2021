@@ -407,7 +407,7 @@ class login extends Component {
                                         }
                                         {localStorage.getItem('custom_logo_sekolah') !== '' && localStorage.getItem('custom_logo_sekolah') !== null &&
                                         <>
-                                        <img src={localStorage.getItem('api_base')+localStorage.getItem('custom_logo_sekolah')} style={{width:'12vh'}}/>
+                                        <img src={localStorage.getItem('api_base')+localStorage.getItem('custom_logo_sekolah')} style={{width:'100px'}}/>
                                         <LoginScreenTitle style={{fontSize:'20px', marginBottom:'0px'}}>{localStorage.getItem('custom_logo_sekolah_nama')}</LoginScreenTitle>
                                         <div style={{marginTop:'15px', fontSize:'10px', fontWeight:'bold', marginLeft:'8px', display:'inline-flex', paddingLeft:'0%', marginTop:'-10px', marginBottom:'32px'}}>
                                             <span style={{marginTop:'12px', marginRight:'8px'}}>powered by</span>
@@ -456,7 +456,7 @@ class login extends Component {
                                             &nbsp;&nbsp;Masuk Aplikasi
                                         </Button>
                                         {/* <hr/> */}
-                                        <div style={{textAlign:'center', width:'100%', marginTop:'16px', marginBottom:'8px'}}>Belum punya akun?</div>
+                                        {/* <div style={{textAlign:'center', width:'100%', marginTop:'16px', marginBottom:'8px'}}>Belum punya akun?</div>
                                         <br/>
                                         <Button raised fill 
                                             iconIos="f7:person_alt_circle" 
@@ -492,7 +492,7 @@ class login extends Component {
                                             <i className="icons f7-icons logoGoogle">logo_google</i>&nbsp;
                                             Daftar/Masuk dengan Google
                                         </Button>
-                                        }
+                                        } */}
                                     </List>
                                 </CardContent>
                             </Card>

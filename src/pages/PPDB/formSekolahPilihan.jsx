@@ -88,6 +88,21 @@ class formSekolahPilihan extends Component {
         'Desember'
     ]
 
+    bulan_singkat = [
+        'Jan',
+        'Feb',
+        'Mar',
+        'Apr',
+        'Mei',
+        'Jun',
+        'Jul',
+        'Agu',
+        'Sep',
+        'Okt',
+        'Nov',
+        'Des'
+    ]
+
     formatAngka = (num) => {
         return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
     }
@@ -293,8 +308,19 @@ class formSekolahPilihan extends Component {
                                                     >
                                                         <option value={"0"} disabled>-</option>
                                                         {this.props.jalur.rows.map((option)=>{
+
+                                                            let waktu_mulai = ''
+                                                            waktu_mulai = moment(option.waktu_mulai).format('D') + ' ' + this.bulan_singkat[(moment(option.waktu_mulai).format('M')-1)] + ' ' + moment(option.waktu_mulai).format('YYYY');
+                                                            
+                                                            let waktu_selesai = ''
+                                                            waktu_selesai = moment(option.waktu_selesai).format('D') + ' ' + this.bulan_singkat[(moment(option.waktu_selesai).format('M')-1)] + ' ' + moment(option.waktu_selesai).format('YYYY');
+
+                                                            let hari_ini = new Date()
+
+                                                            // if(hari_ini >= option.waktu_selesai)
+
                                                             return (
-                                                                <option value={option.jalur_id}>{option.nama}</option>
+                                                                <option value={option.jalur_id}>{option.nama} ({waktu_mulai} - {waktu_selesai})</option>
                                                             )
                                                         })}
                                                     </ListInput>
