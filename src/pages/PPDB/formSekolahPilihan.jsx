@@ -110,63 +110,123 @@ class formSekolahPilihan extends Component {
     componentDidMount = () => {
         this.$f7.dialog.preloader()
 
-        this.props.getSekolah({sekolah_id:this.$f7route.params['sekolah_id'], pengguna_id: this.$f7route.params['pengguna_id']}).then((result)=>{
-            this.setState({
-                sekolah: result.payload.rows[0]
-            },()=>{
-                this.props.getJenisPrestasi(this.state.routeParams)
-                this.props.getTingkatPrestasi(this.state.routeParams)
+        if(this.$f7route.params['sekolah_id'] && this.$f7route.params['sekolah_id'] !== '-'){
 
-                this.props.getJalurPPDB({...this.state.routeParams, jalur_id: null}).then((result)=>{
-
-                    this.props.getCalonPesertaDidik({...this.state.routeParams, sekolah_id:null}).then((result)=>{
-                        this.setState({
-                            routeParams: {
-                                ...result.payload.rows[0],
-                                ...this.state.routeParams
-                            }
-                        },()=>{
-                            this.props.getSekolahPilihan({...this.state.routeParams, peserta_didik_id: this.$f7route.params['peserta_didik_id']}).then((result)=>{
+            this.props.getSekolah({sekolah_id:this.$f7route.params['sekolah_id'], pengguna_id: this.$f7route.params['pengguna_id']}).then((result)=>{
+                this.setState({
+                    sekolah: result.payload.rows[0]
+                },()=>{
+                    this.props.getJenisPrestasi(this.state.routeParams)
+                    this.props.getTingkatPrestasi(this.state.routeParams)
     
-                                let jalur_id = this.state.jalur_id
+                    this.props.getJalurPPDB({...this.state.routeParams, jalur_id: null}).then((result)=>{
     
-                                if(result.payload.total > 0){
-                                    jalur_id = result.payload.rows[0].jalur_id
+                        this.props.getCalonPesertaDidik({...this.state.routeParams, sekolah_id:null}).then((result)=>{
+                            this.setState({
+                                routeParams: {
+                                    ...result.payload.rows[0],
+                                    ...this.state.routeParams
                                 }
+                            },()=>{
+                                this.props.getSekolahPilihan({...this.state.routeParams, peserta_didik_id: this.$f7route.params['peserta_didik_id']}).then((result)=>{
+        
+                                    let jalur_id = this.state.jalur_id
+        
+                                    if(result.payload.total > 0){
+                                        jalur_id = result.payload.rows[0].jalur_id
+                                    }
+        
+                                    this.setState({
+                                        sekolah_pilihan: result.payload,
+                                        jalur_id: jalur_id
+                                    },()=>{
+                                        console.log(this.state.jalur_id)
     
-                                this.setState({
-                                    sekolah_pilihan: result.payload,
-                                    jalur_id: jalur_id
-                                },()=>{
-                                    console.log(this.state.jalur_id)
-
-                                    this.$f7.dialog.close()
-
-                                    //nilai prestasi
-                                    this.props.getNilaiPrestasi(this.state.routeParams).then((result)=>{
-                                        if(result.payload.total > 0){
-                                            this.setState({
-                                                jenis_prestasi_id: result.payload.rows[0].jenis_prestasi_id,
-                                                tingkat_prestasi_id: result.payload.rows[0].tingkat_prestasi_id,
-                                                nilai_semester_1: result.payload.rows[0].nilai_semester_1,
-                                                nilai_semester_2: result.payload.rows[0].nilai_semester_2,
-                                                nilai_semester_3: result.payload.rows[0].nilai_semester_3,
-                                                nilai_semester_4: result.payload.rows[0].nilai_semester_4,
-                                                nilai_semester_5: result.payload.rows[0].nilai_semester_5
-                                            })
-                                        }
+                                        this.$f7.dialog.close()
+    
+                                        //nilai prestasi
+                                        this.props.getNilaiPrestasi(this.state.routeParams).then((result)=>{
+                                            if(result.payload.total > 0){
+                                                this.setState({
+                                                    jenis_prestasi_id: result.payload.rows[0].jenis_prestasi_id,
+                                                    tingkat_prestasi_id: result.payload.rows[0].tingkat_prestasi_id,
+                                                    nilai_semester_1: result.payload.rows[0].nilai_semester_1,
+                                                    nilai_semester_2: result.payload.rows[0].nilai_semester_2,
+                                                    nilai_semester_3: result.payload.rows[0].nilai_semester_3,
+                                                    nilai_semester_4: result.payload.rows[0].nilai_semester_4,
+                                                    nilai_semester_5: result.payload.rows[0].nilai_semester_5
+                                                })
+                                            }
+                                        })
+    
                                     })
-
                                 })
                             })
                         })
+    
                     })
+    
+    
+                })
+            })
 
+        }else{
+            this.props.getJenisPrestasi(this.state.routeParams)
+            this.props.getTingkatPrestasi(this.state.routeParams)
+
+            this.props.getJalurPPDB({
+                ...this.state.routeParams, 
+                jalur_id: null, 
+                sekolah_id: (this.$f7route.params['sekolah_id'] && this.$f7route.params['sekolah_id'] !== '-' ? this.$f7route.params['sekolah_id'] : null),
+                pengguna_id: (this.$f7route.params['pengguna_id'] && this.$f7route.params['pengguna_id'] !== '-' ? this.$f7route.params['pengguna_id'] : null)
+            }).then((result)=>{
+
+                this.props.getCalonPesertaDidik({...this.state.routeParams, sekolah_id:null}).then((result)=>{
+                    this.setState({
+                        routeParams: {
+                            ...result.payload.rows[0],
+                            ...this.state.routeParams
+                        }
+                    },()=>{
+                        this.props.getSekolahPilihan({...this.state.routeParams, peserta_didik_id: this.$f7route.params['peserta_didik_id']}).then((result)=>{
+
+                            let jalur_id = this.state.jalur_id
+
+                            if(result.payload.total > 0){
+                                jalur_id = result.payload.rows[0].jalur_id
+                            }
+
+                            this.setState({
+                                sekolah_pilihan: result.payload,
+                                jalur_id: jalur_id
+                            },()=>{
+                                console.log(this.state.jalur_id)
+
+                                this.$f7.dialog.close()
+
+                                //nilai prestasi
+                                this.props.getNilaiPrestasi(this.state.routeParams).then((result)=>{
+                                    if(result.payload.total > 0){
+                                        this.setState({
+                                            jenis_prestasi_id: result.payload.rows[0].jenis_prestasi_id,
+                                            tingkat_prestasi_id: result.payload.rows[0].tingkat_prestasi_id,
+                                            nilai_semester_1: result.payload.rows[0].nilai_semester_1,
+                                            nilai_semester_2: result.payload.rows[0].nilai_semester_2,
+                                            nilai_semester_3: result.payload.rows[0].nilai_semester_3,
+                                            nilai_semester_4: result.payload.rows[0].nilai_semester_4,
+                                            nilai_semester_5: result.payload.rows[0].nilai_semester_5
+                                        })
+                                    }
+                                })
+
+                            })
+                        })
+                    })
                 })
 
-
             })
-        })
+        }
+
 
     }
 
@@ -204,7 +264,7 @@ class formSekolahPilihan extends Component {
             this.props.simpanSekolahPilihan({peserta_didik_id: this.$f7route.params['peserta_didik_id'], jalur_id: this.state.jalur_id}).then((result)=> {
     
                 this.props.simpanNilaiPrestasi({
-                    pengguna_id: this.$f7route.params['pengguna_id'],
+                    pengguna_id: (this.$f7route.params['pengguna_id'] && this.$f7route.params['pengguna_id'] !== '-' ? this.$f7route.params['pengguna_id'] : null),
                     peserta_didik_id: this.$f7route.params['peserta_didik_id'],
                     jenis_prestasi_id: this.state.jenis_prestasi_id,
                     tingkat_prestasi_id: this.state.tingkat_prestasi_id,
@@ -274,7 +334,10 @@ class formSekolahPilihan extends Component {
                   <Col width="100" tabletWidth="90" desktopWidth="70">
                     <Row noGap>
                         <Col width="100" tabletWidth="100">
+                            {this.$f7route.params['sekolah_id'] && this.$f7route.params['sekolah_id'] !== '-' &&
                             <HeaderSekolahPPDB pengguna_id={this.$f7route.params['pengguna_id']} sekolah={this.state.sekolah} f7={this} />
+                            }
+                            {/* <HeaderSekolahPPDB pengguna_id={this.$f7route.params['pengguna_id']} sekolah={this.state.sekolah} f7={this} /> */}
                         </Col>
                         <Col width="0" tabletWidth="100">
                         <Card style={{margin:'4px'}}>

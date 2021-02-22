@@ -151,52 +151,88 @@ class formBiodata extends Component {
               disabledInput: false
             },()=>{
               
-              this.props.getSekolah({sekolah_id:this.$f7route.params['sekolah_id'], pengguna_id: this.$f7route.params['pengguna_id']}).then((result)=>{
-                this.setState({
-                    sekolah: result.payload.rows[0],
-                    routeParams: {
-                      ...this.state.routeParams,
-                      kode_wilayah_provinsi: this.state.routeParams.kode_wilayah_provinsi,
-                      kode_wilayah_kabupaten: this.state.routeParams.kode_wilayah_kabupaten,
-                      kode_wilayah_kecamatan: this.state.routeParams.kode_wilayah_kecamatan
-                    }
-                },()=>{
-
-                  // kecamatan dan kabupaten start
-                  this.props.getWilayah({id_level_wilayah:'2', mst_kode_wilayah: this.state.routeParams.kode_wilayah_provinsi}).then((result)=>{
-                    this.setState({
-                      kabupaten: result.payload.rows
-                    },()=>{
-                      this.props.getWilayah({id_level_wilayah:'3', mst_kode_wilayah: this.state.routeParams.kode_wilayah_kabupaten}).then((result)=>{
-                        this.setState({
-                          kecamatan: result.payload.rows
-                        },()=>{
-
-                          // // sekolah Asal
-                          if(this.state.routeParams.asal_sekolah_id){
-                            this.props.getSekolahPPDB({sekolah_id: this.state.routeParams.asal_sekolah_id}).then((result)=>{
-                              if(result.payload.total > 0){
-                                this.setState({
-                                  sekolah_terpilih: result.payload.rows[0]
-                                })
-                              }else{
-                                //do nothing
-                              }
-                            })
-                          }else{
-                            //do nothing
-                          }
+              if(this.$f7route.params['sekolah_id'] && this.$f7route.params['sekolah_id'] !== '-'){
+                
+                this.props.getSekolah({sekolah_id:this.$f7route.params['sekolah_id'], pengguna_id: this.$f7route.params['pengguna_id']}).then((result)=>{
+                  this.setState({
+                      sekolah: result.payload.rows[0],
+                      routeParams: {
+                        ...this.state.routeParams,
+                        kode_wilayah_provinsi: this.state.routeParams.kode_wilayah_provinsi,
+                        kode_wilayah_kabupaten: this.state.routeParams.kode_wilayah_kabupaten,
+                        kode_wilayah_kecamatan: this.state.routeParams.kode_wilayah_kecamatan
+                      }
+                  },()=>{
+  
+                    // kecamatan dan kabupaten start
+                    this.props.getWilayah({id_level_wilayah:'2', mst_kode_wilayah: this.state.routeParams.kode_wilayah_provinsi}).then((result)=>{
+                      this.setState({
+                        kabupaten: result.payload.rows
+                      },()=>{
+                        this.props.getWilayah({id_level_wilayah:'3', mst_kode_wilayah: this.state.routeParams.kode_wilayah_kabupaten}).then((result)=>{
+                          this.setState({
+                            kecamatan: result.payload.rows
+                          },()=>{
+  
+                            // // sekolah Asal
+                            if(this.state.routeParams.asal_sekolah_id){
+                              this.props.getSekolahPPDB({sekolah_id: this.state.routeParams.asal_sekolah_id}).then((result)=>{
+                                if(result.payload.total > 0){
+                                  this.setState({
+                                    sekolah_terpilih: result.payload.rows[0]
+                                  })
+                                }else{
+                                  //do nothing
+                                }
+                              })
+                            }else{
+                              //do nothing
+                            }
+                          })
                         })
                       })
                     })
+                    // kecamatan dan kabupaten end
+                    
+                    this.$f7.dialog.close()
+    
                   })
-                  // kecamatan dan kabupaten end
-                  
-                  this.$f7.dialog.close()
-  
+    
                 })
-  
-              })
+
+              }else{
+                // kecamatan dan kabupaten start
+                this.props.getWilayah({id_level_wilayah:'2', mst_kode_wilayah: this.state.routeParams.kode_wilayah_provinsi}).then((result)=>{
+                  this.setState({
+                    kabupaten: result.payload.rows
+                  },()=>{
+                    this.props.getWilayah({id_level_wilayah:'3', mst_kode_wilayah: this.state.routeParams.kode_wilayah_kabupaten}).then((result)=>{
+                      this.setState({
+                        kecamatan: result.payload.rows
+                      },()=>{
+
+                        // // sekolah Asal
+                        if(this.state.routeParams.asal_sekolah_id){
+                          this.props.getSekolahPPDB({sekolah_id: this.state.routeParams.asal_sekolah_id}).then((result)=>{
+                            if(result.payload.total > 0){
+                              this.setState({
+                                sekolah_terpilih: result.payload.rows[0]
+                              })
+                            }else{
+                              //do nothing
+                            }
+                          })
+                        }else{
+                          //do nothing
+                        }
+                      })
+                    })
+                  })
+                })
+                // kecamatan dan kabupaten end
+                
+                this.$f7.dialog.close()
+              }
             
             })
 
@@ -692,7 +728,9 @@ class formBiodata extends Component {
                           <CardContent style={{padding:'8px'}}> */}
                               <Row noGap>
                                   <Col width="100" tabletWidth="100">
+                                    {this.$f7route.params['sekolah_id'] && this.$f7route.params['sekolah_id'] !== '-' &&
                                     <HeaderSekolahPPDB pengguna_id={this.$f7route.params['pengguna_id']} sekolah={this.state.sekolah} f7={this} />
+                                    }
                                   </Col>
                                   <Col width="0" tabletWidth="100">
                                     <Card style={{margin:'4px'}}>

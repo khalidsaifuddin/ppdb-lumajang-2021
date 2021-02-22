@@ -25,7 +25,9 @@ import {
   ListItemContent,
   Badge,
   ListInput,
-  Popover
+  Popover,
+  Popup,
+  Searchbar
 } from 'framework7-react';
 
 import { Doughnut, Bar, Radar } from 'react-chartjs-2';
@@ -62,7 +64,8 @@ class BerandaPPDB extends Component {
       urut_pilihan:1,
       start: 0,
       limit: 20
-    }
+    },
+    popupFilter: false
   };
 
 
@@ -243,6 +246,68 @@ class BerandaPPDB extends Component {
         })
       });
   }
+  
+  cariKeyword = (e) => {
+    
+    this.setState({
+        routeParams: {
+            ...this.state.routeParams,
+            keyword: e.currentTarget.value
+        }
+    })
+  }
+
+  setValue = (type) => (e) => {
+
+      this.setState({
+          routeParams: {
+              ...this.state.routeParams,
+              [type]: e.target.value
+          }
+      },()=>{
+          console.log(this.state)
+      })
+  }
+
+  filter = () => {
+      this.setState({popupFilter:!this.state.popupFilter})
+  }
+
+  tampilFilter = () => {
+      this.$f7.dialog.preloader()
+      this.props.getCalonPesertaDidik({...this.state.routeParams, start: 0}).then((result)=>{
+          this.setState({
+              calon_peserta_didik: result.payload,
+              popupFilter: !this.state.popupFilter
+          },()=>{
+              this.$f7.dialog.close()
+          })
+      })
+  }
+
+  resetFilter = () => {
+      this.$f7.dialog.preloader()
+
+      this.setState({
+          routeParams: {
+              ...this.state.routeParams,
+              keyword: null,
+              status_konfirmasi_id: null
+          }
+      },()=>{
+
+          this.props.getCalonPesertaDidik(this.state.routeParams).then((result)=>{
+              this.setState({
+                  calon_peserta_didik: result.payload,
+                  popupFilter: !this.state.popupFilter
+              },()=>{
+                  this.$f7.dialog.close()
+              })
+          })
+
+      })
+
+  }
 
   render()
     {
@@ -250,6 +315,59 @@ class BerandaPPDB extends Component {
           <Page name="BerandaPPDB" hideBarsOnScroll>
             
             <HeaderPPDB pengguna_id={this.$f7route.params['pengguna_id']} sekolah_id={this.$f7route.params['sekolah_id']} />
+
+            <Popup className="demo-popup" opened={this.state.popupFilter} onPopupClosed={() => this.setState({popupFilter : false})}>
+                <Page>
+                    <Navbar title="Filter Pendaftar">
+                        <NavRight>
+                            <Link popupClose>Tutup</Link>
+                        </NavRight>
+                    </Navbar>
+                    <Block style={{marginTop:'0px', paddingLeft:'0px', paddingRight:'0px'}}>
+                        <List>
+                            <Searchbar
+                                className="searchbar-demo"
+                                placeholder="Nama Pendaftar"
+                                searchContainer=".search-list"
+                                searchIn=".item-title"
+                                onChange={this.cariKeyword}
+                            ></Searchbar>
+                            <ListInput
+                                label="Status Konfirmasi"
+                                type="select"
+                                defaultValue={"99"}
+                                placeholder="Pilih Status konfirmasi..."
+                                onChange={this.setValue('status_konfirmasi_id')}
+                            >
+                              <option value={'semua'} selected>Semua</option>
+                              <option value={'belum'}>Belum Terkonfirmasi</option>
+                              <option value={'sudah'}>Terkonfirmasi</option>
+                                {/* {this.state.provinsi.map((option)=>{
+                                    return (
+                                        <option value={option.kode_wilayah}>{option.nama}</option>
+                                    )
+                                })} */}
+                            </ListInput>
+                        </List>
+                    </Block>
+                    <Block>
+                        <Row>
+                            <Col width="50">
+                                <Button raised onClick={this.resetFilter}>
+                                    <i className="icons f7-icons" style={{fontSize:'20px'}}>arrow_counterclockwise</i>&nbsp;
+                                    Reset Filter
+                                </Button>
+                            </Col>
+                            <Col width="50">
+                                <Button raised fill onClick={this.tampilFilter}>
+                                    <i className="icons f7-icons" style={{fontSize:'20px'}}>arrow_right_arrow_left_square</i>&nbsp;
+                                    Tampilkan Data
+                                </Button>
+                            </Col>
+                        </Row>
+                    </Block>
+                </Page>
+            </Popup>
 
             <div className="cardAtas">
               <div>&nbsp;</div>
@@ -280,8 +398,12 @@ class BerandaPPDB extends Component {
                                           <span className="alamatSekolah hilangDiMobile">{this.state.sekolah.alamat}</span>
                                         </CardContent>
                                     </Card> */}
-                                    {this.$f7route.params['sekolah_id'] &&
+                                    {this.$f7route.params['sekolah_id'] && this.$f7route.params['sekolah_id'] !== '-' &&
+                                    // <>
+                                    // {this.$f7route.params['sekolah_id'] !== '-' &&
                                     <HeaderSekolahPPDB sekolah={this.state.sekolah} />
+                                    // }
+                                    // </>
                                     }
                                   </Col>
                                   <Col width="0" tabletWidth="30" className="hilangDiMobile">
@@ -338,6 +460,10 @@ class BerandaPPDB extends Component {
                                                   </div>
                                               </div>
                                           </div>
+                                          <Button raised fill style={{display:'inline-flex', marginTop:'-32px', float:'right'}} onClick={this.filter}>
+                                            <i className="f7-icons" style={{fontSize:'20px'}}>arrow_right_arrow_left_square</i>&nbsp;
+                                            Filter
+                                          </Button>
                                           {this.state.calon_peserta_didik.rows.map((option)=>{
 
                                             let pas_foto = '';
@@ -412,7 +538,7 @@ class BerandaPPDB extends Component {
                                                           <Button popoverOpen={".popover-menu-"+option.calon_peserta_didik_id}><i className="icons f7-icons">ellipsis_vertical</i></Button>
                                                           <Popover className={"popover-menu-"+option.calon_peserta_didik_id} style={{minWidth:'300px'}}>
                                                             <List>
-                                                                <ListItem disabled={parseInt(option.status_konfirmasi_id) === 1 ? true : false} onClick={()=>this.$f7router.navigate("/formBiodata/"+option.calon_peserta_didik_id+"/"+this.$f7route.params['pengguna_id']+"/"+this.$f7route.params['sekolah_id'])} link="#" popoverClose title="Edit Biodata" />
+                                                                <ListItem disabled={parseInt(option.status_konfirmasi_id) === 1 ? true : false} onClick={()=>this.$f7router.navigate("/formBiodata/"+option.calon_peserta_didik_id+"/"+(this.$f7route.params['pengguna_id'] ? this.$f7route.params['pengguna_id'] : '-')+"/"+(this.$f7route.params['sekolah_id'] ? this.$f7route.params['sekolah_id'] : '-'))} link="#" popoverClose title="Edit Biodata" />
                                                                 {/* <ListItem onClick={()=>window.open("http://mejabantu:8888/api/PPDB/print/formulir/"+option.calon_peserta_didik_id)} link="#" popoverClose title="Cetak Formulir Pendaftaran" />
                                                                 <ListItem onClick={()=>window.open("http://mejabantu:8888/api/PPDB/print/bukti/"+option.calon_peserta_didik_id)} link="#" popoverClose title="Cetak Bukti Pendaftaran" /> */}
                                                                 <ListItem disabled={parseInt(option.status_konfirmasi_id) !== 1 ? true : false} onClick={()=>window.open("https://be.diskuis.id/api/PPDB/print/formulir/"+option.calon_peserta_didik_id)} link="#" popoverClose title="Cetak Formulir Pendaftaran" />

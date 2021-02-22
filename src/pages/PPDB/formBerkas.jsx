@@ -58,8 +58,8 @@ class formBerkas extends Component {
             gambar_logo: '/assets/berkas/1.jpg'
         },
         routeParams: {
-            pengguna_id: this.$f7route.params['pengguna_id'],
-            sekolah_id: this.$f7route.params['sekolah_id'],
+            pengguna_id: (this.$f7route.params['pengguna_id'] && this.$f7route.params['pengguna_id'] !== '-' ? this.$f7route.params['pengguna_id'] : null),
+            sekolah_id: (this.$f7route.params['sekolah_id'] && this.$f7route.params['sekolah_id'] !== '-' ? this.$f7route.params['sekolah_id'] : null),
             peserta_didik_id: (this.$f7route.params['peserta_didik_id'] !== "null" ? (this.$f7route.params['peserta_didik_id'] ? this.$f7route.params['peserta_didik_id'] : null) : null),
         },
         jalur_id: "0100",
@@ -94,47 +94,49 @@ class formBerkas extends Component {
 
     componentDidMount = () => {
         
-        this.props.getSekolah({sekolah_id:this.$f7route.params['sekolah_id'], pengguna_id: this.$f7route.params['pengguna_id']}).then((result)=>{
-            this.setState({
-                sekolah: result.payload.rows[0]
-            },()=>{
-                this.props.getJalurPPDB({jalur_id:this.$f7route.params['jalur_id']}).then((result)=>{
-
-                    this.setState({
-                        jalur: result.payload.rows[0]
-                    },()=>{
-
-                        this.props.getCalonPesertaDidik(this.state.routeParams).then((result)=>{
-                            this.setState({
-                                routeParams: {
-                                    ...this.state.routeParams,
-                                    ...result.payload.rows[0]
-                                }
-                            },()=>{
-                                this.props.getJalurBerkas({jalur_id:this.$f7route.params['jalur_id'], peserta_didik_id:this.$f7route.params['peserta_didik_id'] }).then((result)=>{
-                                    this.setState({
-                                        jalur_berkas: result.payload
-                                    },()=>{ 
-                                        let arrJalurBerkas = {}
-
-                                        for (let indexJalurBerkas = 0; indexJalurBerkas < this.state.jalur_berkas.rows.length; indexJalurBerkas++) {
-                                            const element = this.state.jalur_berkas.rows[indexJalurBerkas];
-
-                                            element.file_gambar = element.nama_file ? element.nama_file : ''
-                                            element.gambar = element.nama_file ? element.nama_file.split("/")[3] : ''
-                                            
-                                            // console.log(element)
-                                            arrJalurBerkas[element.jenis_berkas_id] = element
-
-                                            // console.log(arrJalurBerkas[element.jenis_berkas_id])
-                                            
-                                        }
-
-                                        // console.log(arrJalurBerkas)
+        if(this.$f7route.params['sekolah_id'] && this.$f7route.params['sekolah_id'] !== '-'){
+            this.props.getSekolah({sekolah_id:this.$f7route.params['sekolah_id'], pengguna_id: this.$f7route.params['pengguna_id']}).then((result)=>{
+                this.setState({
+                    sekolah: result.payload.rows[0]
+                },()=>{
+                    this.props.getJalurPPDB({jalur_id:this.$f7route.params['jalur_id']}).then((result)=>{
+    
+                        this.setState({
+                            jalur: result.payload.rows[0]
+                        },()=>{
+    
+                            this.props.getCalonPesertaDidik(this.state.routeParams).then((result)=>{
+                                this.setState({
+                                    routeParams: {
+                                        ...this.state.routeParams,
+                                        ...result.payload.rows[0]
+                                    }
+                                },()=>{
+                                    this.props.getJalurBerkas({jalur_id:this.$f7route.params['jalur_id'], peserta_didik_id:this.$f7route.params['peserta_didik_id'] }).then((result)=>{
                                         this.setState({
-                                            berkas_calon: {...arrJalurBerkas}
-                                        },()=>{
-                                            // console.log(this.state)
+                                            jalur_berkas: result.payload
+                                        },()=>{ 
+                                            let arrJalurBerkas = {}
+    
+                                            for (let indexJalurBerkas = 0; indexJalurBerkas < this.state.jalur_berkas.rows.length; indexJalurBerkas++) {
+                                                const element = this.state.jalur_berkas.rows[indexJalurBerkas];
+    
+                                                element.file_gambar = element.nama_file ? element.nama_file : ''
+                                                element.gambar = element.nama_file ? element.nama_file.split("/")[3] : ''
+                                                
+                                                // console.log(element)
+                                                arrJalurBerkas[element.jenis_berkas_id] = element
+    
+                                                // console.log(arrJalurBerkas[element.jenis_berkas_id])
+                                                
+                                            }
+    
+                                            // console.log(arrJalurBerkas)
+                                            this.setState({
+                                                berkas_calon: {...arrJalurBerkas}
+                                            },()=>{
+                                                // console.log(this.state)
+                                            })
                                         })
                                     })
                                 })
@@ -143,7 +145,53 @@ class formBerkas extends Component {
                     })
                 })
             })
-        })
+            
+        }else{
+            this.props.getJalurPPDB({jalur_id:this.$f7route.params['jalur_id']}).then((result)=>{
+    
+                this.setState({
+                    jalur: result.payload.rows[0]
+                },()=>{
+
+                    this.props.getCalonPesertaDidik(this.state.routeParams).then((result)=>{
+                        this.setState({
+                            routeParams: {
+                                ...this.state.routeParams,
+                                ...result.payload.rows[0]
+                            }
+                        },()=>{
+                            this.props.getJalurBerkas({jalur_id:this.$f7route.params['jalur_id'], peserta_didik_id:this.$f7route.params['peserta_didik_id'] }).then((result)=>{
+                                this.setState({
+                                    jalur_berkas: result.payload
+                                },()=>{ 
+                                    let arrJalurBerkas = {}
+
+                                    for (let indexJalurBerkas = 0; indexJalurBerkas < this.state.jalur_berkas.rows.length; indexJalurBerkas++) {
+                                        const element = this.state.jalur_berkas.rows[indexJalurBerkas];
+
+                                        element.file_gambar = element.nama_file ? element.nama_file : ''
+                                        element.gambar = element.nama_file ? element.nama_file.split("/")[3] : ''
+                                        
+                                        // console.log(element)
+                                        arrJalurBerkas[element.jenis_berkas_id] = element
+
+                                        // console.log(arrJalurBerkas[element.jenis_berkas_id])
+                                        
+                                    }
+
+                                    // console.log(arrJalurBerkas)
+                                    this.setState({
+                                        berkas_calon: {...arrJalurBerkas}
+                                    },()=>{
+                                        // console.log(this.state)
+                                    })
+                                })
+                            })
+                        })
+                    })
+                })
+            })
+        }
 
     }
 
@@ -332,7 +380,10 @@ class formBerkas extends Component {
                   <Col width="100" tabletWidth="90" desktopWidth="80">
                     <Row noGap>
                         <Col width="100" tabletWidth="100">
+                            {this.$f7route.params['sekolah_id'] && this.$f7route.params['sekolah_id'] !== '-' &&
                             <HeaderSekolahPPDB pengguna_id={this.$f7route.params['pengguna_id']} sekolah={this.state.sekolah} f7={this} />
+                            }
+                            {/* <HeaderSekolahPPDB pengguna_id={this.$f7route.params['pengguna_id']} sekolah={this.state.sekolah} f7={this} /> */}
                         </Col>
                         <Col width="0" tabletWidth="100">
                         <Card style={{margin:'4px'}}>

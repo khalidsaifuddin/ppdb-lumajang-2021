@@ -147,30 +147,59 @@ class HomePPDB extends Component {
         // console.log(this)
         this.$f7.dialog.preloader()
         
-        this.props.getSekolah({sekolah_id:this.$f7route.params['sekolah_id'], pengguna_id: this.$f7route.params['pengguna_id']}).then((result)=>{
-          this.setState({
-              sekolah: result.payload.rows[0]
-          },()=>{
-            this.$f7.dialog.close()
-            this.props.getStatistikSekolah({sekolah_id:this.$f7route.params['sekolah_id']}).then((result)=>{
-                this.setState({
-                    statistik_sekolah: result.payload
-                },()=>{
-                    this.props.getJadwal({param:'hari_ini'}).then((result)=>{
-                        this.setState({
-                            jadwal: result.payload
-                        },()=>{
-                            this.props.getCalonPesertaDidik({...this.state.routeParams, limit: 3, sekolah_id:this.$f7route.params['sekolah_id'], urut_pilihan:1 }).then((result)=>{
-                                this.setState({
-                                    calon_peserta_didik: result.payload
-                                })
-                            })
-                        })
-                    })
-                })
+        if(this.$f7route.params['sekolah_id'] && this.$f7route.params['sekolah_id'] !== '-'){
+
+          this.props.getSekolah({sekolah_id:this.$f7route.params['sekolah_id'], pengguna_id: this.$f7route.params['pengguna_id']}).then((result)=>{
+            this.setState({
+                sekolah: result.payload.rows[0]
+            },()=>{
+              this.$f7.dialog.close()
+              this.props.getStatistikSekolah({sekolah_id:this.$f7route.params['sekolah_id']}).then((result)=>{
+                  this.setState({
+                      statistik_sekolah: result.payload
+                  },()=>{
+                      this.props.getJadwal({param:'hari_ini'}).then((result)=>{
+                          this.setState({
+                              jadwal: result.payload
+                          },()=>{
+                              this.props.getCalonPesertaDidik({...this.state.routeParams, limit: 3, sekolah_id:this.$f7route.params['sekolah_id'], urut_pilihan:1 }).then((result)=>{
+                                  this.setState({
+                                      calon_peserta_didik: result.payload
+                                  })
+                              })
+                          })
+                      })
+                  })
+              })
             })
           })
-        })
+
+        }else{
+
+          this.$f7.dialog.close()
+
+          this.$f7router.navigate('/')
+          
+          // this.props.getStatistikSekolah({sekolah_id:this.$f7route.params['sekolah_id']}).then((result)=>{
+          //     this.setState({
+          //         statistik_sekolah: result.payload
+          //     },()=>{
+          //         this.props.getJadwal({param:'hari_ini'}).then((result)=>{
+          //             this.setState({
+          //                 jadwal: result.payload
+          //             },()=>{
+          //                 this.props.getCalonPesertaDidik({...this.state.routeParams, limit: 3, sekolah_id:this.$f7route.params['sekolah_id'], urut_pilihan:1 }).then((result)=>{
+          //                     this.setState({
+          //                         calon_peserta_didik: result.payload
+          //                     })
+          //                 })
+          //             })
+          //         })
+          //     })
+          // })
+
+        }
+
 
     }
 
@@ -284,8 +313,10 @@ class HomePPDB extends Component {
                   <Col width="0" tabletWidth="5" desktopWidth="10"></Col>
                   <Col width="100" tabletWidth="90" desktopWidth="80">
                         <Row noGap>
-                            <Col width="100" tabletWidth="100">                                    
+                            <Col width="100" tabletWidth="100">   
+                            {this.$f7route.params['sekolah_id'] && this.$f7route.params['sekolah_id'] !== '-' &&
                             <HeaderSekolahPPDB sekolah={this.state.sekolah} />
+                            }                                 
                             </Col>
                             <Col width="0" tabletWidth="30" className="hilangDiMobile">
                                 <Card style={{margin:'4px'}}>
