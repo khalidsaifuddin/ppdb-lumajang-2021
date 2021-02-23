@@ -21,6 +21,7 @@ export const GET_JALUR_BERKAS = '[APP] GET_JALUR_BERKAS';
 export const SIMPAN_BERKAS_CALON = '[APP] SIMPAN_BERKAS_CALON';
 export const SIMPAN_KONFIRMASI = '[APP] SIMPAN_KONFIRMASI';
 export const GET_JADWAL = '[APP] GET_JADWAL';
+export const GET_KUOTA = '[APP] GET_KUOTA';
 export const GET_STATISTIK_SEKOLAH = '[APP] GET_STATISTIK_SEKOLAH';
 export const GET_STATISTIK_DINAS = '[APP] GET_STATISTIK_DINAS';
 export const SIMPAN_NILAI_PRESTASI = '[APP] SIMPAN_NLAI_PRESTASI';
@@ -345,6 +346,22 @@ export function getJadwal(routeParams)
         request.then((response) =>
             dispatch({
                 type   : GET_JADWAL,
+                payload: response.data,
+                routeParams
+            })
+        );
+}
+
+export function getKuota(routeParams)
+{
+    const request = axios.post(localStorage.getItem('api_base')+'/api/PPDB/getKuota', {
+        ...routeParams
+    });
+
+    return (dispatch) =>
+        request.then((response) =>
+            dispatch({
+                type   : GET_KUOTA,
                 payload: response.data,
                 routeParams
             })

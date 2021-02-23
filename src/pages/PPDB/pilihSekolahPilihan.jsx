@@ -218,7 +218,7 @@ class pilihSekolahPilihan extends Component {
             sekolah_id: sekolah_id,
             peserta_didik_id: this.$f7route.params['peserta_didik_id'],
             jalur_id: this.$f7route.params['jalur_id'],
-            pengguna_id: this.$f7route.params['pengguna_id']         
+            pengguna_id: (this.$f7route.params['pengguna_id'] && this.$f7route.params['pengguna_id'] !== '-') ? this.$f7route.params['pengguna_id'] : null          
         }).then((result)=>{
             this.$f7.dialog.close()
             this.$f7router.navigate('/formSekolahPilihan/'+this.$f7route.params['peserta_didik_id']+"/"+this.$f7route.params['pengguna_id']+"/"+this.$f7route.params['sekolah_id'])

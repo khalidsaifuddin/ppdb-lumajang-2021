@@ -78,6 +78,7 @@ import HomePPDBDinas from '../pages/PPDB/HomePPDBDinas';
 import kelolaJadwal from '../pages/PPDB/kelolaJadwal';
 import editJadwal from '../pages/PPDB/editJadwal';
 import HomePPDBPublik from '../pages/PPDB/HomePPDBPublik';
+import kelolaKuota from '../pages/PPDB/kelolaKuota';
 
 // console.log(localStorage.getItem('kode_aplikasi'));
 
@@ -135,6 +136,10 @@ var routes = [
   {
     path: '/kelolaJadwal/',
     component: kelolaJadwal
+  },
+  {
+    path: '/kelolaKuota/',
+    component: kelolaKuota
   },
   {
     path: '/formBiodata/:peserta_didik_id/:pengguna_id/:sekolah_id',

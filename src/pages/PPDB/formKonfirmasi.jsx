@@ -350,7 +350,13 @@ class formKonfirmasi extends Component {
                 if(result.payload.sukses){
                     this.$f7.dialog.close()
                     this.$f7.dialog.alert('Calon Peserta Didik baru telah berhasil dikonfirmasi!','Berhasil',()=>{
-                        this.$f7router.navigate("/PPDB/"+this.$f7route.params['pengguna_id']+"/"+this.$f7route.params['sekolah_id'])
+
+                        if(this.$f7route.params['pengguna_id'] !== '-' && this.$f7route.params['sekolah_id'] !== '-'){
+                            this.$f7router.navigate("/PPDB/"+this.$f7route.params['pengguna_id']+"/"+this.$f7route.params['sekolah_id'])
+                        }else{
+                            this.$f7router.navigate("/PPDB/")
+                        }
+
                     })
                 }
                 // this.$f7router.navigate("/PPDB/"+this.$f7route.params['pengguna_id']+"/"+this.$f7route.params['sekolah_id'])
