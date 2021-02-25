@@ -57,7 +57,8 @@ class kelolaKuota extends Component {
         start: 0,
         limit: 20
     },
-    popupFilter: false
+    popupFilter: false,
+    popupKuota: false
   };
 
 
@@ -81,6 +82,8 @@ class kelolaKuota extends Component {
   }
 
   componentDidMount = () => {
+
+    this.$f7.dialog.preloader()
     
     this.props.getSekolah({sekolah_id:this.$f7route.params['sekolah_id'], pengguna_id: this.$f7route.params['pengguna_id']}).then((result)=>{
       this.setState({
@@ -89,6 +92,8 @@ class kelolaKuota extends Component {
         this.props.getKuota({kode_wilayah:'052100'}).then((result)=>{
           this.setState({
             kuota: result.payload
+          },()=>{
+            this.$f7.dialog.close()
           })
         })
       })
@@ -112,8 +117,33 @@ class kelolaKuota extends Component {
     }
   }
 
-    editKuota = (sekolah_id) => {
-        alert(sekolah_id)
+    editKuota = (nama, sekolah_id, jalur_id, kuota) => {
+        // alert(sekolah_id)
+        this.setState({
+            routeParams: {
+                ...this.state.routeParams,
+                nama: nama,
+                sekolah_id: sekolah_id,
+                jalur_id: jalur_id,
+                kuota: kuota,
+                jalur: (
+                    jalur_id === '0100' ? 'Affirmasi' : 
+                    (
+                        jalur_id === '0200' ? 'Pindah Tugas' : 
+                        (
+                            jalur_id === '0300' ? 'Prestasi' : 
+                            (
+                                jalur_id === '0400' ? 'Zonasi' : 
+                                (
+                                    jalur_id === '0500' ? 'Tahfidz' : ''
+                                )
+                            )
+                        )
+                    )
+                )
+            },
+            popupKuota: true
+        })
     }
 
     klikNext = () => {
@@ -223,6 +253,28 @@ class kelolaKuota extends Component {
 
     }
 
+    simpanKuota = () => {
+        this.$f7.dialog.preloader()
+
+        this.props.simpanKuota(this.state.routeParams).then((result)=>{
+            this.setState({
+                routeParams: {
+                    ...this.state.routeParams,
+                    sekolah_id: null
+                }
+            },()=>{
+                this.props.getKuota(this.state.routeParams).then((result)=>{
+                    this.setState({
+                        kuota: result.payload,
+                        popupKuota: !this.state.popupKuota
+                    },()=>{
+                        this.$f7.dialog.close()
+                    })
+                })
+            })
+        })
+    }
+
     render()
     {
         return (
@@ -263,6 +315,34 @@ class kelolaKuota extends Component {
                                 </Button>
                             </Col>
                         </Row>
+                    </Block>
+                </Page>
+            </Popup>
+
+            <Popup className="edit-kuota-popup" opened={this.state.popupKuota} onPopupClosed={() => this.setState({popupKuota : false})}>
+                <Page>
+                    <Navbar title={"Edit Kuota "+this.state.routeParams.nama+" ("+(this.state.routeParams.jalur)+")"}>
+                        <NavRight>
+                            <Link popupClose>Tutup</Link>
+                        </NavRight>
+                    </Navbar>
+                    <Block style={{marginTop:'0px', paddingLeft:'0px', paddingRight:'0px'}}>
+                        <List>
+                            <ListInput
+                                label="Jumlah Kuota"
+                                type="number"
+                                placeholder="Jumlah Kuota"
+                                clearButton
+                                value={this.state.routeParams.kuota || ''}
+                                onChange={this.setValue('kuota')}
+                            />
+                        </List>
+                    </Block>
+                    <Block>
+                        <Button style={{display:'inline-flex'}} raised fill onClick={this.simpanKuota}>
+                            <i className="icons f7-icons" style={{fontSize:'20px'}}>floppy_disk</i>&nbsp;
+                            Simpan
+                        </Button>
                     </Block>
                 </Page>
             </Popup>
@@ -339,23 +419,28 @@ class kelolaKuota extends Component {
                                         <Col key={option.jadwal_id} width="100" tabletWidth="100">
                                         <Card style={{marginTop:'4px', marginBottom:'4px', marginRight:'0px', marginLeft:'0px', borderLeft:'3px solid '+(option.jalur_id === '0100' ? 'red' : (option.jalur_id === '0200' ? 'purple' : (option.jalur_id === '0300' ? 'green' : (option.jalur_id === '0400' ? 'orange' : (option.jalur_id === '0500' ? 'teal' : 'gray'))))), borderRadius:'0px'}}>
                                             <CardContent>
-                                                <Row>
-                                                    <Col width="80">
+                                                <Row style={{justifyContent:'end'}}>
+                                                    <Col width="100">
                                                         <b>{option.nama}</b> ({option.npsn})
                                                         <br/>
                                                         <span style={{fontSize:'10px'}}>{option.bentuk} | {option.status} | {option.alamat}, {option.kecamatan}, {option.kabupaten}</span>
                                                     </Col>
-                                                    <Col width="20">
-                                                        <Button className="bawahCiriBiru" raised fill onClick={()=>this.editKuota(option.sekolah_id)}>
+                                                    {/* <Col width="20">
+                                                        <Button className="bawahCiriBiru" raised fill onClick={()=>this.editKuota(option.nama, option.sekolah_id)}>
                                                             <i className="f7-icons" style={{fontSize:'20px'}}>pencil</i>
                                                             Edit
                                                         </Button>
-                                                    </Col>
+                                                    </Col> */}
                                                     <Col width="20">
                                                         <Card style={{margin:'4px', borderRadius:'0px', borderTop:'2px solid #ddd'}}>
                                                             <CardContent style={{padding:'8px', minHeight:'40px', textAlign: 'center', fontSize:'10px'}}>
                                                                 Affirmasi<br/>
                                                                 <b style={{fontSize:'15px'}}>{option.kuota_0100 ? option.kuota_0100 : '0'}</b>
+                                                                <br/>
+                                                                <Button style={{height:'20px', fontSize:'10px'}} onClick={()=>this.editKuota(option.nama, option.sekolah_id, '0100', option.kuota_0100)}>
+                                                                    <i className="f7-icons" style={{fontSize:'15px'}}>pencil</i>
+                                                                    Edit
+                                                                </Button>
                                                             </CardContent>
                                                         </Card>
                                                     </Col>
@@ -364,22 +449,39 @@ class kelolaKuota extends Component {
                                                             <CardContent style={{padding:'8px', minHeight:'40px', textAlign: 'center', fontSize:'10px'}}>
                                                                 Pindah Tugas<br/>
                                                                 <b style={{fontSize:'15px'}}>{option.kuota_0200 ? option.kuota_0200 : '0'}</b>
+                                                                <br/>
+                                                                <Button style={{height:'20px', fontSize:'10px'}} onClick={()=>this.editKuota(option.nama, option.sekolah_id, '0200', option.kuota_0200)}>
+                                                                    <i className="f7-icons" style={{fontSize:'15px'}}>pencil</i>
+                                                                    Edit
+                                                                </Button>
                                                             </CardContent>
                                                         </Card>
                                                     </Col>
+                                                    {parseInt(option.bentuk_pendidikan_id) === 6 &&
                                                     <Col width="20">
                                                         <Card style={{margin:'4px', borderRadius:'0px', borderTop:'2px solid #ddd'}}>
                                                             <CardContent style={{padding:'8px', minHeight:'40px', textAlign: 'center', fontSize:'10px'}}>
                                                                 Prestasi<br/>
                                                                 <b style={{fontSize:'15px'}}>{option.kuota_0300 ? option.kuota_0300 : '0'}</b>
+                                                                <br/>
+                                                                <Button style={{height:'20px', fontSize:'10px'}} onClick={()=>this.editKuota(option.nama, option.sekolah_id, '0300', option.kuota_0300)}>
+                                                                    <i className="f7-icons" style={{fontSize:'15px'}}>pencil</i>
+                                                                    Edit
+                                                                </Button>
                                                             </CardContent>
                                                         </Card>
                                                     </Col>
+                                                    }
                                                     <Col width="20">
                                                         <Card style={{margin:'4px', borderRadius:'0px', borderTop:'2px solid #ddd'}}>
                                                             <CardContent style={{padding:'8px', minHeight:'40px', textAlign: 'center', fontSize:'10px'}}>
                                                                 Zonasi<br/>
                                                                 <b style={{fontSize:'15px'}}>{option.kuota_0400 ? option.kuota_0400 : '0'}</b>
+                                                                <br/>
+                                                                <Button style={{height:'20px', fontSize:'10px'}} onClick={()=>this.editKuota(option.nama, option.sekolah_id, '0400', option.kuota_0400)}>
+                                                                    <i className="f7-icons" style={{fontSize:'15px'}}>pencil</i>
+                                                                    Edit
+                                                                </Button>
                                                             </CardContent>
                                                         </Card>
                                                     </Col>
@@ -388,6 +490,11 @@ class kelolaKuota extends Component {
                                                             <CardContent style={{padding:'8px', minHeight:'40px', textAlign: 'center', fontSize:'10px'}}>
                                                                 Tahfidz<br/>
                                                                 <b style={{fontSize:'15px'}}>{option.kuota_0500 ? option.kuota_0500 : '0'}</b>
+                                                                <br/>
+                                                                <Button style={{height:'20px', fontSize:'10px'}} onClick={()=>this.editKuota(option.nama, option.sekolah_id, '0500', option.kuota_0500)}>
+                                                                    <i className="f7-icons" style={{fontSize:'15px'}}>pencil</i>
+                                                                    Edit
+                                                                </Button>
                                                             </CardContent>
                                                         </Card>
                                                     </Col>
@@ -418,7 +525,8 @@ function mapDispatchToProps(dispatch) {
     setLoading: Actions.setLoading,
     setTabActive: Actions.setTabActive,
     getSekolah: Actions.getSekolah,
-    getKuota: Actions.getKuota
+    getKuota: Actions.getKuota,
+    simpanKuota: Actions.simpanKuota
   }, dispatch);
 }
 

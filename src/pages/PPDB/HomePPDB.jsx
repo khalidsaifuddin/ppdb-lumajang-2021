@@ -61,6 +61,10 @@ class HomePPDB extends Component {
     jadwal: {
         rows: [],
         total: 0
+    },
+    kuota: {
+      rows: [],
+      total: 0
     }
   };
 
@@ -165,6 +169,16 @@ class HomePPDB extends Component {
                               this.props.getCalonPesertaDidik({...this.state.routeParams, limit: 3, sekolah_id:this.$f7route.params['sekolah_id'], urut_pilihan:1 }).then((result)=>{
                                   this.setState({
                                       calon_peserta_didik: result.payload
+                                  },()=>{
+                                  
+                                    this.props.getKuota({sekolah_id: this.$f7route.params['sekolah_id']}).then((result)=>{
+                                      
+                                      this.setState({
+                                        kuota: result.payload
+                                      })
+
+                                    })
+                                  
                                   })
                               })
                           })
@@ -376,6 +390,75 @@ class HomePPDB extends Component {
                                             </Link>
                                         </Col>
                                         <Col width="100">
+                                            <BlockTitle style={{marginLeft:'0px'}}>Kuota</BlockTitle>
+                                            {this.state.kuota.total > 0 &&
+                                            <Row noGap style={{justifyContent:'end'}}>
+                                              {this.state.statistik_sekolah.map((option)=>{
+                                                  return (
+                                                    <Col width="50" tabletWidth="33" desktopWidth="20">
+                                                      <Card className={"kotakJalur"} style={{minHeight:'100px'}}>
+                                                          <CardContent style={{color:'#434343', fontSize:'10px'}}>
+                                                            <b>{option.nama}</b>
+                                                            <div style={{fontSize:'22px', fontWeight:'bold', color:'#434343'}}><span style={{color: (parseFloat(parseFloat(option.total)/parseFloat((option.jalur_id === '0100' ? this.state.kuota.rows[0].kuota_0100 : (option.jalur_id === '0200' ? this.state.kuota.rows[0].kuota_0200 : (option.jalur_id === '0300' ? this.state.kuota.rows[0].kuota_0300 : (option.jalur_id === '0400' ? this.state.kuota.rows[0].kuota_0400 : (option.jalur_id === '0500' ? this.state.kuota.rows[0].kuota_0500 : '0'))))))*100).toFixed(1) > 100 ? 'red' : '#434343')}}>{option.total}</span>/{(option.jalur_id === '0100' ? this.state.kuota.rows[0].kuota_0100 : (option.jalur_id === '0200' ? this.state.kuota.rows[0].kuota_0200 : (option.jalur_id === '0300' ? this.state.kuota.rows[0].kuota_0300 : (option.jalur_id === '0400' ? this.state.kuota.rows[0].kuota_0400 : (option.jalur_id === '0500' ? this.state.kuota.rows[0].kuota_0500 : '0')))))}</div><br/>
+                                                            {/* Persentase Kuota {parseFloat(parseFloat(option.total)/parseFloat((option.jalur_id === '0100' ? this.state.kuota.rows[0].kuota_0100 : (option.jalur_id === '0200' ? this.state.kuota.rows[0].kuota_0200 : (option.jalur_id === '0300' ? this.state.kuota.rows[0].kuota_0300 : (option.jalur_id === '0400' ? this.state.kuota.rows[0].kuota_0400 : (option.jalur_id === '0500' ? this.state.kuota.rows[0].kuota_0500 : '0'))))))*100).toFixed(1)}%
+                                                            <br/>
+                                                            {parseFloat(parseFloat(option.total)/parseFloat((option.jalur_id === '0100' ? this.state.kuota.rows[0].kuota_0100 : (option.jalur_id === '0200' ? this.state.kuota.rows[0].kuota_0200 : (option.jalur_id === '0300' ? this.state.kuota.rows[0].kuota_0300 : (option.jalur_id === '0400' ? this.state.kuota.rows[0].kuota_0400 : (option.jalur_id === '0500' ? this.state.kuota.rows[0].kuota_0500 : '0'))))))*100).toFixed(1) > 100 &&
+                                                            <div style={{display:'inline-flex'}}>
+                                                              <i className="f7-icons" style={{color:'red', fontSize:'20px'}}>exclamationmark_circle</i>&nbsp;
+                                                              <div style={{color:'red', marginLeft:'8px'}}>
+                                                                Pendaftar melebihi kuota yang ditentukan
+                                                              </div>
+                                                            </div>
+                                                            } */}
+                                                          </CardContent>
+                                                      </Card>
+                                                    </Col>
+                                                  )
+                                              })}
+                                              {/* <Col width="50" tabletWidth="33" desktopWidth="20">
+                                                  <Card className={"kotakJalur"} style={{minHeight:'80px'}}>
+                                                      <CardContent style={{color:'#434343', fontSize:'10px'}}>
+                                                      <b>Affirmasi</b>
+                                                      <div style={{fontSize:'22px', fontWeight:'bold', color:'#434343'}}>/{this.state.kuota.rows[0].kuota_0100}</div><br/>
+                                                      </CardContent>
+                                                  </Card>
+                                              </Col>
+                                              <Col width="50" tabletWidth="33" desktopWidth="20">
+                                                  <Card className={"kotakJalur"} style={{minHeight:'80px'}}>
+                                                      <CardContent style={{color:'#434343', fontSize:'10px'}}>
+                                                      <b>Pindah Tugas</b>
+                                                      <div style={{fontSize:'22px', fontWeight:'bold', color:'#434343'}}>/{this.state.kuota.rows[0].kuota_0200}</div><br/>
+                                                      </CardContent>
+                                                  </Card>
+                                              </Col>
+                                              <Col width="50" tabletWidth="33" desktopWidth="20">
+                                                  <Card className={"kotakJalur"} style={{minHeight:'80px'}}>
+                                                      <CardContent style={{color:'#434343', fontSize:'10px'}}>
+                                                      <b>Prestasi</b>
+                                                      <div style={{fontSize:'22px', fontWeight:'bold', color:'#434343'}}>/{this.state.kuota.rows[0].kuota_0300}</div><br/>
+                                                      </CardContent>
+                                                  </Card>
+                                              </Col>
+                                              <Col width="50" tabletWidth="33" desktopWidth="20">
+                                                  <Card className={"kotakJalur"} style={{minHeight:'80px'}}>
+                                                      <CardContent style={{color:'#434343', fontSize:'10px'}}>
+                                                      <b>Zonasi</b>
+                                                      <div style={{fontSize:'22px', fontWeight:'bold', color:'#434343'}}>/{this.state.kuota.rows[0].kuota_0400}</div><br/>
+                                                      </CardContent>
+                                                  </Card>
+                                              </Col>
+                                              <Col width="50" tabletWidth="33" desktopWidth="20">
+                                                  <Card className={"kotakJalur"} style={{minHeight:'80px'}}>
+                                                      <CardContent style={{color:'#434343', fontSize:'10px'}}>
+                                                      <b>Tahfidz</b>
+                                                      <div style={{fontSize:'22px', fontWeight:'bold', color:'#434343'}}>/{this.state.kuota.rows[0].kuota_0500}</div><br/>
+                                                      </CardContent>
+                                                  </Card>
+                                              </Col> */}
+                                            </Row>
+                                            }
+                                        </Col>
+                                        <Col width="100">
                                             <BlockTitle style={{marginLeft:'0px'}}>Jadwal Aktif Hari Ini ({hari_ini})</BlockTitle>
                                             <Row noGap>
                                             {this.state.jadwal.rows.map((option)=>{
@@ -538,7 +621,8 @@ function mapDispatchToProps(dispatch) {
     getCalonPesertaDidik: Actions.getCalonPesertaDidik,
     getStatistikSekolah: Actions.getStatistikSekolah,
     getJadwal: Actions.getJadwal,
-    getSekolahPengguna: Actions.getSekolahPengguna
+    getSekolahPengguna: Actions.getSekolahPengguna,
+    getKuota: Actions.getKuota
   }, dispatch);
 }
 

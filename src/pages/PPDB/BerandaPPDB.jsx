@@ -65,7 +65,11 @@ class BerandaPPDB extends Component {
       start: 0,
       limit: 20
     },
-    popupFilter: false
+    popupFilter: false,
+    jalur: {
+      rows: [],
+      total: 0 
+    }
   };
 
 
@@ -82,6 +86,22 @@ class BerandaPPDB extends Component {
     'Oktober',
     'November',
     'Desember'
+]
+
+
+  bulan_singkat = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'Mei',
+    'Jun',
+    'Jul',
+    'Agu',
+    'Sep',
+    'Okt',
+    'Nov',
+    'Des'
 ]
 
   formatAngka = (num) => {
@@ -104,6 +124,11 @@ class BerandaPPDB extends Component {
               calon_peserta_didik: result.payload
             },()=>{
               this.$f7.dialog.close()
+              this.props.getJalurPPDB(this.state.routeParams).then((result)=>{
+                this.setState({
+                  jalur: result.payload
+                })
+              })
             })
           })
         })
@@ -114,6 +139,11 @@ class BerandaPPDB extends Component {
           calon_peserta_didik: result.payload
         },()=>{
           this.$f7.dialog.close()
+          this.props.getJalurPPDB(this.state.routeParams).then((result)=>{
+            this.setState({
+              jalur: result.payload
+            })
+          })
         })
       })
     }
@@ -292,7 +322,8 @@ class BerandaPPDB extends Component {
           routeParams: {
               ...this.state.routeParams,
               keyword: null,
-              status_konfirmasi_id: null
+              status_konfirmasi_id: null,
+              jalur_id_filter: null
           }
       },()=>{
 
@@ -347,6 +378,20 @@ class BerandaPPDB extends Component {
                                         <option value={option.kode_wilayah}>{option.nama}</option>
                                     )
                                 })} */}
+                            </ListInput>
+                            <ListInput
+                                label="Jalur"
+                                type="select"
+                                defaultValue={"99"}
+                                placeholder="Pilih Jalur..."
+                                onChange={this.setValue('jalur_id_filter')}
+                            >
+                              <option value={'semua'} selected>Semua</option>
+                              {this.state.jalur.rows.map((option)=>{
+                                  return (
+                                      <option value={option.jalur_id}>{option.nama}</option>
+                                  )
+                              })}
                             </ListInput>
                         </List>
                     </Block>
@@ -423,6 +468,7 @@ class BerandaPPDB extends Component {
                                             <Button style={{borderRadius:'20px', marginBottom:'4px'}} className="color-theme-deeporange" tabLink="#tab-0" onClick={()=>this.$f7router.navigate("/")}>Beranda</Button>
                                             <Button style={{borderRadius:'20px', marginBottom:'4px'}} className="color-theme-deeporange bawahCiri" tabLink="#tab-1" tabLinkActive>Data Pendaftar</Button>
                                             <Button style={{borderRadius:'20px', marginBottom:'4px'}} className="color-theme-deeporange" tabLink="#tab-1" onClick={()=>this.$f7router.navigate("/KelolaJadwal/")}>Kelola Jadwal</Button>
+                                            <Button style={{borderRadius:'20px', marginBottom:'4px'}} className="color-theme-deeporange" tabLink="#tab-1" onClick={()=>this.$f7router.navigate("/KelolaKuota/")}>Kelola Kuota</Button>
                                           </>
                                           }
                                         </CardContent>
@@ -477,6 +523,9 @@ class BerandaPPDB extends Component {
                                               
                                             }
 
+                                            let last_update = '';
+                                            last_update = moment(option.last_update).format('D') + ' ' + this.bulan_singkat[(moment(option.last_update).format('M')-1)] + ' ' + moment(option.last_update).format('YYYY') + ', ' + moment(option.last_update).format('HH') + ':' + moment(option.last_update).format('mm');
+
                                             return (
                                               <Card key={option.calon_peserta_didik_id} style={{marginRight:'0px', marginLeft:'0px'}}>
                                                 <CardContent style={{padding:'8px'}}>
@@ -525,6 +574,8 @@ class BerandaPPDB extends Component {
                                                                   Poin: <b>{option.nilai_prestasi.skor}</b>
                                                                 </span>
                                                               }
+                                                              <br/>
+                                                              <span style={{fontSize:'8px'}}>Pembaruan: {last_update}</span>
                                                             </Col>
                                                             <Col width="100" className="hilangDiDesktop">
                                                               <Button raised fill small style={{fontSize:'10px', height:'20px', display:'inline-flex'}} className={(parseInt(option.status_konfirmasi_id) === 1 ? 'color-theme-green' : 'color-theme-orange')}>
@@ -597,7 +648,8 @@ function mapDispatchToProps(dispatch) {
     getSekolah: Actions.getSekolah,
     getCalonPesertaDidik: Actions.getCalonPesertaDidik,
     batalKonfirmasi: Actions.batalKonfirmasi,
-    hapusCalonPesertaDidik: Actions.hapusCalonPesertaDidik
+    hapusCalonPesertaDidik: Actions.hapusCalonPesertaDidik,
+    getJalurPPDB: Actions.getJalurPPDB
   }, dispatch);
 }
 
