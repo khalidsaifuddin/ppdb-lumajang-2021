@@ -120,49 +120,66 @@ class formSekolahPilihan extends Component {
                     this.props.getTingkatPrestasi(this.state.routeParams)
     
                     this.props.getJalurPPDB({...this.state.routeParams, jalur_id: null}).then((result)=>{
-    
-                        this.props.getCalonPesertaDidik({...this.state.routeParams, sekolah_id:null}).then((result)=>{
+
+                        if(result.payload.total > 0){
+                            //ada pilihan jalurnya
                             this.setState({
-                                routeParams: {
-                                    ...result.payload.rows[0],
-                                    ...this.state.routeParams
-                                }
+                                jalur_id: result.payload.rows[0].jalur_id
                             },()=>{
-                                this.props.getSekolahPilihan({...this.state.routeParams, peserta_didik_id: this.$f7route.params['peserta_didik_id']}).then((result)=>{
-        
-                                    let jalur_id = this.state.jalur_id
-        
-                                    if(result.payload.total > 0){
-                                        jalur_id = result.payload.rows[0].jalur_id
-                                    }
-        
+
+                                console.log(this.state.jalur_id)
+
+                                this.props.getCalonPesertaDidik({...this.state.routeParams, sekolah_id:null, jalur_id: this.state.jalur_id}).then((result)=>{
                                     this.setState({
-                                        sekolah_pilihan: result.payload,
-                                        jalur_id: jalur_id
+                                        routeParams: {
+                                            ...result.payload.rows[0],
+                                            ...this.state.routeParams
+                                        }
                                     },()=>{
-                                        console.log(this.state.jalur_id)
-    
-                                        this.$f7.dialog.close()
-    
-                                        //nilai prestasi
-                                        this.props.getNilaiPrestasi(this.state.routeParams).then((result)=>{
+                                        this.props.getSekolahPilihan({
+                                            ...this.state.routeParams,
+                                            peserta_didik_id: this.$f7route.params['peserta_didik_id'],
+                                            lintang: parseFloat(this.state.routeParams.lintang),
+                                            bujur: parseFloat(this.state.routeParams.bujur)
+                                        }).then((result)=>{
+                
+                                            let jalur_id = this.state.jalur_id
+                
                                             if(result.payload.total > 0){
-                                                this.setState({
-                                                    jenis_prestasi_id: result.payload.rows[0].jenis_prestasi_id,
-                                                    tingkat_prestasi_id: result.payload.rows[0].tingkat_prestasi_id,
-                                                    nilai_semester_1: result.payload.rows[0].nilai_semester_1,
-                                                    nilai_semester_2: result.payload.rows[0].nilai_semester_2,
-                                                    nilai_semester_3: result.payload.rows[0].nilai_semester_3,
-                                                    nilai_semester_4: result.payload.rows[0].nilai_semester_4,
-                                                    nilai_semester_5: result.payload.rows[0].nilai_semester_5
-                                                })
+                                                jalur_id = result.payload.rows[0].jalur_id
                                             }
+                
+                                            this.setState({
+                                                sekolah_pilihan: result.payload,
+                                                jalur_id: jalur_id
+                                            },()=>{
+                                                console.log(this.state.jalur_id)
+            
+                                                this.$f7.dialog.close()
+            
+                                                //nilai prestasi
+                                                this.props.getNilaiPrestasi(this.state.routeParams).then((result)=>{
+                                                    if(result.payload.total > 0){
+                                                        this.setState({
+                                                            jenis_prestasi_id: result.payload.rows[0].jenis_prestasi_id,
+                                                            tingkat_prestasi_id: result.payload.rows[0].tingkat_prestasi_id,
+                                                            nilai_semester_1: result.payload.rows[0].nilai_semester_1,
+                                                            nilai_semester_2: result.payload.rows[0].nilai_semester_2,
+                                                            nilai_semester_3: result.payload.rows[0].nilai_semester_3,
+                                                            nilai_semester_4: result.payload.rows[0].nilai_semester_4,
+                                                            nilai_semester_5: result.payload.rows[0].nilai_semester_5
+                                                        })
+                                                    }
+                                                })
+            
+                                            })
                                         })
-    
                                     })
                                 })
+
                             })
-                        })
+                        }
+    
     
                     })
     
@@ -181,14 +198,22 @@ class formSekolahPilihan extends Component {
                 pengguna_id: (this.$f7route.params['pengguna_id'] && this.$f7route.params['pengguna_id'] !== '-' ? this.$f7route.params['pengguna_id'] : null)
             }).then((result)=>{
 
-                this.props.getCalonPesertaDidik({...this.state.routeParams, sekolah_id:null}).then((result)=>{
+                this.props.getCalonPesertaDidik({
+                    ...this.state.routeParams, 
+                    sekolah_id:null
+                }).then((result)=>{
                     this.setState({
                         routeParams: {
                             ...result.payload.rows[0],
                             ...this.state.routeParams
                         }
                     },()=>{
-                        this.props.getSekolahPilihan({...this.state.routeParams, peserta_didik_id: this.$f7route.params['peserta_didik_id']}).then((result)=>{
+                        this.props.getSekolahPilihan({
+                            ...this.state.routeParams, 
+                            peserta_didik_id: this.$f7route.params['peserta_didik_id'],
+                            lintang: parseFloat(this.state.routeParams.lintang),
+                            bujur: parseFloat(this.state.routeParams.bujur)
+                        }).then((result)=>{
 
                             let jalur_id = this.state.jalur_id
 
@@ -558,6 +583,10 @@ class formSekolahPilihan extends Component {
                                                                                 <br/>
                                                                                 <span style={{fontSize:'10px'}}>
                                                                                     {option.alamat}{option.kecamatan ? <>, {option.kecamatan}</> : <></>}{option.kabupaten ? <>, {option.kabupaten}</> : <></>}{option.provinsi ? <>, {option.provinsi}</> : <></>}
+                                                                                </span>
+                                                                                <br/>
+                                                                                <span style={{fontSize:'10px'}}>
+                                                                                    <b>{option.jalur}</b>
                                                                                 </span>
                                                                                 {/* <br/> */}
                                                                                 {/* <span style={{fontSize:'10px'}}>

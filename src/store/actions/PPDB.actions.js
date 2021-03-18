@@ -30,6 +30,7 @@ export const GET_NILAI_PRESTASI = '[APP] GET_NILAI_PRESTASI';
 export const BATAL_KONFIRMASI = '[APP] BATAL_KONFIRMASI';
 export const HAPUS_CALON_PESERTA_DIDIK = '[APP] HAPUS_CALON_PESERTA_DIDIK';
 export const SIMPAN_JADWAL = '[APP] SIMPAN_JADWAL';
+export const SIMPAN_DAFTAR_ULANG = '[APP] SIMPAN_DAFTAR_ULANG';
 
 export function getCalonPesertaDidik(routeParams)
 {
@@ -494,6 +495,22 @@ export function simpanJadwal(routeParams)
         request.then((response) =>
             dispatch({
                 type   : SIMPAN_JADWAL,
+                payload: response.data,
+                routeParams
+            })
+        );
+}
+
+export function simpanDaftarUlang(routeParams)
+{
+    const request = axios.post(localStorage.getItem('api_base')+'/api/PPDB/simpanDaftarUlang', {
+        ...routeParams
+    });
+
+    return (dispatch) =>
+        request.then((response) =>
+            dispatch({
+                type   : SIMPAN_DAFTAR_ULANG,
                 payload: response.data,
                 routeParams
             })

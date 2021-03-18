@@ -62,6 +62,7 @@ class BerandaPPDB extends Component {
     routeParams: {
       sekolah_id: this.$f7route.params['sekolah_id'] ? this.$f7route.params['sekolah_id'] : null, 
       urut_pilihan:1,
+      pendaftar:1,
       start: 0,
       limit: 20
     },
@@ -458,7 +459,12 @@ class BerandaPPDB extends Component {
                                           <>
                                             <Button style={{borderRadius:'20px', marginBottom:'4px'}} className="color-theme-deeporange" tabLink="#tab-0" onClick={()=>this.$f7router.navigate("/HomePPDB/"+this.$f7route.params['pengguna_id']+"/"+this.$f7route.params['sekolah_id'])}>Beranda</Button>
                                             <Button style={{borderRadius:'20px', marginBottom:'4px'}} className="color-theme-deeporange bawahCiri" tabLink="#tab-1" tabLinkActive>Data Pendaftar</Button>
+                                            {localStorage.getItem('tambah_pendaftar') === 'Y' &&
                                             <Button style={{borderRadius:'20px', marginBottom:'4px'}} className="color-theme-deeporange" tabLink="#tab-3" onClick={()=>this.$f7router.navigate("/formulirPPDB/"+this.$f7route.params['pengguna_id']+"/"+this.$f7route.params['sekolah_id'])}>Tambah Pendaftar</Button>
+                                            }
+                                            {localStorage.getItem('tampil_pendaftar_diterima') === 'Y' &&
+                                            <Button style={{borderRadius:'20px', marginBottom:'4px'}} className="color-theme-deeporange" tabLink="#tab-1" onClick={()=>this.$f7router.navigate("/PendaftarDiterima/"+this.$f7route.params['pengguna_id']+"/"+this.$f7route.params['sekolah_id'])}>Pendaftar Diterima</Button>
+                                            }
                                             <Button style={{borderRadius:'20px', marginBottom:'4px'}} className="color-theme-deeporange" tabLink="#tab-3" onClick={()=>this.$f7router.navigate("/jadwalPPDB/"+this.$f7route.params['pengguna_id']+"/"+this.$f7route.params['sekolah_id'])}>Jadwal</Button>
                                             <Button style={{borderRadius:'20px', marginBottom:'4px', background:'#eeeeee', color:'red', marginTop:'16px'}} className="color-theme-deeporange" tabLink="#tab-3" onClick={this.keluar}>Keluar</Button>
                                           </>
@@ -492,7 +498,21 @@ class BerandaPPDB extends Component {
                                   <Col width="100" tabletWidth="70">
                                     <Card style={{margin:'4px', marginBottom:'50px'}}>
                                         <CardContent>
-                                          <BlockTitle style={{marginTop:"0px", marginBottom:'8px'}}>Data Pendaftar</BlockTitle>
+                                          
+                                          {/* <Card style={{marginBottom:'16px'}}>
+                                            <CardContent style={{padding:'8px'}}>
+                                                <Row>
+                                                  <Col width="20" tabletWidth="15" style={{textAlign:'center'}}>
+                                                    <i className="icons f7-icons" style={{fontSize:'50px'}}>info_circle</i>
+                                                  </Col>
+                                                  <Col width="80" tabletWidth="85" style={{fontSize:'12px', fontStyle:'italic'}}>
+                                                    Data yang ditampilkan di halaman ini adalah data pendaftar yang belum berstatus telah diterima/daftar ulang/cabut berkas. Untuk melihat data pendaftar yang telah diterima/daftar ulang/cabut berkas, silakan buka menu <Link href={"/PendaftarDiterima/"+this.$f7route.params['pengguna_id']+'/'+this.$f7route.params['sekolah_id']}>Pendaftar Diterima</Link>
+                                                  </Col>
+                                                </Row>
+                                            </CardContent>
+                                          </Card> */}
+
+                                          <BlockTitle style={{marginTop:"8px", marginBottom:'8px'}}>Data Pendaftar</BlockTitle>
                                           <div className="data-table" style={{overflowY:'hidden'}}>
                                               <div className="data-table-footer" style={{display:'block'}}>
                                                   <div className="data-table-pagination" style={{textAlign:'right'}}>
@@ -589,13 +609,19 @@ class BerandaPPDB extends Component {
                                                           <Button popoverOpen={".popover-menu-"+option.calon_peserta_didik_id}><i className="icons f7-icons">ellipsis_vertical</i></Button>
                                                           <Popover className={"popover-menu-"+option.calon_peserta_didik_id} style={{minWidth:'300px'}}>
                                                             <List>
+                                                                {localStorage.getItem('edit_pendaftar') === 'Y' &&
                                                                 <ListItem disabled={parseInt(option.status_konfirmasi_id) === 1 ? true : false} onClick={()=>this.$f7router.navigate("/formBiodata/"+option.calon_peserta_didik_id+"/"+(this.$f7route.params['pengguna_id'] ? this.$f7route.params['pengguna_id'] : '-')+"/"+(this.$f7route.params['sekolah_id'] ? this.$f7route.params['sekolah_id'] : '-'))} link="#" popoverClose title="Edit Biodata" />
+                                                                }
                                                                 {/* <ListItem onClick={()=>window.open("http://mejabantu:8888/api/PPDB/print/formulir/"+option.calon_peserta_didik_id)} link="#" popoverClose title="Cetak Formulir Pendaftaran" />
                                                                 <ListItem onClick={()=>window.open("http://mejabantu:8888/api/PPDB/print/bukti/"+option.calon_peserta_didik_id)} link="#" popoverClose title="Cetak Bukti Pendaftaran" /> */}
                                                                 <ListItem disabled={parseInt(option.status_konfirmasi_id) !== 1 ? true : false} onClick={()=>window.open("https://be.diskuis.id/api/PPDB/print/formulir/"+option.calon_peserta_didik_id)} link="#" popoverClose title="Cetak Formulir Pendaftaran" />
                                                                 <ListItem disabled={parseInt(option.status_konfirmasi_id) !== 1 ? true : false} onClick={()=>window.open("https://be.diskuis.id/api/PPDB/print/bukti/"+option.calon_peserta_didik_id)} link="#" popoverClose title="Cetak Bukti Pendaftaran" />
+                                                                {localStorage.getItem('edit_pendaftar') === 'Y' &&
                                                                 <ListItem disabled={parseInt(option.status_konfirmasi_id) !== 1 ? true : false} onClick={()=>this.batalKonfirmasi(option.calon_peserta_didik_id)} link="#" popoverClose title="Batalkan Konfirmasi" />
+                                                                }
+                                                                {localStorage.getItem('hapus_pendaftar') === 'Y' &&
                                                                 <ListItem onClick={()=>this.hapus(option.calon_peserta_didik_id)} link="#" popoverClose title="Hapus" />
+                                                                }
                                                             </List>
                                                         </Popover>
                                                       </Col>

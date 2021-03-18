@@ -337,7 +337,12 @@ class HomePPDB extends Component {
                                     <CardContent>
                                         <Button style={{borderRadius:'20px', marginBottom:'4px'}} className="color-theme-deeporange bawahCiri" tabLink="#tab-0" tabLinkActive>Beranda</Button>
                                         <Button style={{borderRadius:'20px', marginBottom:'4px'}} className="color-theme-deeporange" tabLink="#tab-1" onClick={()=>this.$f7router.navigate("/PPDB/"+this.$f7route.params['pengguna_id']+"/"+this.$f7route.params['sekolah_id'])}>Data Pendaftar</Button>
+                                        {localStorage.getItem('tambah_pendaftar') === 'Y' &&
                                         <Button style={{borderRadius:'20px', marginBottom:'4px'}} className="color-theme-deeporange" tabLink="#tab-3" onClick={()=>this.$f7router.navigate("/formulirPPDB/"+this.$f7route.params['pengguna_id']+"/"+this.$f7route.params['sekolah_id'])}>Tambah Pendaftar</Button>
+                                      }
+                                        {localStorage.getItem('tampil_pendaftar_diterima') === 'Y' &&
+                                        <Button style={{borderRadius:'20px', marginBottom:'4px'}} className="color-theme-deeporange" tabLink="#tab-1" onClick={()=>this.$f7router.navigate("/PendaftarDiterima/"+this.$f7route.params['pengguna_id']+"/"+this.$f7route.params['sekolah_id'])}>Pendaftar Diterima</Button>
+                                        }
                                         <Button style={{borderRadius:'20px', marginBottom:'4px'}} className="color-theme-deeporange" tabLink="#tab-3" onClick={()=>this.$f7router.navigate("/jadwalPPDB/"+this.$f7route.params['pengguna_id']+"/"+this.$f7route.params['sekolah_id'])}>Jadwal</Button>
                                         {/* <Button style={{borderRadius:'20px', marginBottom:'4px'}} className="color-theme-deeporange" tabLink="#tab-3" onClick={()=>this.$f7router.navigate("/ProfilPengguna/")}>Profil Pengguna</Button> */}
                                         <Button style={{borderRadius:'20px', marginBottom:'4px', background:'#eeeeee', color:'red', marginTop:'16px'}} className="color-theme-deeporange" tabLink="#tab-3" onClick={this.keluar}>Keluar</Button>
@@ -551,11 +556,17 @@ class HomePPDB extends Component {
                                                         <Button popoverOpen={".popover-menu-"+option.calon_peserta_didik_id}><i className="icons f7-icons">ellipsis_vertical</i></Button>
                                                         <Popover className={"popover-menu-"+option.calon_peserta_didik_id} style={{minWidth:'300px'}}>
                                                             <List>
+                                                                {localStorage.getItem('edit_pendaftar') === 'Y' &&
                                                                 <ListItem disabled={parseInt(option.status_konfirmasi_id) === 1 ? true : false} onClick={()=>this.$f7router.navigate("/formBiodata/"+option.calon_peserta_didik_id+"/"+this.$f7route.params['pengguna_id']+"/"+this.$f7route.params['sekolah_id'])} link="#" popoverClose title="Edit Biodata" />
+                                                                }
                                                                 <ListItem disabled={parseInt(option.status_konfirmasi_id) !== 1 ? true : false} onClick={()=>window.open("https://be.diskuis.id/api/PPDB/print/formulir/"+option.calon_peserta_didik_id)} link="#" popoverClose title="Cetak Formulir Pendaftaran" />
                                                                 <ListItem disabled={parseInt(option.status_konfirmasi_id) !== 1 ? true : false} onClick={()=>window.open("https://be.diskuis.id/api/PPDB/print/bukti/"+option.calon_peserta_didik_id)} link="#" popoverClose title="Cetak Bukti Pendaftaran" />
+                                                                {localStorage.getItem('edit_pendaftar') === 'Y' &&
                                                                 <ListItem disabled={parseInt(option.status_konfirmasi_id) !== 1 ? true : false} onClick={()=>this.batalKonfirmasi(option.calon_peserta_didik_id)} link="#" popoverClose title="Batalkan Konfirmasi" />
+                                                                }
+                                                                {localStorage.getItem('hapus_pendaftar') === 'Y' &&
                                                                 <ListItem onClick={()=>this.hapus(option.calon_peserta_didik_id)} link="#" popoverClose title="Hapus" />
+                                                                }
                                                             </List>
                                                         </Popover>
                                                     </Col>
@@ -622,7 +633,8 @@ function mapDispatchToProps(dispatch) {
     getStatistikSekolah: Actions.getStatistikSekolah,
     getJadwal: Actions.getJadwal,
     getSekolahPengguna: Actions.getSekolahPengguna,
-    getKuota: Actions.getKuota
+    getKuota: Actions.getKuota,
+    hapusCalonPesertaDidik: Actions.hapusCalonPesertaDidik
   }, dispatch);
 }
 

@@ -149,7 +149,7 @@ class HomePPDBPublik extends Component {
             }
         }, ()=> {
             
-            this.props.getCalonPesertaDidik(this.state.routeParams).then((result)=>{
+            this.props.getCalonPesertaDidik({...this.state.routeParams, publik:1}).then((result)=>{
                 
                 this.setState({
                     loading: false,
@@ -290,8 +290,43 @@ class HomePPDBPublik extends Component {
                                                                         </div>
                                                                     </div>
                                                                 </Col>
-                                                                <Col width="100" tabletWidth="50">
+                                                                <Col width="100" tabletWidth="50" style={{textAlign:'right'}}>
                                                                     <BlockTitle style={{marginTop:'0px', marginLeft:'4px', marginBottom:'0px'}}>Jalur <b>{option.jalur}</b></BlockTitle>
+                                                                    {parseInt(option.status_diterima_id) === 1 &&
+                                                                    <div className="sudahDiterima">
+                                                                        Selamat, peserta didik ini telah diterima di 
+                                                                        <br/>
+                                                                        <b>{option.nama_sekolah_penerima}</b>
+                                                                    </div>
+                                                                    }
+                                                                    
+                                                                    {parseInt(option.status_diterima_id) === 2 &&
+                                                                    <div className="sudahDiterima">
+                                                                        Selamat, peserta didik ini telah diterima di 
+                                                                        <br/>
+                                                                        <b>{option.nama_sekolah_penerima}</b>
+                                                                    </div>
+                                                                    }
+                                                                    
+                                                                    {parseInt(option.status_diterima_id) === 3 &&
+                                                                    <div className="sudahDiterima">
+                                                                        Selamat, peserta didik ini telah diterima di 
+                                                                        <br/>
+                                                                        <b>{option.nama_sekolah_penerima}</b>
+                                                                    </div>
+                                                                    }
+                                                                    
+                                                                    {option.status_diterima_id &&
+                                                                    <div style={{marginTop:'8px'}}>
+                                                                    Status:<br/>
+                                                                    <Button raised fill small style={{fontSize:'10px', height:'20px', display:'inline-flex'}} className={(parseInt(option.status_diterima_id) === 1 ? 'color-theme-green' : (parseInt(option.status_diterima_id) === 2 ? 'color-theme-blue' : 'color-theme-orange'))}>
+                                                                        <i className="f7-icons" style={{fontSize:'15px'}}>{parseInt(option.status_diterima_id) === 1 ? 'checkmark_seal' : (parseInt(option.status_diterima_id) === 2 ? 'checkmark_seal' : 'circle')}</i>&nbsp;
+                                                                        {parseInt(option.status_diterima_id) === 1 ? 'Diterima' : (parseInt(option.status_diterima_id) === 2 ? 'Daftar Ulang' : 'Cabut Berkas')}
+                                                                    </Button>
+                                                                    </div>
+                                                                    }
+                                                                    
+                                                                    {!option.status_diterima_id &&
                                                                     <Row noGap style={{justifyContent:'end'}}>
                                                                         {option.sekolah_pilihan.map((optionSekolah)=>{
                                                                             return (
@@ -335,6 +370,7 @@ class HomePPDBPublik extends Component {
                                                                             )
                                                                         })}
                                                                     </Row>
+                                                                    }
                                                                 </Col>
                                                             </Row>
                                                         </CardContent>

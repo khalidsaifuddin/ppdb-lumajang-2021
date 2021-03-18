@@ -706,7 +706,12 @@ class formBiodata extends Component {
 
     this.$f7.dialog.preloader()
     
-    this.props.simpanCalonPesertaDidik({...this.state.routeParams, peserta_didik_id: this.$f7route.params['peserta_didik_id']}).then((result)=> {
+    this.props.simpanCalonPesertaDidik({
+      ...this.state.routeParams, 
+      peserta_didik_id: this.$f7route.params['peserta_didik_id'],
+      lintang: parseFloat(this.state.routeParams.lintang),
+      bujur: parseFloat(this.state.routeParams.bujur)
+    }).then((result)=> {
       this.$f7.dialog.close()
       this.$f7router.navigate("/formSekolahPilihan/"+this.$f7route.params['peserta_didik_id']+"/"+this.$f7route.params['pengguna_id']+"/"+this.$f7route.params['sekolah_id'])
     })

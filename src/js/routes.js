@@ -79,6 +79,7 @@ import kelolaJadwal from '../pages/PPDB/kelolaJadwal';
 import editJadwal from '../pages/PPDB/editJadwal';
 import HomePPDBPublik from '../pages/PPDB/HomePPDBPublik';
 import kelolaKuota from '../pages/PPDB/kelolaKuota';
+import PendaftarDiterima from '../pages/PPDB/PendaftarDiterima';
 
 // console.log(localStorage.getItem('kode_aplikasi'));
 
@@ -124,6 +125,10 @@ var routes = [
   {
     path: '/jadwalPPDB/:pengguna_id/:sekolah_id',
     component: jadwalPPDB
+  },
+  {
+    path: '/PendaftarDiterima/:pengguna_id/:sekolah_id',
+    component: PendaftarDiterima
   },
   {
     path: '/editJadwal/:jadwal_id',

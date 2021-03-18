@@ -269,6 +269,9 @@ class formulirPendaftaran extends Component {
                                             <Button style={{borderRadius:'20px', marginBottom:'4px'}} className="color-theme-deeporange" tabLink="#tab-0" onClick={()=>this.$f7router.navigate("/HomePPDB/"+this.$f7route.params['pengguna_id']+"/"+this.$f7route.params['sekolah_id'])}>Beranda</Button>
                                             <Button style={{borderRadius:'20px', marginBottom:'4px'}} className="color-theme-deeporange" tabLink="#tab-1" onClick={()=>this.$f7router.navigate("/PPDB/"+this.$f7route.params['pengguna_id']+"/"+this.$f7route.params['sekolah_id'])}>Data Pendaftar</Button>
                                             <Button style={{borderRadius:'20px', marginBottom:'4px'}} className="color-theme-deeporange bawahCiri" tabLink="#tab-3" tabLinkActive>Tambah Pendaftar</Button>
+                                            {localStorage.getItem('tampil_pendaftar_diterima') === 'Y' &&
+                                            <Button style={{borderRadius:'20px', marginBottom:'4px'}} className="color-theme-deeporange" tabLink="#tab-1" onClick={()=>this.$f7router.navigate("/PendaftarDiterima/"+this.$f7route.params['pengguna_id']+"/"+this.$f7route.params['sekolah_id'])}>Pendaftar Diterima</Button>
+                                            }
                                             <Button style={{borderRadius:'20px', marginBottom:'4px'}} className="color-theme-deeporange" tabLink="#tab-3" onClick={()=>this.$f7router.navigate("/jadwalPPDB/"+this.$f7route.params['pengguna_id']+"/"+this.$f7route.params['sekolah_id'])}>Jadwal</Button>
                                             <Button style={{borderRadius:'20px', marginBottom:'4px', background:'#eeeeee', color:'red', marginTop:'16px'}} className="color-theme-deeporange" tabLink="#tab-3" onClick={this.keluar}>Keluar</Button>
                                         </CardContent>
@@ -415,6 +418,11 @@ class formulirPendaftaran extends Component {
                                                             </Button>
                                                             <span style={{fontSize:'8px', display:'inline-flex', textAlign:'center'}}>{!option.calon_peserta_didik_id ? '' : 'Peserta didik ini telah didaftarkan'}</span>
                                                           </Col>
+                                                          {(parseInt(option.status_diterima_id) === 1 || parseInt(option.status_diterima_id) === 2) &&
+                                                          <Col width="100" className="sudahDiterima">
+                                                            telah diterima {parseInt(option.status_diterima_id) === 2 && <>dan daftar ulang </>}di <b>{option.nama_sekolah_penerima}</b>
+                                                          </Col>
+                                                          }
                                                         </Row>
                                                       </CardContent>
                                                     </Card>
