@@ -96,9 +96,9 @@ localStorage.setItem('custom_logo_sekolah','/assets/berkas/lumajang_logo_besar.p
 
 localStorage.setItem('judul_aplikasi','PPDB Kab Lumajang 2021');
 localStorage.setItem('sub_judul_aplikasi','Dinas Pendidikan Kabupaten Lumajang');
-// localStorage.setItem('kode_aplikasi','MEJA-PPDB');
+localStorage.setItem('kode_aplikasi','MEJA-PPDB');
 // localStorage.setItem('kode_aplikasi','MEJA-PPDB-PUBLIK');
-localStorage.setItem('kode_aplikasi','MEJA-PPDB-DINAS');
+// localStorage.setItem('kode_aplikasi','MEJA-PPDB-DINAS');
 localStorage.setItem('tema_warna_aplikasi','biru-1');
 localStorage.setItem('wilayah_aplikasi','');
 localStorage.setItem('kode_wilayah_aplikasi','026100');
@@ -113,7 +113,7 @@ localStorage.setItem('versi','1.0.0');
 
 localStorage.setItem('tambah_pendaftar','Y');
 localStorage.setItem('edit_pendaftar','Y');
-localStorage.setItem('hapus_pendaftar','Y');
+localStorage.setItem('hapus_pendaftar','N');
 localStorage.setItem('tampil_pendaftar_diterima','Y');
 
 
@@ -122,7 +122,7 @@ localStorage.setItem('tampil_pendaftar_diterima','Y');
 // localStorage.setItem('show_toolbar','1');
 
 // localStorage.setItem('google_api','582957663393-kp55jbquet0m0rlkkkskrahm2ruq8dfc.apps.googleusercontent.com');
-localStorage.setItem('api_base','http://mejabantu:8888');
+// localStorage.setItem('api_base','http://mejabantu:8888');
 // localStorage.setItem('google_api', '582957663393-hlr6l0a2oendcq6ul13n9pasi88mb7bc.apps.googleusercontent.com');
 // localStorage.setItem('device','android');
 localStorage.setItem('device','web');

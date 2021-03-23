@@ -147,6 +147,51 @@ class formSekolahPilihan extends Component {
                 
                                             if(result.payload.total > 0){
                                                 jalur_id = result.payload.rows[0].jalur_id
+                                            }else{
+                                                // console.log('belum ada sekolah')
+                                                this.props.simpanSekolahPilihan({
+                                                    peserta_didik_id: this.$f7route.params['peserta_didik_id'], 
+                                                    sekolah_id: this.$f7route.params['sekolah_id'], 
+                                                    urut_pilihan: 1,
+                                                    jalur_id: this.state.jalur_id
+                                                }).then((result)=> {
+
+                                                    this.props.getSekolahPilihan({
+                                                        ...this.state.routeParams,
+                                                        peserta_didik_id: this.$f7route.params['peserta_didik_id'],
+                                                        lintang: parseFloat(this.state.routeParams.lintang),
+                                                        bujur: parseFloat(this.state.routeParams.bujur)
+                                                    }).then((result)=>{
+                            
+                                                        let jalur_id = this.state.jalur_id
+
+                                                        this.setState({
+                                                            sekolah_pilihan: result.payload,
+                                                            jalur_id: jalur_id
+                                                        },()=>{
+                                                        
+                                                        })
+                                                    })
+    
+                                                    // this.props.simpanNilaiPrestasi({
+                                                    //     pengguna_id: (this.$f7route.params['pengguna_id'] && this.$f7route.params['pengguna_id'] !== '-' ? this.$f7route.params['pengguna_id'] : null),
+                                                    //     peserta_didik_id: this.$f7route.params['peserta_didik_id'],
+                                                    //     jenis_prestasi_id: this.state.jenis_prestasi_id,
+                                                    //     tingkat_prestasi_id: this.state.tingkat_prestasi_id,
+                                                    //     nilai_semester_1: this.state.nilai_semester_1,
+                                                    //     nilai_semester_2: this.state.nilai_semester_2,
+                                                    //     nilai_semester_3: this.state.nilai_semester_3,
+                                                    //     nilai_semester_4: this.state.nilai_semester_4,
+                                                    //     nilai_semester_5: this.state.nilai_semester_5
+                                                    // }).then((result)=>{
+                                        
+                                                    //     this.$f7.dialog.close()
+                                                    //     this.$f7router.navigate("/formBerkas/"+this.$f7route.params['peserta_didik_id']+"/"+this.$f7route.params['pengguna_id']+"/"+this.$f7route.params['sekolah_id']+'/'+this.state.jalur_id)
+                                        
+                                                    // })
+                                        
+                                                })
+                                                // console.log('belum ada sekolah')
                                             }
                 
                                             this.setState({
@@ -286,7 +331,8 @@ class formSekolahPilihan extends Component {
             //boleh
             this.$f7.dialog.preloader()
             
-            this.props.simpanSekolahPilihan({peserta_didik_id: this.$f7route.params['peserta_didik_id'], jalur_id: this.state.jalur_id}).then((result)=> {
+            this.props.simpanSekolahPilihan({
+                peserta_didik_id: this.$f7route.params['peserta_didik_id'], jalur_id: this.state.jalur_id}).then((result)=> {
     
                 this.props.simpanNilaiPrestasi({
                     pengguna_id: (this.$f7route.params['pengguna_id'] && this.$f7route.params['pengguna_id'] !== '-' ? this.$f7route.params['pengguna_id'] : null),
@@ -313,6 +359,7 @@ class formSekolahPilihan extends Component {
     hapusSekolah = (sekolah_id) => (e) => {
         this.$f7.dialog.confirm('Apakah Anda yakin ingin menghapus sekolah ini?', 'Konfirmasi', () => {
             this.props.simpanSekolahPilihan({
+
                 peserta_didik_id: this.$f7route.params['peserta_didik_id'],
                 sekolah_id: sekolah_id,
                 soft_delete: 1
@@ -648,7 +695,9 @@ function mapDispatchToProps(dispatch) {
         getWilayah: Actions.getWilayah,
         getJalurPPDB: Actions.getJalurPPDB,
         getSekolahPilihan: Actions.getSekolahPilihan,
-        simpanSekolahPilihan: Actions.simpanSekolahPilihan,
+        simpanSekolahPilihan: 
+        Actions.simpanSekolahPilihan,
+
         getJenisPrestasi: Actions.getJenisPrestasi,
         getTingkatPrestasi: Actions.getTingkatPrestasi,
         simpanNilaiPrestasi: Actions.simpanNilaiPrestasi,
